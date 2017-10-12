@@ -1,0 +1,4 @@
+{
+  "WTF_CSRF_ENABLED": true,
+  "SECRET_KEY": "XY8bStqGJKvWtx5Rztv8gMDSNagaPTguAY6YuDPJpcvPRnmp5wV36js6V7fvtxCY"
+}
