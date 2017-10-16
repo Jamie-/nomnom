@@ -7,7 +7,7 @@ University of Southampton - Cloud Application Development - Coursework 2
  * Imran Bepari
  * Jamie Scott
  * Michael Paulsen-Forster
- * Stefan Padel
+ * Steffan Padel
  * Toby Fielding
 
 ## Development Setup Instructions ##
