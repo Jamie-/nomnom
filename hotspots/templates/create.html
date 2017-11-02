@@ -1,0 +1,34 @@
+{% extends "template.html" %}
+
+{% block container %}
+    <h1 class="text-center">Create a poll! <i class="fa fa-pie-chart"></i></h1>
+
+    <form action="/create" method="post" name="create" class="text-centers">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label>Title</label>
+            {% if form.title.errors %}
+                {{ form.title(class='form-control is-invalid') }}
+            {% else %}
+                {{ form.title(class='form-control') }}
+            {% endif %}
+            {% for error in form.title.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            {% if form.description.errors %}
+                {{ form.description(class='form-control is-invalid') }}
+            {% else %}
+                {{ form.description(class='form-control') }}
+            {% endif %}
+            {% for error in form.description.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="text-center">
+            {{ form.submit(class='btn btn-primary') }}
+        </div>
+    </form>
+{% endblock %}

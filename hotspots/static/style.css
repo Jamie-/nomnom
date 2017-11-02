@@ -1,1 +1,26 @@
 /* Custom CSS File */
+
+body > div.container {
+    padding-top: 2rem;
+}
+
+.response-description {
+    margin-bottom: 20px;
+}
+
+/* Font Awesome Icon Hovers */
+
+.fa-trophy:hover,
+.fa-trophy:focus {
+    color: #0000ff;
+}
+
+.fa-arrow-up:hover,
+.fa-arrow-up:focus {
+    color: #00ff00;
+}
+
+.fa-arrow-down:hover,
+.fa-arrow-down:focus {
+    color: #ff0000;
+}
