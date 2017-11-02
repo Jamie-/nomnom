@@ -15,7 +15,7 @@ def get_poll(id):
 
 @app.route('/')
 def index():
-    return flask.render_template('index.html', title='Index', polls=polls)
+    return flask.render_template('index.html', polls=polls)
 
 # Create a poll
 @app.route('/create', methods=['GET', 'POST'])
