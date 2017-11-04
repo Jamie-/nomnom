@@ -2,7 +2,7 @@
 .PHONY: clean, depends, run, deploy, cloud-logs, view
 
 # This will need changing to wherever you installed your GCloud SDK - please don't commit changes to this line though!
-gcloud-sdk = /opt/google-cloud-sdk
+gcloud-sdk = /C:/Program\ Files\ \(x86\)/Google/Cloud\ SDK/google-cloud-sdk
 
 clean: # Clean build files
 	rm -rf *.pyc
