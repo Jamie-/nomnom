@@ -7,7 +7,8 @@ from google.appengine.ext import ndb
 
 @app.route('/')
 def index():
-    return flask.render_template('index.html', polls=Poll.query().fetch())
+    polls = Poll.query().fetch()
+    return flask.render_template('index.html', polls=polls)
 
 # Create a poll
 @app.route('/create', methods=['GET', 'POST'])
@@ -29,7 +30,7 @@ def poll(poll_id):
         flask.abort(404)
     form = forms.ResponseForm()
     if form.validate_on_submit():
-        r = Response(parent = poll.key, response_str = form.response.data)
+        r = Response(parent = poll.key, response_str = form.response.data, upv = 0, dnv = 0)
         r.put()
     rs = Response.query(ancestor=poll.key).fetch()
     return flask.render_template('poll.html', title=poll.title, poll=poll, form=form, responses = rs)
