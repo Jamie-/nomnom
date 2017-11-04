@@ -9,6 +9,12 @@ class Poll(ndb.Model):
     title = ndb.StringProperty()
     description = ndb.TextProperty()
 
+    responses = []
+
+    def set_responses(self, n):
+        self.responses = Response.query(ancestor=self.key).fetch(n)
+        return
+
 
 # Response object model
 class Response(ndb.Model):

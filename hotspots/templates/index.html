@@ -11,8 +11,8 @@
                         <p class="card-text">{{ p.description }}</p>
                     </div>
                     <ul class="list-group list-group-flush">
-                        {% if Response.query(ancestor=poll.key).fetch(3)|length > 0 %}
-                            {% for r in Response.query(ancestor=poll.key).fetch(3) %}
+                        {% if p.responses|length > 0 %}
+                            {% for r in p.responses %}
                                 <li class="list-group-item">
                                     {{ r.response_str }}
                                     <div class="pull-right">

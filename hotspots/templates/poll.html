@@ -15,8 +15,8 @@
                 <tr>
                     <td class="text-center score" style="width: 10%;"><i class="fa fa-trophy"></i> <span>{{ r.upv - r.dnv }}</span></td>
                     <td>{{ r.response_str }}</td>
-                    <td class="text-center up-score" style="width: 10%;"><a href="#" class="vote" data-vote="up" data-resp-id="{{ r.id }}"><i class="fa fa-arrow-up"></i></a> <span>{{ r.upv }}</span></td>
-                    <td class="text-center down-score" style="width: 10%;"><a href="#" class="vote" data-vote="down" data-resp-id="{{ r.id }}"><i class="fa fa-arrow-down"></i></a> <span>{{ r.dnv }}</span></td>
+                    <td class="text-center up-score" style="width: 10%;"><a href="#" class="vote" data-vote="up" data-resp-id="{{ r.key.id() }}"><i class="fa fa-arrow-up"></i></a> <span>{{ r.upv }}</span></td>
+                    <td class="text-center down-score" style="width: 10%;"><a href="#" class="vote" data-vote="down" data-resp-id="{{ r.key.id() }}"><i class="fa fa-arrow-down"></i></a> <span>{{ r.dnv }}</span></td>
                 </tr>
             {% endfor %}
         </table>

@@ -7,7 +7,10 @@ from google.appengine.ext import ndb
 
 @app.route('/')
 def index():
-    polls = Poll.query().fetch()
+    query = Poll.query()
+    polls = query.fetch()
+    for p in polls:
+        p.set_responses(3)
     return flask.render_template('index.html', polls=polls)
 
 # Create a poll
@@ -39,11 +42,12 @@ def poll(poll_id):
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
 def poll_vote(poll_id, vote_type):
     poll = ndb.Key(urlsafe=poll_id).get()
-    r = Response.query(ancestor=poll.key, id = flask.request.form['resp_id']).fetch()
+    r_id = int(flask.request.form['resp_id'])
+    r = Response.get_by_id(r_id,parent = poll.key)
     if vote_type.lower() == 'up':
         r.upv += 1
     elif vote_type.lower() == 'down':
-        r.dnv += -1
+        r.dnv += 1
     r.put()
     return flask.jsonify({'score': (r.upv - r.dnv), 'up': r.upv, 'down': r.dnv})
 
