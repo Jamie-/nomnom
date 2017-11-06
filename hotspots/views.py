@@ -3,14 +3,18 @@ from hotspots import app
 import logging
 import forms
 from poll import Poll, Response
-from google.appengine.ext import ndb
+
+# TEMP
+polls = [] # Temp poll store during development until we get a database running
+def get_poll(id):
+    for p in polls:
+        if p.id == id:
+            return p
+    return None
+# /TEMP
 
 @app.route('/')
 def index():
-    query = Poll.query()
-    polls = query.fetch()
-    for p in polls:
-        p.set_responses(3)
     return flask.render_template('index.html', polls=polls)
 
 # Create a poll
@@ -18,37 +22,32 @@ def index():
 def create():
     form = forms.CreateForm()
     if form.validate_on_submit():
-        poll = Poll(title = form.title.data, description = form.description.data)
-        poll.put()
+        poll = Poll(form.title.data, form.description.data)
+        polls.append(poll) # Adding to temp store temporarily
         flask.flash('Poll created successfully!', 'success')
-        return flask.redirect('/poll/' + poll.key.urlsafe(), code=302) # After successfully creating a poll, go to it
+        return flask.redirect('/poll/' + poll.id, code=302) # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
 
 # View poll and add responses
 @app.route('/poll/<string:poll_id>', methods=['GET', 'POST'])
 def poll(poll_id):
-    poll_key = ndb.Key(urlsafe=poll_id)
-    poll = poll_key.get()
+    poll = get_poll(poll_id) #TEMP
     if poll is None:
         flask.abort(404)
     form = forms.ResponseForm()
     if form.validate_on_submit():
-        r = Response(parent = poll.key, response_str = form.response.data, upv = 0, dnv = 0)
-        r.put()
-    rs = Response.query(ancestor=poll.key).fetch()
-    return flask.render_template('poll.html', title=poll.title, poll=poll, form=form, responses = rs)
+        poll.responses.append(Response(form.response.data))
+    return flask.render_template('poll.html', title=poll.title, poll=poll, form=form)
 
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
 def poll_vote(poll_id, vote_type):
-    poll = ndb.Key(urlsafe=poll_id).get()
-    r_id = int(flask.request.form['resp_id'])
-    r = Response.get_by_id(r_id,parent = poll.key)
+    poll = get_poll(poll_id) #TEMP
+    r = poll.get_response_by_id(flask.request.form['resp_id'])
     if vote_type.lower() == 'up':
-        r.upv += 1
+        r.upvote()
     elif vote_type.lower() == 'down':
-        r.dnv += 1
-    r.put()
+        r.downvote()
     return flask.jsonify({'score': (r.upv - r.dnv), 'up': r.upv, 'down': r.dnv})
 
 

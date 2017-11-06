@@ -2,39 +2,45 @@
 
 {% block container %}
     <div class="row">
-
-        {% for p in polls %}
-            <div class="col-6 form-group">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">{{ p.title }}</h4>
-                        <p class="card-text">{{ p.description }}</p>
-                    </div>
-                    <ul class="list-group list-group-flush">
-                        {% if p.responses|length > 0 %}
-                            {% for r in p.responses %}
-                                <li class="list-group-item">
-                                    {{ r.response_str }}
-                                    <div class="pull-right">
-                                        <i class="fa fa-trophy"></i>
-                                        <span>{{ r.upv - r.dnv }}</span>
-                                        <i class="fa fa-arrow-up"></i>
-                                        <span>{{ r.upv }}</span>
-                                        <i class="fa fa-arrow-down"></i>
-                                        <span>{{ r.dnv }}</span>
-                                    </div>
-                                </li>
-                            {% endfor %}
-                        {% else %}
-                            <li class="list-group-item">No responses made yet :(</li>
-                        {% endif %}
-                    </ul>
-                    <div class="card-body">
-                        <a href="/poll/{{ p.key.urlsafe() }}" class="card-link">Show More</a>
+        {% if polls|length > 0 %}{# TEMP UNTIL DATABASE - {% if polls is not None %} #}
+            {% for p in polls %}
+                <div class="col-6 form-group">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ p.title }}</h4>
+                            <p class="card-text">{{ p.description }}</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% if p.get_top_three()|length > 0 %}
+                                {% for r in p.get_top_three() %}
+                                    <li class="list-group-item">
+                                        {{ r.response_str }}
+                                        <div class="pull-right">
+                                            <i class="fa fa-trophy"></i>
+                                            <span>{{ r.upv - r.dnv }}</span>
+                                            <i class="fa fa-arrow-up"></i>
+                                            <span>{{ r.upv }}</span>
+                                            <i class="fa fa-arrow-down"></i>
+                                            <span>{{ r.dnv }}</span>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="list-group-item">No responses made yet :(</li>
+                            {% endif %}
+                        </ul>
+                        <div class="card-body">
+                            <a href="/poll/{{ p.id }}" class="card-link">Show More</a>
+                        </div>
                     </div>
                 </div>
+            {% endfor %}
+        {% else %}
+            <div class="container text-center">
+                <h2>Oh no, there are no polls at the moment.</h2>
+                <h4>Why don't you <a href="/create">create one</a>?</h4>
             </div>
-        {% endfor %}
+        {% endif %}
 
     </div>
 {% endblock %}
