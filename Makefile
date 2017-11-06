@@ -6,6 +6,7 @@ gcloud-sdk = /opt/google-cloud-sdk
 
 clean: # Clean build files
 	rm -rf *.pyc
+	rm -f **/*.pyc
 	rm -rf __pycache__/
 	rm -rf **/__pycache__/
 
