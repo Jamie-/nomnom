@@ -29,7 +29,6 @@ def poll(poll_id):
         Response.add(poll, form.response.data)
     return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form)
 
-
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
 def poll_vote(poll_id, vote_type):
