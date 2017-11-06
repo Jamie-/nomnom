@@ -9,14 +9,14 @@
         </div>
     </div>
 
-    {% if poll.responses|length > 0 %}
+    {% if responses|length > 0 %}
         <table class="table table-striped table-inverse">
-            {% for r in poll.responses %}
+            {% for r in responses %}
                 <tr>
                     <td class="text-center score" style="width: 10%;"><i class="fa fa-trophy"></i> <span>{{ r.upv - r.dnv }}</span></td>
                     <td>{{ r.response_str }}</td>
-                    <td class="text-center up-score" style="width: 10%;"><a href="#" class="vote" data-vote="up" data-resp-id="{{ r.id }}"><i class="fa fa-arrow-up"></i></a> <span>{{ r.upv }}</span></td>
-                    <td class="text-center down-score" style="width: 10%;"><a href="#" class="vote" data-vote="down" data-resp-id="{{ r.id }}"><i class="fa fa-arrow-down"></i></a> <span>{{ r.dnv }}</span></td>
+                    <td class="text-center up-score" style="width: 10%;"><a href="#" class="vote" data-vote="up" data-resp-id="{{ r.get_id() }}"><i class="fa fa-arrow-up"></i></a> <span>{{ r.upv }}</span></td>
+                    <td class="text-center down-score" style="width: 10%;"><a href="#" class="vote" data-vote="down" data-resp-id="{{ r.get_id() }}"><i class="fa fa-arrow-down"></i></a> <span>{{ r.dnv }}</span></td>
                 </tr>
             {% endfor %}
         </table>
@@ -26,7 +26,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="/poll/{{ poll.id }}" method="post" name="response" class="text-centers">
+            <form action="/poll/{{ poll.get_id() }}" method="post" name="response" class="text-centers">
                 {{ form.hidden_tag() }}
                 <div class="form-group">
                     <label>Add a response:</label>
@@ -55,7 +55,7 @@
             element = $(this); // Element event handler bound to
 
             $.ajax({
-                url: '/poll/{{ poll.id }}/vote/' + $(this).data('vote'),
+                url: '/poll/{{ poll.get_id() }}/vote/' + $(this).data('vote'),
                 data: {resp_id: $(this).data('resp-id')},
                 type: 'POST',
                 success: function(response) {

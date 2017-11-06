@@ -1,43 +1,75 @@
-import uuid
+from google.appengine.ext import ndb
 
 # Poll object model
-class Poll():
+class Poll(ndb.Model):
+    title = ndb.StringProperty()
+    description = ndb.TextProperty()
 
-    def __init__(self, title, description):
-        self.id = str(uuid.uuid4())
-        self.title = title
-        self.description = description
-        self.responses = []
+    def get_id(self):
+        return self.key.urlsafe()
 
-    # Get a response object by ID
-    def get_response_by_id(self, response_id):
-        for r in self.responses:
-            if r.id == response_id:
-                return r
-        return None
-
-    # Get top three responses
-    #TODO order by score in this rankning - needs DB
-    def get_top_three(self):
-        if len(self.responses) < 4:
-            return self.responses
+    # Get list of response objects
+    def get_responses(self, n=None):
+        if n is None:
+            return Response.query(ancestor=self.key).fetch()
         else:
-            return self.responses[:3]
+            return Response.query(ancestor=self.key).fetch(n)
+
+    # Add poll to datastore
+    @classmethod
+    def add(cls, title, description):
+        p = Poll(title=title, description=description)
+        p.put() # Add to datastore
+        return p
+
+    # Fetch all polls from datastore
+    @classmethod
+    def fetch_all(cls):
+        query = Poll.query()
+        return query.fetch()
+
+    # Get poll from datastore by ID
+    @classmethod
+    def get_poll(cls, id):
+        key = ndb.Key(urlsafe=id)
+        return key.get()
 
 
 # Response object model
-class Response():
+class Response(ndb.Model):
+    response_str = ndb.StringProperty()
+    upv = ndb.IntegerProperty()
+    dnv = ndb.IntegerProperty()
 
-    def __init__(self, response_str):
-        self.id = str(uuid.uuid4())
-        self.response_str = response_str
+    # Initialise a new response object with 0 upv and dnv maintaining kwargs to parent
+    def __init__(self, **kwargs):
+        super(Response, self).__init__(**kwargs) # Call parent constructor
         self.upv = 0
         self.dnv = 0
+
+    def get_id(self):
+        return self.key.id()
 
     # Add up-vote to response
     def upvote(self):
         self.upv += 1
+        self.put() # Update in datastore
 
     # Add down-vote to response
     def downvote(self):
         self.dnv += 1
+        self.put() # Update in datastore
+
+    # Add response to datastore
+    @classmethod
+    def add(cls, poll, response_str):
+        r = Response(parent=poll.key, response_str=response_str)
+        r.put()
+        return r
+
+    # Get response from datastore
+    @classmethod
+    def get_response(cls, poll_id, response_id):
+        poll = ndb.Key(urlsafe=poll_id).get()
+        resp_id = int(response_id)
+        return Response.get_by_id(resp_id, parent=poll.key)
