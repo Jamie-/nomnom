@@ -2,7 +2,7 @@
 
 {% block container %}
     <div class="row">
-        {% if polls|length > 0 %}{# TEMP UNTIL DATABASE - {% if polls is not None %} #}
+        {% if polls|length > 0 %}
             {% for p in polls %}
                 <div class="col-6 form-group">
                     <div class="card">
@@ -11,8 +11,8 @@
                             <p class="card-text">{{ p.description }}</p>
                         </div>
                         <ul class="list-group list-group-flush">
-                            {% if p.get_top_three()|length > 0 %}
-                                {% for r in p.get_top_three() %}
+                            {% if p.get_responses(3)|length > 0 %}
+                                {% for r in p.get_responses(3) %}
                                     <li class="list-group-item">
                                         {{ r.response_str }}
                                         <div class="pull-right">
@@ -30,7 +30,7 @@
                             {% endif %}
                         </ul>
                         <div class="card-body">
-                            <a href="/poll/{{ p.id }}" class="card-link">Show More</a>
+                            <a href="/poll/{{ p.get_id() }}" class="card-link">Show More</a>
                         </div>
                     </div>
                 </div>

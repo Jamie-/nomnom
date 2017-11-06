@@ -4,46 +4,35 @@ import logging
 import forms
 from poll import Poll, Response
 
-# TEMP
-polls = [] # Temp poll store during development until we get a database running
-def get_poll(id):
-    for p in polls:
-        if p.id == id:
-            return p
-    return None
-# /TEMP
-
 @app.route('/')
 def index():
-    return flask.render_template('index.html', polls=polls)
+    return flask.render_template('index.html', polls=Poll.fetch_all())
 
 # Create a poll
 @app.route('/create', methods=['GET', 'POST'])
 def create():
     form = forms.CreateForm()
     if form.validate_on_submit():
-        poll = Poll(form.title.data, form.description.data)
-        polls.append(poll) # Adding to temp store temporarily
+        poll = Poll.add(form.title.data, form.description.data)
         flask.flash('Poll created successfully!', 'success')
-        return flask.redirect('/poll/' + poll.id, code=302) # After successfully creating a poll, go to it
+        return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
 
 # View poll and add responses
 @app.route('/poll/<string:poll_id>', methods=['GET', 'POST'])
 def poll(poll_id):
-    poll = get_poll(poll_id) #TEMP
+    poll = Poll.get_poll(poll_id)
     if poll is None:
         flask.abort(404)
     form = forms.ResponseForm()
     if form.validate_on_submit():
-        poll.responses.append(Response(form.response.data))
-    return flask.render_template('poll.html', title=poll.title, poll=poll, form=form)
+        Response.add(poll, form.response.data)
+    return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form)
 
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
 def poll_vote(poll_id, vote_type):
-    poll = get_poll(poll_id) #TEMP
-    r = poll.get_response_by_id(flask.request.form['resp_id'])
+    r = Response.get_response(poll_id, flask.request.form['resp_id'])
     if vote_type.lower() == 'up':
         r.upvote()
     elif vote_type.lower() == 'down':
