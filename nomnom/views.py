@@ -1,5 +1,5 @@
 import flask
-from hotspots import app
+from nomnom import app
 import logging
 import forms
 from poll import Poll, Response

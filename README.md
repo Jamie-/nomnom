@@ -1,4 +1,4 @@
-# Hotspots # 
+# NomNom # 
 
 University of Southampton - Cloud Application Development - Coursework 2
 
