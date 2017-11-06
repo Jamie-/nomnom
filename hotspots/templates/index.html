@@ -2,7 +2,7 @@
 
 {% block container %}
     <div class="row">
-        {% if polls|length > 0 %}{# TEMP UNTIL DATABASE - {% if polls is not None %} #}
+        {% if polls|length > 0 %}
             {% for p in polls %}
                 <div class="col-6 form-group">
                     <div class="card">
