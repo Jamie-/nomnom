@@ -1,5 +1,10 @@
 ## PROJECT #############################################################################################################
 
+# Project specific files that need to not be changed after committing
+.idea/nomnom.iml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/misc.xml
+.idea/preferred-vcs.xml
 
 ## PYTHON ##############################################################################################################
 
