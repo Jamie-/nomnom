@@ -8,6 +8,10 @@ body > div.container {
     margin-bottom: 20px;
 }
 
+#poll-list .card {
+    margin-bottom: 20px;
+}
+
 /* Font Awesome Icon Hovers */
 
 .fa-trophy:hover,
