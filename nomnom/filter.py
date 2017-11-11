@@ -2,8 +2,12 @@ from __future__ import print_function
 import json
 import re
 import unittest
+from wtforms import ValidationError
 
 
+################
+# Filter Class #
+################
 class Filter:
     # create the class
     def __init__(self, fs_path):
@@ -42,10 +46,24 @@ class Filter:
         return True
 
 
+####################
+# Language Checker #
+####################
+class Language(object):
+    def __init__(self):
+        self._filter = Filter('bad_words.json')
+        self._message = 'There is inappropriate language in this field.'
+
+    def __call__(self, form, field):
+        string = field.data
+        if not self._filter.is_safe(string):
+            raise ValidationError(self._message)
+
+
 ##########################################################
 # Class used for unit testing, no need to use in project.#
 ##########################################################
-class TestFilter(unittest.TestCase):
+class _TestFilter(unittest.TestCase):
     def setUp(self):
         self.filter = Filter('bad_words.json')
 
