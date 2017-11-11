@@ -51,7 +51,7 @@ class Filter:
 ####################
 class Language(object):
     def __init__(self):
-        self._filter = Filter('bad_words.json')
+        self._filter = Filter('nomnom/bad_words.json')
         self._message = 'There is inappropriate language in this field.'
 
     def __call__(self, form, field):
