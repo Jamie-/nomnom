@@ -6,12 +6,14 @@
     <form action="/create" method="post" name="create" class="text-centers">
         {{ form.hidden_tag() }}
         <div class="form-group">
-            <label>Title</label>
-            {% if form.title.errors %}
-                {{ form.title(class='form-control is-invalid') }}
-            {% else %}
-                {{ form.title(class='form-control') }}
-            {% endif %}
+            <div class="input-group">
+                <div class="input-group-addon">Name my</div>
+                {% if form.title.errors %}
+                    {{ form.title(placeholder='What would you like to name?', class='form-control is-invalid') }}
+                {% else %}
+                    {{ form.title(placeholder='What would you like to name?', class='form-control') }}
+                {% endif %}
+            </div>
             {% for error in form.title.errors %}
                 <div class="invalid-feedback">{{ error }}</div>
             {% endfor %}
