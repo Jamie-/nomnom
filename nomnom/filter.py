@@ -19,6 +19,11 @@ class Filter:
         regex_patterns = filter_settings['regex']
         # sort the keys to the regex, they need to be in alphabetical order
         keys = sorted(regex_patterns.keys())
+        #  common english conjugations of words
+        endings = '(ed|ing|es|s)'
+        for key in ['e', 'd', 'i', 'n', 'g', 's']:
+            # filter them through leet speak.
+            endings = endings.replace(key, regex_patterns[key])
         # go through the word list
         for i in range(len(word_list)):
             word = word_list[i]
@@ -27,8 +32,7 @@ class Filter:
                 word = word.replace(key, regex_patterns[key])
             # add in surrounding regex
             # (?<![a-z]) and (?![a-z]) means that the word won't trigger if surrounded by letters
-            # (ed|ing|es|s)? : common english conjugations
-            word = '(?<![a-z])' + word + '(ed|ing|es|s)?(?![a-z])'
+            word = '(?<![a-z])' + word + endings + '*(?![a-z])'
             # add the word back to the list
             word_list[i] = word
         # save the list
