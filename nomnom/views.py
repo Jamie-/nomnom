@@ -8,6 +8,16 @@ from poll import Poll, Response
 def index():
     return flask.render_template('index.html', polls=Poll.fetch_all())
 
+# Return a list of ordered polls
+@app.route('/order/<string:order_by>')
+def index_ordered(order_by):
+    if(order_by == "newest"):
+        return flask.render_template('index.html', polls=Poll.fetch_all_order(-Poll.datetime))
+    elif(order_by == "oldest"):
+        return flask.render_template('index.html', polls=Poll.fetch_all_order(Poll.datetime))
+    else:
+        return flask.render_template('index.html', polls=Poll.fetch_all())
+
 # Create a poll
 @app.route('/create', methods=['GET', 'POST'])
 def create():

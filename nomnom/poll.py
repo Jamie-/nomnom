@@ -1,9 +1,11 @@
 from google.appengine.ext import ndb
+import datetime
 
 # Poll object model
 class Poll(ndb.Model):
     title = ndb.StringProperty()
     description = ndb.TextProperty()
+    datetime = ndb.DateTimeProperty(auto_now_add=True)
 
     def get_id(self):
         return self.key.urlsafe()
@@ -26,6 +28,12 @@ class Poll(ndb.Model):
     @classmethod
     def fetch_all(cls):
         query = Poll.query()
+        return query.fetch()
+
+    # Fetch all polls from datastore
+    @classmethod
+    def fetch_all_order(cls, order_by):
+        query = Poll.query().order(order_by)
         return query.fetch()
 
     # Get poll from datastore by ID

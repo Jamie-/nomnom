@@ -1,7 +1,13 @@
 {% extends "template.html" %}
 
 {% block container %}
-    <img src="{{ url_for('static', filename='nomnom-logo.svg') }}" class="site-logo img-fluid mx-auto" alt="{{ APP_NAME }} Logo">
+    <div>
+        <tr>
+            <td>Order:</td>
+            <td><a href="/order/newest">Newest</a></td>
+            <td><a href="/order/oldest">Oldest</a></td>
+        </tr>
+    </div>
     <div class="row">
         {% if polls|length > 0 %}
             {% for p in polls %}
