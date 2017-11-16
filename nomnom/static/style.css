@@ -12,6 +12,42 @@ body > div.container {
     margin-bottom: 20px;
 }
 
+.site-logo {
+    display: block;
+    max-height: 200px!important;
+    margin-bottom: 20px;
+}
+
+
+/* Brand Colours */
+
+.bg-dark {
+    background-color: #800000!important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff;
+}
+
+a {
+    color: #800000;
+}
+
+a:hover {
+    color: #F00000;
+}
+
+.btn-primary {
+    background-color: #800000;
+    border-color: #800000;
+}
+
+.btn-primary:hover {
+    background-color: #F00000;
+    border-color: #F00000;
+}
+
+
 /* Font Awesome Icon Hovers */
 
 .fa-trophy:hover,

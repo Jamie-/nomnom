@@ -1,19 +1,21 @@
 {% extends "template.html" %}
 
 {% block container %}
-    <h1 class="text-center">Create a poll! <i class="fa fa-pie-chart"></i></h1>
+    <h1 class="text-center">Create a Poll</h1>
 
     <form action="/create" method="post" name="create" class="text-centers">
         {{ form.hidden_tag() }}
         <div class="form-group">
-            <label>Title</label>
-            {% if form.title.errors %}
-                {{ form.title(class='form-control is-invalid') }}
-            {% else %}
-                {{ form.title(class='form-control') }}
-            {% endif %}
+            <div class="input-group">
+                <div class="input-group-addon">Name my</div>
+                {% if form.title.errors %}
+                    {{ form.title(placeholder='What would you like to name?', class='form-control is-invalid') }}
+                {% else %}
+                    {{ form.title(placeholder='What would you like to name?', class='form-control') }}
+                {% endif %}
+            </div>
             {% for error in form.title.errors %}
-                <div class="invalid-feedback">{{ error }}</div>
+                <div class="invalid-feedback d-flex">{{ error }}</div>
             {% endfor %}
         </div>
         <div class="form-group">
