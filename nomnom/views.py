@@ -1,4 +1,5 @@
 import flask
+from flask import request, make_response, redirect, url_for, session
 from nomnom import app
 import logging
 import forms
@@ -24,6 +25,17 @@ def poll(poll_id):
     poll = Poll.get_poll(poll_id)
     if poll is None:
         flask.abort(404)
+
+    # check for cookies when viewing the poll, and create a cookie if there isnt one
+    if(request.method == 'GET'):
+        print 'we getting'
+        if 'session' in request.cookies:
+            print "this is the cookie " + request.cookies.get('session')
+        else:
+            resp = redirect(url_for('poll', poll_id=poll_id))
+            resp.set_cookie('session', 'hello')
+            return resp
+
     form = forms.ResponseForm()
     if form.validate_on_submit():
         Response.add(poll, form.response.data)
@@ -32,6 +44,7 @@ def poll(poll_id):
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
 def poll_vote(poll_id, vote_type):
+
     r = Response.get_response(poll_id, flask.request.form['resp_id'])
     if vote_type.lower() == 'up':
         r.upvote()
