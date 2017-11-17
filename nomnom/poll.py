@@ -11,9 +11,9 @@ class Poll(ndb.Model):
     # Get list of response objects
     def get_responses(self, n=None):
         if n is None:
-            return Response.query(ancestor=self.key).fetch()
+            return sorted(Response.query(ancestor=self.key).fetch(),key=lambda response: -response.score)
         else:
-            return Response.query(ancestor=self.key).fetch(n)
+            return sorted(Response.query(ancestor=self.key).fetch(n),key=lambda response: -response.score)
 
     # Add poll to datastore
     @classmethod
@@ -40,6 +40,7 @@ class Response(ndb.Model):
     response_str = ndb.StringProperty()
     upv = ndb.IntegerProperty()
     dnv = ndb.IntegerProperty()
+    score = ndb.ComputedProperty(lambda self: self.upv - self.dnv)
 
     # Initialise a new response object with 0 upv and dnv maintaining kwargs to parent
     def __init__(self, **kwargs):
