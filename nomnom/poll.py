@@ -11,9 +11,9 @@ class Poll(ndb.Model):
     # Get list of response objects
     def get_responses(self, n=None):
         if n is None:
-            return sorted(Response.query(ancestor=self.key).fetch(),key=lambda response: -response.score)
+            return sorted(Response.query(ancestor=self.key).fetch(), key=lambda response: -response.score)
         else:
-            return sorted(Response.query(ancestor=self.key).fetch(n),key=lambda response: -response.score)[:n]
+            return sorted(Response.query(ancestor=self.key).fetch(n), key=lambda response: -response.score)[:n]
 
     # Add poll to datastore
     @classmethod
