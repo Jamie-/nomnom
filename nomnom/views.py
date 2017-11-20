@@ -4,26 +4,19 @@ import logging
 import forms
 from poll import Poll, Response
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
-    return flask.render_template('index.html', polls=Poll.fetch_all())
-
-# Return a list of ordered polls
-@app.route('/order/<string:order_by>')
-def index_ordered(order_by):
-    if(order_by == "newest"):
-        return flask.render_template('index.html', polls=Poll.fetch_all_order(-Poll.datetime))
-    elif(order_by == "oldest"):
-        return flask.render_template('index.html', polls=Poll.fetch_all_order(Poll.datetime))
-    else:
-        return flask.render_template('index.html', polls=Poll.fetch_all())
+    if(flask.request.args.get("order") == "closest"):
+        return flask.render_template('index.html', polls=Poll.fetch_all(flask.request.order, flask.request.getHeader("X-AppEngine-CityLatLong").split(',')))
+    return flask.render_template('index.html', polls=Poll.fetch_all(flask.request.args.get("order")))
 
 # Create a poll
 @app.route('/create', methods=['GET', 'POST'])
 def create():
     form = forms.CreateForm()
     if form.validate_on_submit():
-        poll = Poll.add(form.title.data, form.description.data)
+        long_lat = flask.request.getHeader("X-AppEngine-CityLatLong").split(',');
+        poll = Poll.add(form.title.data, form.description.data, long_lat[0], long_lat[1])
         flask.flash('Poll created successfully!', 'success')
         return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
