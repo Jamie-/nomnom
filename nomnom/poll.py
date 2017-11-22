@@ -3,6 +3,7 @@ from google.appengine.ext import ndb
 # Poll object model
 class Poll(ndb.Model):
     title = ndb.StringProperty()
+    email = ndb.StringProperty()
     description = ndb.TextProperty()
 
     def get_id(self):
@@ -17,8 +18,8 @@ class Poll(ndb.Model):
 
     # Add poll to datastore
     @classmethod
-    def add(cls, title, description):
-        p = Poll(title=title, description=description)
+    def add(cls, title, email, description):
+        p = Poll(title=title, email=email, description=description)
         p.put() # Add to datastore
         return p
 
