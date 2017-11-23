@@ -1,5 +1,4 @@
 from google.appengine.ext import ndb
-import math
 
 # Poll object model
 class Poll(ndb.Model):
@@ -8,7 +7,6 @@ class Poll(ndb.Model):
     hotness = ndb.IntegerProperty()
     datetime = ndb.DateTimeProperty(auto_now_add=True)
     responses = ndb.IntegerProperty()
-    # location = ndb.GeoPtProperty()
 
     def get_id(self):
         return self.key.urlsafe()
@@ -74,19 +72,7 @@ class Poll(ndb.Model):
         else:
             query = Poll.query()
         polls = query.fetch()
-        # if (order_by == "closest"):
-        #     return polls.sort(key=lambda p: math.fabs(
-        #         Poll.getDistanceFromLatLonInKm(location[0], location[1], p.location.lat, p.location.lon)))
         return query.fetch()
-
-    def getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2):
-        R = 6371
-        dLat = (lat2 - lat1)* (math.PI / 180)
-        dLon = (lon2 - lon1)* (math.PI / 180)
-        a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.cos((lat1)* (math.PI / 180)) * math.cos((lat2)* (math.PI / 180)) * math.sin(dLon / 2) * math.sin(dLon / 2)
-        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-        d = R * c
-        return d
 
     # Get poll from datastore by ID
     @classmethod
