@@ -6,7 +6,10 @@ from poll import Poll, Response
 
 @app.route('/')
 def index():
-    return flask.render_template('index.html', polls=Poll.fetch_all(flask.request.args.get("order")))
+    try:
+        return flask.render_template('index.html', polls=Poll.fetch_all(flask.request.args.get("order")))
+    except ValueError:
+        flask.abort(400)  # Args invalid
 
 # Create a poll
 @app.route('/create', methods=['GET', 'POST'])

@@ -4,9 +4,7 @@ from google.appengine.ext import ndb
 class Poll(ndb.Model):
     title = ndb.StringProperty()
     description = ndb.TextProperty()
-    temperature = ndb.IntegerProperty()
     datetime = ndb.DateTimeProperty(auto_now_add=True)
-    responses = ndb.IntegerProperty()
 
     def get_id(self):
         return self.key.urlsafe()
@@ -18,16 +16,6 @@ class Poll(ndb.Model):
         else:
             return Response.query(ancestor=self.key).fetch(n)
 
-    # Calculate how hot a poll is
-    def set_temperature(self):
-        self.temperature = sum(r.upv + r.dnv for r in Response.query(ancestor=self.key).fetch())
-        self.put()
-
-    # Calculate no. of responses on a poll
-    def set_responses(self):
-        self.responses = Response.query(ancestor=self.key).count()
-        self.put()
-
     # Add poll to datastore
     @classmethod
     def add(cls, title, description):
@@ -38,35 +26,21 @@ class Poll(ndb.Model):
     # Fetch all polls from datastore
     @classmethod
     def fetch_all(cls, order_by=None):
-        query = ""
+        if (order_by is None):  # First as most common case
+            return Poll.query().fetch()
         if (order_by == "newest"):
-            query = Poll.query().order(-Poll.datetime)
+            return Poll.query().order(-Poll.datetime).fetch()
         elif (order_by == "oldest"):
-            query = Poll.query().order(Poll.datetime)
-        elif (order_by == "hotest" or order_by == "coldest"):
-            # Set the temperature for each poll
-            query = Poll.query()
-            polls = query.fetch()
-            for poll in polls:
-                poll.set_temperature()
-            if(order_by == "hotest"):
-                query = Poll.query().order(-Poll.temperature)
-            else:
-                query = Poll.query().order(Poll.temperature)
-        elif (order_by == "easiest" or order_by == "hardest"):
-            # Set the number of responses for each poll
-            query = Poll.query()
-            polls = query.fetch()
-            for poll in polls:
-                poll.set_responses()
-            if(order_by == "easiest"):
-                query = Poll.query().order(-Poll.responses)
-            else:
-                query = Poll.query().order(Poll.responses)
-        else:
-            query = Poll.query()
-        polls = query.fetch()
-        return query.fetch()
+            return Poll.query().order(Poll.datetime).fetch()
+        elif (order_by == "hotest"):
+            return sorted(Poll.query().fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
+        elif (order_by == "coldest"):
+            return sorted(Poll.query().fetch(), key=lambda poll: sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
+        elif (order_by == "easiest"):
+            return sorted(Poll.query().fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
+        elif (order_by == "hardest"):
+            return sorted(Poll.query().fetch(), key=lambda poll: -Response.query(ancestor=poll.key).count())
+        raise ValueError()  # order_by not in specified list
 
     # Get poll from datastore by ID
     @classmethod
