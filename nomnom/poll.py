@@ -32,7 +32,7 @@ class Poll(ndb.Model):
             return Poll.query().order(-Poll.datetime).fetch()
         elif (order_by == "oldest"):
             return Poll.query().order(Poll.datetime).fetch()
-        elif (order_by == "hotest"):
+        elif (order_by == "hottest"):
             return sorted(Poll.query().fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "coldest"):
             return sorted(Poll.query().fetch(), key=lambda poll: sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))

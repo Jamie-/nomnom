@@ -2,17 +2,27 @@
 
 {% block container %}
     <img src="{{ url_for('static', filename='nomnom-logo.svg') }}" class="site-logo img-fluid mx-auto" alt="{{ APP_NAME }} Logo">
-    <div>
-        <tr>
-            <td>Order:</td>
-            <td><a href="/?order=newest">Newest</a></td>
-            <td><a href="/?order=oldest">Oldest</a></td>
-            <td><a href="/?order=hotest">Hotest</a></td>
-            <td><a href="/?order=coldest">Coldest</a></td>
-            <td><a href="/?order=easiest">Easiest</a></td>
-            <td><a href="/?order=hardest">Hardest</a></td>
-        </tr>
-    </div>
+
+    {% if polls|length > 0 %}
+        <ul class="nav nav-tabs" style="margin-bottom: 20px">
+            <li class="nav-item">
+                <a class="nav-link{% if order == "newest" %} active{% endif %}" href="?order=newest">
+                    <i class="fa fa-hourglass"></i> Newest
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link{% if order == "hottest" %} active{% endif %}" href="?order=hottest">
+                    <i class="fa fa-fire"></i> Hottest
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link{% if order == "easiest" %} active{% endif %}" href="?order=easiest">
+                    <i class="fa fa-thumbs-up"></i> Easiest
+                </a>
+            </li>
+        </ul>
+    {% endif %}
+
     <div class="row">
         {% if polls|length > 0 %}
             {% for p in polls %}

@@ -6,8 +6,9 @@ from poll import Poll, Response
 
 @app.route('/')
 def index():
+    order = flask.request.args.get("order")
     try:
-        return flask.render_template('index.html', polls=Poll.fetch_all(flask.request.args.get("order")))
+        return flask.render_template('index.html', polls=Poll.fetch_all(order), order=order)
     except ValueError:
         flask.abort(400)  # Args invalid
 
