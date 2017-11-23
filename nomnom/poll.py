@@ -4,7 +4,7 @@ from google.appengine.ext import ndb
 class Poll(ndb.Model):
     title = ndb.StringProperty()
     description = ndb.TextProperty()
-    hotness = ndb.IntegerProperty()
+    temperature = ndb.IntegerProperty()
     datetime = ndb.DateTimeProperty(auto_now_add=True)
     responses = ndb.IntegerProperty()
 
@@ -19,25 +19,19 @@ class Poll(ndb.Model):
             return Response.query(ancestor=self.key).fetch(n)
 
     # Calculate how hot a poll is
-    def set_hotness(self):
-        responses = Response.query(ancestor=self.key).fetch()
-        hotness = 0
-        for response in responses:
-            hotness = hotness + response.upv
-            hotness = hotness - response.dnv
-        self.hotness = hotness
+    def set_temperature(self):
+        self.temperature = sum(r.upv + r.dnv for r in Response.query(ancestor=self.key).fetch())
         self.put()
 
     # Calculate no. of responses on a poll
     def set_responses(self):
-        responses = Response.query(ancestor=self.key).fetch()
-        self.responses = len(responses)
+        self.responses = Response.query(ancestor=self.key).count()
         self.put()
 
     # Add poll to datastore
     @classmethod
     def add(cls, title, description):
-        p = Poll(title=title, description=description, hotness=0)
+        p = Poll(title=title, description=description, temperature=0)
         p.put() # Add to datastore
         return p
 
@@ -50,17 +44,17 @@ class Poll(ndb.Model):
         elif (order_by == "oldest"):
             query = Poll.query().order(Poll.datetime)
         elif (order_by == "hotest" or order_by == "coldest"):
-            # Set the hotness on each poll
+            # Set the temperature for each poll
             query = Poll.query()
             polls = query.fetch()
             for poll in polls:
-                poll.set_hotness()
+                poll.set_temperature()
             if(order_by == "hotest"):
-                query = Poll.query().order(-Poll.hotness)
+                query = Poll.query().order(-Poll.temperature)
             else:
-                query = Poll.query().order(Poll.hotness)
+                query = Poll.query().order(Poll.temperature)
         elif (order_by == "easiest" or order_by == "hardest"):
-            # Set the hotness on each poll
+            # Set the number of responses for each poll
             query = Poll.query()
             polls = query.fetch()
             for poll in polls:
