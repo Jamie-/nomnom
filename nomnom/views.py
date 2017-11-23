@@ -6,8 +6,8 @@ from poll import Poll, Response
 
 @app.route('/', methods=['GET'])
 def index():
-    if(flask.request.args.get("order") == "closest"):
-        return flask.render_template('index.html', polls=Poll.fetch_all(flask.request.order, flask.request.getHeader("X-AppEngine-CityLatLong").split(',')))
+    # if(flask.request.args.get("order") == "closest"):
+    #     return flask.render_template('index.html', polls=Poll.fetch_all(flask.request.order, flask.request.getHeader("X-AppEngine-CityLatLong").split(',')))
     return flask.render_template('index.html', polls=Poll.fetch_all(flask.request.args.get("order")))
 
 # Create a poll
@@ -15,8 +15,8 @@ def index():
 def create():
     form = forms.CreateForm()
     if form.validate_on_submit():
-        long_lat = flask.request.getHeader("X-AppEngine-CityLatLong").split(',');
-        poll = Poll.add(form.title.data, form.description.data, long_lat[0], long_lat[1])
+        # long_lat = flask.request.getHeader("X-AppEngine-CityLatLong").split(',');
+        poll = Poll.add(form.title.data, form.description.data)
         flask.flash('Poll created successfully!', 'success')
         return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
