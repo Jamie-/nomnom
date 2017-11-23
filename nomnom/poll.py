@@ -67,23 +67,20 @@ class Response(ndb.Model):
             print 'voteValue is 1'
             self.upv -= 1
             self.votedUsers[cookieValue] = 0
-            self.put()
         elif voteValue == 0:
             print 'voteValue is 0'
             self.upv += 1
             self.votedUsers[cookieValue] = 1
-            self.put()
         elif voteValue == -1:
             print 'voteValue is -1'
             self.upv += 1
             self.dnv -= 1
             self.votedUsers[cookieValue] = 1
-            self.put()
 
+        self.put()
 
     # Add down-vote to response
     def downvote(self, cookieValue):
-
         voteValue = 0
         if cookieValue in self.votedUsers:
             voteValue = self.votedUsers[cookieValue]
@@ -93,16 +90,15 @@ class Response(ndb.Model):
         if voteValue == -1:
             self.dnv -= 1
             self.votedUsers[cookieValue] = 0
-            self.put()
         elif voteValue == 0:
             self.dnv += 1
             self.votedUsers[cookieValue] = -1
-            self.put()
         elif voteValue == 1:
             self.upv -= 1
             self.dnv += 1
             self.votedUsers[cookieValue] = -1
-            self.put()
+
+        self.put()
 
     # Add response to datastore
     @classmethod
