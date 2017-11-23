@@ -4,7 +4,7 @@ import logging
 import forms
 from poll import Poll, Response
 
-@app.route('/', methods=['GET'])
+@app.route('/')
 def index():
     return flask.render_template('index.html', polls=Poll.fetch_all(flask.request.args.get("order")))
 
