@@ -28,7 +28,7 @@ class Poll(ndb.Model):
     def fetch_all(cls, order_by=None):
         if (order_by is None):  # First as most common case
             return Poll.query().fetch()
-        if (order_by == "newest"):
+        elif (order_by == "newest"):
             return Poll.query().order(-Poll.datetime).fetch()
         elif (order_by == "oldest"):
             return Poll.query().order(Poll.datetime).fetch()
