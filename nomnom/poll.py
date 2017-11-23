@@ -41,14 +41,14 @@ class Response(ndb.Model):
     upv = ndb.IntegerProperty()
     dnv = ndb.IntegerProperty()
     score = ndb.ComputedProperty(lambda self: self.upv - self.dnv)
-    votedUsers = ndb.JsonProperty()
+    voted_users = ndb.JsonProperty()
 
     # Initialise a new response object with 0 upv and dnv maintaining kwargs to parent
     def __init__(self, **kwargs):
         super(Response, self).__init__(**kwargs) # Call parent constructor
         self.upv = 0
         self.dnv = 0
-        self.votedUsers = {}
+        self.voted_users = {}
 
 
     def get_id(self):
@@ -56,46 +56,39 @@ class Response(ndb.Model):
 
     # Add up-vote to response
     def upvote(self, cookieValue):
-        voteValue = 0
-        if cookieValue in self.votedUsers:
-            voteValue = self.votedUsers[cookieValue]
-        else:
-            self.votedUsers[cookieValue] = 0
+        vote_value = 0
+        if cookieValue in self.voted_users:
+            vote_value = self.voted_users[cookieValue]
 
-        if voteValue == 1:
-            print 'voteValue is 1'
+        if vote_value == 1:  # User has previously upvoted (so toggle vote)
             self.upv -= 1
-            self.votedUsers[cookieValue] = 0
-        elif voteValue == 0:
-            print 'voteValue is 0'
+            self.voted_users[cookieValue] = 0
+        elif vote_value == 0:  # User has no previous vote
             self.upv += 1
-            self.votedUsers[cookieValue] = 1
-        elif voteValue == -1:
-            print 'voteValue is -1'
+            self.voted_users[cookieValue] = 1
+        elif vote_value == -1:  # User has previously downvoted (so change vote)
             self.upv += 1
             self.dnv -= 1
-            self.votedUsers[cookieValue] = 1
+            self.voted_users[cookieValue] = 1
 
         self.put()
 
     # Add down-vote to response
     def downvote(self, cookieValue):
-        voteValue = 0
-        if cookieValue in self.votedUsers:
-            voteValue = self.votedUsers[cookieValue]
-        else:
-            self.votedUsers[cookieValue] = 0
+        vote_value = 0
+        if cookieValue in self.voted_users:
+            vote_value = self.voted_users[cookieValue]
 
-        if voteValue == -1:
+        if vote_value == -1:  # User has previously downvoted (so toggle vote)
             self.dnv -= 1
-            self.votedUsers[cookieValue] = 0
-        elif voteValue == 0:
+            self.voted_users[cookieValue] = 0
+        elif vote_value == 0:  # User has no previous vote
             self.dnv += 1
-            self.votedUsers[cookieValue] = -1
-        elif voteValue == 1:
+            self.voted_users[cookieValue] = -1
+        elif vote_value == 1:  # User has previously upvoted (so change vote)
             self.upv -= 1
             self.dnv += 1
-            self.votedUsers[cookieValue] = -1
+            self.voted_users[cookieValue] = -1
 
         self.put()
 
