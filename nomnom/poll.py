@@ -1,10 +1,13 @@
 from google.appengine.ext import ndb
+from email import Email
+import uuid
 
 # Poll object model
 class Poll(ndb.Model):
     title = ndb.StringProperty()
-    email = ndb.StringProperty()
     description = ndb.TextProperty()
+    email = ndb.StringProperty()
+    delete_key = ndb.StringProperty()
 
     def get_id(self):
         return self.key.urlsafe()
@@ -18,9 +21,12 @@ class Poll(ndb.Model):
 
     # Add poll to datastore
     @classmethod
-    def add(cls, title, email, description):
-        p = Poll(title=title, email=email, description=description)
-        p.put() # Add to datastore
+    def add(cls, title, description, email):
+        delete_key = uuid.uuid4()
+        p = Poll(title=title, description=description, email=email, delete_key=delete_key)
+        p.put()  # Add to datastore
+        post_key = p.get_id()
+        Email.send_delete_post_email(email, post_key, delete_key)
         return p
 
     # Fetch all polls from datastore
