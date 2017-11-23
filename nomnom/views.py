@@ -4,6 +4,7 @@ from nomnom import app
 import logging
 import forms
 from poll import Poll, Response
+import uuid
 
 @app.route('/')
 def index():
@@ -27,13 +28,12 @@ def poll(poll_id):
         flask.abort(404)
 
     # check for cookies when viewing the poll, and create a cookie if there isnt one
-    if(request.method == 'GET'):
-        print 'we getting'
-        if 'session' in request.cookies:
-            print "this is the cookie " + request.cookies.get('session')
+    if (request.method == 'GET'):
+        if 'voteData' in request.cookies:
+            request.cookies.get('voteData')
         else:
             resp = redirect(url_for('poll', poll_id=poll_id))
-            resp.set_cookie('session', 'hello')
+            resp.set_cookie('voteData', str(uuid.uuid4()))
             return resp
 
     form = forms.ResponseForm()
@@ -44,12 +44,11 @@ def poll(poll_id):
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
 def poll_vote(poll_id, vote_type):
-
     r = Response.get_response(poll_id, flask.request.form['resp_id'])
     if vote_type.lower() == 'up':
-        r.upvote()
+        r.upvote(request.cookies.get('voteData'))
     elif vote_type.lower() == 'down':
-        r.downvote()
+        r.downvote(request.cookies.get('voteData'))
     return flask.jsonify({'score': (r.upv - r.dnv), 'up': r.upv, 'down': r.dnv})
 
 
