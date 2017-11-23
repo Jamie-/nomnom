@@ -1,5 +1,4 @@
 from google.appengine.ext import ndb
-import json
 
 # Poll object model
 class Poll(ndb.Model):
