@@ -7,6 +7,7 @@ class Poll(ndb.Model):
     description = ndb.TextProperty()
     hotness = ndb.IntegerProperty()
     datetime = ndb.DateTimeProperty(auto_now_add=True)
+    responses = ndb.IntegerProperty()
     # location = ndb.GeoPtProperty()
 
     def get_id(self):
@@ -27,6 +28,12 @@ class Poll(ndb.Model):
             hotness = hotness + response.upv
             hotness = hotness - response.dnv
         self.hotness = hotness
+        self.put()
+
+    # Calculate no. of responses on a poll
+    def set_responses(self):
+        responses = Response.query(ancestor=self.key).fetch()
+        self.responses = len(responses)
         self.put()
 
     # Add poll to datastore
@@ -54,6 +61,16 @@ class Poll(ndb.Model):
                 query = Poll.query().order(-Poll.hotness)
             else:
                 query = Poll.query().order(Poll.hotness)
+        elif (order_by == "easiest" or order_by == "hardest"):
+            # Set the hotness on each poll
+            query = Poll.query()
+            polls = query.fetch()
+            for poll in polls:
+                poll.set_responses()
+            if(order_by == "easiest"):
+                query = Poll.query().order(-Poll.responses)
+            else:
+                query = Poll.query().order(Poll.responses)
         else:
             query = Poll.query()
         polls = query.fetch()
