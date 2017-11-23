@@ -19,7 +19,7 @@ class Poll(ndb.Model):
     # Add poll to datastore
     @classmethod
     def add(cls, title, description):
-        p = Poll(title=title, description=description, temperature=0)
+        p = Poll(title=title, description=description)
         p.put() # Add to datastore
         return p
 
