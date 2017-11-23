@@ -44,13 +44,16 @@ class Poll(ndb.Model):
             query = Poll.query().order(-Poll.datetime)
         elif (order_by == "oldest"):
             query = Poll.query().order(Poll.datetime)
-        elif (order_by == "hotest"):
+        elif (order_by == "hotest" or order_by == "coldest"):
             # Set the hotness on each poll
             query = Poll.query()
             polls = query.fetch()
             for poll in polls:
                 poll.set_hotness()
-            query = Poll.query().order(-Poll.hotness)
+            if(order_by == "hotest"):
+                query = Poll.query().order(-Poll.hotness)
+            else:
+                query = Poll.query().order(Poll.hotness)
         else:
             query = Poll.query()
         polls = query.fetch()
