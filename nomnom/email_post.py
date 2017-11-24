@@ -25,6 +25,6 @@ class Email:
 
         conn = httplib.HTTPSConnection('api.mailgun.net', 443)
         conn.request('POST', '/v3/' + app.config['MAILGUN_DOMAIN_NAME'] + '/messages', data, headers)
-        respppp = conn.getresponse()
-        print str(respppp.status) + 'http request \'jamiesuckscock.com\' returned SYSTEM FAILURE' + respppp.reason
+        response = conn.getresponse()
+        print str(response.status) + response.reason
         conn.close()
