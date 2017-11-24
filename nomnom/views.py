@@ -11,17 +11,12 @@ def index():
 # Create a poll
 @app.route('/create', methods=['GET', 'POST'])
 def create():
-    try:
-        form = forms.CreateForm()
-        if form.validate_on_submit():
-            poll = Poll.add(form.title.data, form.description.data, form.email.data)
-            flask.flash('Poll created successfully!', 'success')
-            return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
-        return flask.render_template('create.html', title='Create a Poll', form=form)
-    except:
-        import traceback
-        traceback.print_exc()
-        return None
+    form = forms.CreateForm()
+    if form.validate_on_submit():
+        poll = Poll.add(form.title.data, form.description.data, form.email.data)
+        flask.flash('Poll created successfully!', 'success')
+        return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
+    return flask.render_template('create.html', title='Create a Poll', form=form)
 
 # View poll and add responses
 @app.route('/poll/<string:poll_id>', methods=['GET', 'POST'])
