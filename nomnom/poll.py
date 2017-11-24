@@ -22,16 +22,11 @@ class Poll(ndb.Model):
     # Add poll to datastore
     @classmethod
     def add(cls, title, description, email):
+        p = Poll(title=title, description=description, email=email, delete_key=str(uuid.uuid4()))
+        p.put()  # Add to datastore
         if email is not None:
-            delete_key = str(uuid.uuid4())
-            p = Poll(title=title, description=description, email=email, delete_key=delete_key)
-            p.put()  # Add to datastore
-            Email.send_mail(email, p.get_id(), delete_key)
-            return p
-        else:
-            p = Poll(title=title, description=description)
-            p.put()  # Add to datastore
-            return p
+            Email.send_mail(email, p.get_id(), p.delete_key)
+        return p
 
     # Fetch all polls from datastore
     @classmethod
