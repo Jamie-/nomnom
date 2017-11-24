@@ -1,6 +1,6 @@
 import httplib
 import base64
-import urllib
+import urllib  # requests module not supported by GAE so using urllib instead
 import logging
 from nomnom import app
 
