@@ -1,5 +1,7 @@
 {
   "WTF_CSRF_ENABLED": true,
   "SECRET_KEY": "XY8bStqGJKvWtx5Rztv8gMDSNagaPTguAY6YuDPJpcvPRnmp5wV36js6V7fvtxCY",
-  "APP_NAME": "NomNom"
+  "APP_NAME": "NomNom",
+  "MAILGUN_DOMAIN_NAME":"sandboxc753467df1ae49bea3687991b980ba6b.mailgun.org",
+  "MAILGUN_API_KEY": "key-dbdf2012d4409df162546794dc8a66a1"
 }
