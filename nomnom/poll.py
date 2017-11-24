@@ -41,25 +41,56 @@ class Response(ndb.Model):
     upv = ndb.IntegerProperty()
     dnv = ndb.IntegerProperty()
     score = ndb.ComputedProperty(lambda self: self.upv - self.dnv)
+    voted_users = ndb.JsonProperty()
 
     # Initialise a new response object with 0 upv and dnv maintaining kwargs to parent
     def __init__(self, **kwargs):
         super(Response, self).__init__(**kwargs) # Call parent constructor
         self.upv = 0
         self.dnv = 0
+        self.voted_users = {}
+
 
     def get_id(self):
         return self.key.id()
 
     # Add up-vote to response
-    def upvote(self):
-        self.upv += 1
-        self.put() # Update in datastore
+    def upvote(self, cookieValue):
+        vote_value = 0
+        if cookieValue in self.voted_users:
+            vote_value = self.voted_users[cookieValue]
+
+        if vote_value == 1:  # User has previously upvoted (so toggle vote)
+            self.upv -= 1
+            self.voted_users[cookieValue] = 0
+        elif vote_value == 0:  # User has no previous vote
+            self.upv += 1
+            self.voted_users[cookieValue] = 1
+        elif vote_value == -1:  # User has previously downvoted (so change vote)
+            self.upv += 1
+            self.dnv -= 1
+            self.voted_users[cookieValue] = 1
+
+        self.put()
 
     # Add down-vote to response
-    def downvote(self):
-        self.dnv += 1
-        self.put() # Update in datastore
+    def downvote(self, cookieValue):
+        vote_value = 0
+        if cookieValue in self.voted_users:
+            vote_value = self.voted_users[cookieValue]
+
+        if vote_value == -1:  # User has previously downvoted (so toggle vote)
+            self.dnv -= 1
+            self.voted_users[cookieValue] = 0
+        elif vote_value == 0:  # User has no previous vote
+            self.dnv += 1
+            self.voted_users[cookieValue] = -1
+        elif vote_value == 1:  # User has previously upvoted (so change vote)
+            self.upv -= 1
+            self.dnv += 1
+            self.voted_users[cookieValue] = -1
+
+        self.put()
 
     # Add response to datastore
     @classmethod
