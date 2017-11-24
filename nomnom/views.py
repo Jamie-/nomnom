@@ -29,7 +29,7 @@ def poll(poll_id):
         Response.add(poll, form.response.data)
     return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form)
 
-# View poll and add responses
+# Delete a poll
 @app.route('/poll/<string:poll_id>/delete/<string:delete_key>', methods=['GET', 'POST'])
 def delete_poll(poll_id, delete_key):
     poll = Poll.get_poll(poll_id)
@@ -38,7 +38,8 @@ def delete_poll(poll_id, delete_key):
     if poll.delete_key != delete_key:
         flask.abort(403)
     poll.key.delete()
-    return flask.render_template('index.html')
+    flask.flash('Poll deleted successfully.', 'success')
+    return flask.redirect('/', code=302)  # Redirect back to home page
 
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
