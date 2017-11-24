@@ -1,5 +1,5 @@
 from google.appengine.ext import ndb
-from email import Email
+from email_post import Email
 import uuid
 
 # Poll object model
@@ -22,12 +22,16 @@ class Poll(ndb.Model):
     # Add poll to datastore
     @classmethod
     def add(cls, title, description, email):
-        delete_key = uuid.uuid4()
-        p = Poll(title=title, description=description, email=email, delete_key=delete_key)
-        p.put()  # Add to datastore
-        post_key = p.get_id()
-        Email.send_delete_post_email(email, post_key, delete_key)
-        return p
+        if email is not None:
+            delete_key = str(uuid.uuid4())
+            p = Poll(title=title, description=description, email=email, delete_key=delete_key)
+            p.put()  # Add to datastore
+            Email.send_delete_post_email(email, p.get_id(), delete_key)
+            return p
+        else:
+            p = Poll(title=title, description=description)
+            p.put()  # Add to datastore
+            return p
 
     # Fetch all polls from datastore
     @classmethod

@@ -11,12 +11,17 @@ def index():
 # Create a poll
 @app.route('/create', methods=['GET', 'POST'])
 def create():
-    form = forms.CreateForm()
-    if form.validate_on_submit():
-        poll = Poll.add(form.title.data, form.description.data, form.email.data)
-        flask.flash('Poll created successfully!', 'success')
-        return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
-    return flask.render_template('create.html', title='Create a Poll', form=form)
+    try:
+        form = forms.CreateForm()
+        if form.validate_on_submit():
+            poll = Poll.add(form.title.data, form.description.data, form.email.data)
+            flask.flash('Poll created successfully!', 'success')
+            return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
+        return flask.render_template('create.html', title='Create a Poll', form=form)
+    except:
+        import traceback
+        traceback.print_exc()
+        return None
 
 # View poll and add responses
 @app.route('/poll/<string:poll_id>', methods=['GET', 'POST'])
@@ -28,6 +33,17 @@ def poll(poll_id):
     if form.validate_on_submit():
         Response.add(poll, form.response.data)
     return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form)
+
+# View poll and add responses
+@app.route('/poll/<string:poll_id>/delete/<string:delete_key>', methods=['GET', 'POST'])
+def delete_poll(poll_id, delete_key):
+    poll = Poll.get_poll(poll_id)
+    if poll is None:
+        flask.abort(404)
+    if poll.delete_key != delete_key:
+        flask.abort(403)
+    poll.key.delete()
+    return flask.render_template('index.html')
 
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
