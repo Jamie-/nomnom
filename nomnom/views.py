@@ -7,7 +7,11 @@ import uuid
 
 @app.route('/')
 def index():
-    return flask.render_template('index.html', polls=Poll.fetch_all())
+    order = flask.request.args.get("order")
+    try:
+        return flask.render_template('index.html', polls=Poll.fetch_all(order), order=order)
+    except ValueError:
+        flask.abort(400)  # Args invalid
 
 # Create a poll
 @app.route('/create', methods=['GET', 'POST'])
