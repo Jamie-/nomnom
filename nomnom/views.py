@@ -3,10 +3,15 @@ from nomnom import app
 import logging
 import forms
 from poll import Poll, Response
+import uuid
 
 @app.route('/')
 def index():
-    return flask.render_template('index.html', polls=Poll.fetch_all())
+    order = flask.request.args.get("order")
+    try:
+        return flask.render_template('index.html', polls=Poll.fetch_all(order), order=order)
+    except ValueError:
+        flask.abort(400)  # Args invalid
 
 # Create a poll
 @app.route('/create', methods=['GET', 'POST'])
@@ -44,12 +49,21 @@ def delete_poll(poll_id, delete_key):
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
 def poll_vote(poll_id, vote_type):
+    # Check for cookie when voting, and create a cookie if there isn't one
+    if 'voteData' in flask.request.cookies:
+        cookie = flask.request.cookies.get('voteData')
+    else:
+        cookie = str(uuid.uuid4())  # Generate cookie
+
     r = Response.get_response(poll_id, flask.request.form['resp_id'])
     if vote_type.lower() == 'up':
-        r.upvote()
+        r.upvote(cookie)
     elif vote_type.lower() == 'down':
-        r.downvote()
-    return flask.jsonify({'score': (r.upv - r.dnv), 'up': r.upv, 'down': r.dnv})
+        r.downvote(cookie)
+
+    resp = flask.jsonify({'score': (r.upv - r.dnv), 'up': r.upv, 'down': r.dnv})
+    resp.set_cookie('voteData', cookie)
+    return resp
 
 
 ## Error Handlers
