@@ -7,6 +7,7 @@ import wtforms.widgets as widgets
 # Create a poll
 class CreateForm(FlaskForm):
     title = fields.StringField('title', validators=[validators.DataRequired(), Language()])
+    email = fields.StringField('email', validators=[validators.Email(), validators.Optional()])
     description = fields.StringField('description', widget=widgets.TextArea(), validators=[validators.DataRequired(), Language()])
     submit = fields.SubmitField(label='Create')
 
