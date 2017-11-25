@@ -1,0 +1,27 @@
+.facebook{
+    color: #3b5998;
+}
+.social-btn:hover{
+    text-decoration: none;
+}
+
+.twitter{
+    color: #1da1f2;
+}
+
+.reddit{
+    color: #FF4500;
+}
+.google-plus{
+    color: #db4437;
+}
+.tumblr{
+    color: #35465c
+}
+.share{
+    color: #353535;
+}
+.share-buttons{
+    font-size: 32pt;
+
+}
