@@ -2,6 +2,7 @@ import flask
 from nomnom import app
 import logging
 import forms
+import urllib
 from poll import Poll, Response
 
 @app.route('/')
@@ -27,7 +28,7 @@ def poll(poll_id):
     form = forms.ResponseForm()
     if form.validate_on_submit():
         Response.add(poll, form.response.data)
-    return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form)
+    return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, page_url=urllib.quote_plus(flask.request.base_url))
 
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])

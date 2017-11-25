@@ -1,20 +1,23 @@
 .facebook{
-    background-color: #3b5998;
+    color: #3b5998;
 }
 
 .twitter{
-    background-color: #1da1f2;
+    color: #1da1f2;
 }
 
 .reddit{
-    background-color: #FF4500;
+    color: #FF4500;
 }
 .google-plus{
-    background-color: #db4437;
+    color: #db4437;
 }
 .tumblr{
-    background-color: #35465c
+    color: #35465c
 }
-.pintress{
-    background-color: #bd081c
+.share{
+    color: #353535;
+}
+.share-buttons{
+    font-size: 32pt;
 }
