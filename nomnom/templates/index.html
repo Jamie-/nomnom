@@ -43,12 +43,14 @@
                                     </tr>
                                 {% endfor %}
                             </table>
+                            <div class="card-body">
+                                <a href="/poll/{{ p.get_id() }}" class="card-link">See more and respond</a>
+                            </div>
                         {% else %}
-                            <h3> No responses yet</h3>
+                            <div class="card-body">
+                                <a href="/poll/{{ p.get_id() }}" class="card-link">Be the first to respond</a>
+                            </div>
                         {% endif %}
-                        <div class="card-body">
-                            <a href="/poll/{{ p.get_id() }}" class="card-link">Show More</a>
-                        </div>
                     </div>
                 </div>
             {% endfor %}
