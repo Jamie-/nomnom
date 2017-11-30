@@ -8,6 +8,7 @@ class Poll(ndb.Model):
     description = ndb.TextProperty()
     datetime = ndb.DateTimeProperty(auto_now_add=True)
     email = ndb.StringProperty()
+    image_url = ndb.StringProperty()
     delete_key = ndb.StringProperty()
 
     def get_id(self):
@@ -22,8 +23,8 @@ class Poll(ndb.Model):
 
     # Add poll to datastore
     @classmethod
-    def add(cls, title, description, email):
-        p = Poll(title=title, description=description, email=email, delete_key=str(uuid.uuid4()))
+    def add(cls, title, description, email, image_url):
+        p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()))
         p.put()  # Add to datastore
         if email is not None:
             Email.send_mail(email, p.get_id(), p.delete_key)
