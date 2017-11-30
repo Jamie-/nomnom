@@ -93,3 +93,10 @@ a:hover {
 .downvote {
     color: #ff0000;
 }
+
+button.vote {
+    border: none;
+    background: transparent;
+    color: #800000;
+    padding: 0;
+}
