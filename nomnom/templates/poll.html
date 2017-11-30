@@ -8,41 +8,15 @@
             {{ poll.description }}
         </div>
     </div>
-    <div class="share-buttons">
-        <span class="share fa fa-share-alt-square"></span>
-        <a href="https://www.facebook.com/dialog/share?app_id=145634995501895&display=popup&href={{ page_url }}" class="social-btn" role="button">
-            <span class="fa fa-facebook-square facebook"></span>
-        </a>
-        <a href="https://www.reddit.com/submit?url={{ page_url }}" class="social-btn" role="button">
-            <span class="fa fa-reddit-square reddit"></span>
-        </a>
-        <a href="https://plus.google.com/share?url={{ page_url }}" class="social-btn" role="button">
-            <span class="fa fa-google-plus-square google-plus"></span>
-        </a>
-        <a href="https://twitter.com/intent/tweet?url={{ page_url }}" class="social-btn" role="button">
-            <span class="fa fa-twitter-square twitter"></span>
-        </a>
-        <a href="https://www.tumblr.com/widgets/share/tool?posttype=link&content={{ page_url }}" class="social-btn" role="button">
-            <span class="fa fa-tumblr-square tumblr"></span>
-        </a>
-        <a href="mailto:?body={{ page_url }}" class="social-btn" role="button">
-            <span class="fa fa-envelope-square share"></span>
-        </a>
 
-    </div>
     {% if responses|length > 0 %}
         <table class="table table-striped table-inverse">
             {% for r in responses %}
                 <tr>
-                    <td class="text-center score" style="width: 10%;"><i class="fa fa-trophy"></i>
-                        <span>{{ r.upv - r.dnv }}</span></td>
+                    <td class="text-center score" style="width: 10%;"><i class="fa fa-trophy"></i> <span>{{ r.upv - r.dnv }}</span></td>
                     <td>{{ r.response_str }}</td>
-                    <td class="text-center up-score" style="width: 10%;"><a href="#" class="vote" data-vote="up"
-                                                                            data-resp-id="{{ r.get_id() }}"><i
-                            class="fa fa-arrow-up"></i></a> <span>{{ r.upv }}</span></td>
-                    <td class="text-center down-score" style="width: 10%;"><a href="#" class="vote" data-vote="down"
-                                                                              data-resp-id="{{ r.get_id() }}"><i
-                            class="fa fa-arrow-down"></i></a> <span>{{ r.dnv }}</span></td>
+                    <td class="text-center up-score" style="width: 10%;"><a href="#" class="vote" data-vote="up" data-resp-id="{{ r.get_id() }}"><i class="fa fa-arrow-up"></i></a> <span>{{ r.upv }}</span></td>
+                    <td class="text-center down-score" style="width: 10%;"><a href="#" class="vote" data-vote="down" data-resp-id="{{ r.get_id() }}"><i class="fa fa-arrow-down"></i></a> <span>{{ r.dnv }}</span></td>
                 </tr>
             {% endfor %}
         </table>
@@ -77,21 +51,21 @@
 {% block script %}
     <script>
         // Update score and return results on .vote event
-        $('.vote').click(function () {
+        $('.vote').click(function() {
             element = $(this); // Element event handler bound to
 
             $.ajax({
                 url: '/poll/{{ poll.get_id() }}/vote/' + $(this).data('vote'),
                 data: {resp_id: $(this).data('resp-id')},
                 type: 'POST',
-                success: function (response) {
+                success: function(response) {
                     // Update total score
                     element.parent().parent().find('.score').find('span').html(response['score']);
                     // Update up-vote and down-vote scores
                     element.parent().parent().find('.up-score span').html(response['up']);
                     element.parent().parent().find('.down-score span').html(response['down']);
                 },
-                error: function (error) {
+                error: function(error) {
                     console.log(error);
                 }
             });

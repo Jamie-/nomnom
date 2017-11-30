@@ -2,7 +2,6 @@ import flask
 from nomnom import app
 import logging
 import forms
-import urllib
 from poll import Poll, Response
 import uuid
 
@@ -35,7 +34,7 @@ def poll(poll_id):
         Response.add(poll, form.response.data)
         flask.flash('Response added', 'success')
         return flask.redirect('/poll/' + poll.get_id(), code=302)
-    return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, page_url=urllib.quote_plus(flask.request.base_url))
+    return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form)
 
 # Delete a poll
 @app.route('/poll/<string:poll_id>/delete/<string:delete_key>', methods=['GET', 'POST'])
