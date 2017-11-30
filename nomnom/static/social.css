@@ -1,27 +1,44 @@
-.facebook{
+.facebook {
     color: #3b5998;
 }
-.social-btn:hover{
+
+.social-btn:hover {
     text-decoration: none;
 }
 
-.twitter{
+.twitter {
     color: #1da1f2;
 }
 
-.reddit{
+.reddit {
     color: #FF4500;
 }
-.google-plus{
+
+.google-plus {
     color: #db4437;
 }
-.tumblr{
+
+.tumblr {
     color: #35465c
 }
-.share{
+
+.share {
     color: #353535;
 }
-.share-buttons{
-    font-size: 32pt;
 
+.share-buttons {
+    font-size: 32pt;
+    border: none;
+    text-align: right;
 }
+
+@media (max-width: 399px) {
+    .share-buttons {
+        text-align: center;
+    }
+}
+
+.share-buttons > .card-body {
+    padding: 0;
+}
+
