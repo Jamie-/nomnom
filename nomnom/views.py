@@ -33,7 +33,6 @@ def poll(poll_id):
     if form.validate_on_submit():
         Response.add(poll, form.response.data)
         flask.flash('Response added', 'success')
-        return flask.redirect('/poll/' + poll.get_id(), code=302)
     return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form)
 
 # Delete a poll
