@@ -4,10 +4,6 @@ body > div.container {
     padding-top: 2rem;
 }
 
-.response-description {
-    margin-bottom: 20px;
-}
-
 #poll-list .card {
     margin-bottom: 20px;
 }

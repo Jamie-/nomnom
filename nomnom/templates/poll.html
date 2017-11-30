@@ -3,11 +3,36 @@
 {% block container %}
     <h1 class="text-center">Name my {{ poll.title }}</h1>
 
-    <div class="card response-description">
+    <div class="card">
         <div class="card-body">
             {{ poll.description }}
         </div>
     </div>
+
+    <div class="card share-buttons">
+        <div class="card-body">
+            <span class="share fa fa-share-alt-square"></span>
+            <a href="https://www.facebook.com/dialog/share?app_id=145634995501895&display=popup&href={{ url_enc(request.base_url) }}" class="social-btn" role="button">
+                <span class="fa fa-facebook-square facebook"></span>
+            </a>
+            <a href="https://www.reddit.com/submit?url={{ url_enc(request.base_url) }}" class="social-btn" role="button">
+                <span class="fa fa-reddit-square reddit"></span>
+            </a>
+            <a href="https://plus.google.com/share?url={{ url_enc(request.base_url) }}" class="social-btn" role="button">
+                <span class="fa fa-google-plus-square google-plus"></span>
+            </a>
+            <a href="https://twitter.com/intent/tweet?url={{ url_enc(request.base_url) }}" class="social-btn" role="button">
+                <span class="fa fa-twitter-square twitter"></span>
+            </a>
+            <a href="https://www.tumblr.com/widgets/share/tool?posttype=link&content={{ url_enc(request.base_url) }}" class="social-btn" role="button">
+                <span class="fa fa-tumblr-square tumblr"></span>
+            </a>
+            <a href="mailto:?body={{ url_enc(request.base_url) }}" class="social-btn" role="button">
+                <span class="fa fa-envelope-square share"></span>
+            </a>
+        </div>
+    </div>
+
 
     {% if responses|length > 0 %}
         <table class="table table-striped table-inverse">
