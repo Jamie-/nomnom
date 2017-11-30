@@ -57,11 +57,11 @@
                                 {% endfor %}
                             </ul>
                             <div class="card-body">
-                                <a href="/poll/{{ p.get_id() }}" class="card-link">See more and respond</a>
+                                <a href="/poll/{{ p.get_id() }}" class="btn btn-outline-primary">See more and respond</a>
                             </div>
                         {% else %}
                             <div class="card-body">
-                                <a href="/poll/{{ p.get_id() }}" class="card-link">Be the first to respond</a>
+                                <a href="/poll/{{ p.get_id() }}" class="btn btn-outline-primary">Be the first to respond</a>
                             </div>
                         {% endif %}
                     </div>

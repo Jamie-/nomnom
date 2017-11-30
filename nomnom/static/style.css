@@ -40,7 +40,7 @@ a {
 }
 
 a:hover {
-    color: #F00000;
+    color: #C00000;
 }
 
 .btn-primary {
@@ -49,24 +49,47 @@ a:hover {
 }
 
 .btn-primary:hover {
-    background-color: #F00000;
-    border-color: #F00000;
+    background-color: #C00000;
+    border-color: #C00000;
+}
+
+.btn-primary:not([disabled]):not(.disabled).active,
+.btn-primary:not([disabled]):not(.disabled):active,
+.show > .btn-primary.dropdown-toggle {
+    background-color: #C00000;
+    border-color: #C00000;
+    box-shadow: none;
+}
+
+.btn-outline-primary {
+    color: #800000;
+    border-color: #800000;
+}
+
+.btn-outline-primary:hover {
+    background-color: #800000;
+    border-color: #800000;
+}
+
+.btn-outline-primary:not([disabled]):not(.disabled).active,
+.btn-outline-primary:not([disabled]):not(.disabled):active,
+.show > .btn-outline-primary.dropdown-toggle {
+    background-color: #800000;
+    border-color: #800000;
+    box-shadow: none;
 }
 
 
 /* Font Awesome Icon Hovers */
 
-.fa-trophy:hover,
-.fa-trophy:focus {
-    color: #0000ff;
-}
-
 .fa-arrow-up:hover,
-.fa-arrow-up:focus {
+.fa-arrow-up:focus,
+.upvote {
     color: #00ff00;
 }
 
 .fa-arrow-down:hover,
-.fa-arrow-down:focus {
+.fa-arrow-down:focus,
+.downvote {
     color: #ff0000;
 }
