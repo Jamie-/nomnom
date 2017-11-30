@@ -41,15 +41,15 @@
                                         {{ r.response_str }}
                                         <div class="pull-right">
                                             <span class="up-score">
-                                                <a href="#" class="vote" data-vote="up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
+                                                <button class="vote" data-vote="up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
                                                     <i class="fa fa-arrow-up"></i>
-                                                </a>
+                                                </button>
                                                 <span style="margin-right: 10px;">{{ r.upv }}</span>
                                             </span>
                                             <span class="down-score">
-                                                <a href="#" class="vote" data-vote="down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
+                                                <button class="vote" data-vote="down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
                                                     <i class="fa fa-arrow-down"></i>
-                                                </a>
+                                                </button>
                                                 <span>{{ r.dnv }}</span>
                                             </span>
                                         </div>
@@ -57,11 +57,11 @@
                                 {% endfor %}
                             </ul>
                             <div class="card-body">
-                                <a href="/poll/{{ p.get_id() }}" class="card-link">See more and respond</a>
+                                <a href="/poll/{{ p.get_id() }}" class="btn btn-outline-primary">See more and respond</a>
                             </div>
                         {% else %}
                             <div class="card-body">
-                                <a href="/poll/{{ p.get_id() }}" class="card-link">Be the first to respond</a>
+                                <a href="/poll/{{ p.get_id() }}" class="btn btn-outline-primary">Be the first to respond</a>
                             </div>
                         {% endif %}
                     </div>
