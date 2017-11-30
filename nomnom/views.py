@@ -19,7 +19,7 @@ def create():
     form = forms.CreateForm()
     if form.validate_on_submit():
         poll = Poll.add(form.title.data, form.description.data, form.email.data)
-        flask.flash('Poll created successfully!', 'success')
+        flask.flash('Poll created successfully', 'success')
         return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
 
@@ -32,6 +32,7 @@ def poll(poll_id):
     form = forms.ResponseForm()
     if form.validate_on_submit():
         Response.add(poll, form.response.data)
+        flask.flash('Response added', 'success')
     return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form)
 
 # Delete a poll

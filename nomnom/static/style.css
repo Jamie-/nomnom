@@ -18,6 +18,16 @@ body > div.container {
     margin-bottom: 20px;
 }
 
+.list-group-striped li:nth-child(odd) {
+    background-color: #f5f5f5;
+}
+
+#poll-list .list-group-item {
+    border-left: 0;
+    border-right: 0;
+    border-top: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+}
 
 /* Brand Colours */
 
