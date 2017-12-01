@@ -12,7 +12,8 @@
             </div>
             <div class="modal-footer">
                 <form action="/poll/{{ poll.get_id() }}/delete/{{ poll.delete_key }}" method="post">
-                    <input type="submit" class="btn btn-primary" value="Delete">
+                    {{ form.hidden_tag() }}
+                    {{ delete_form.submit(class='btn btn-primary') }}
                 </form>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
