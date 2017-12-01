@@ -18,7 +18,7 @@ def index():
 def create():
     form = forms.CreateForm()
     if form.validate_on_submit():
-        poll = Poll.add(form.title.data, form.description.data, form.email.data)
+        poll = Poll.add(form.title.data, form.description.data, form.email.data, form.image_url.data)
         flask.flash('Poll created successfully', 'success')
         return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
