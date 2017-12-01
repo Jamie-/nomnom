@@ -3,6 +3,10 @@
 {% block container %}
     <h1 class="text-center">Name my {{ poll.title }}</h1>
 
+    {% if delete is defined and delete %}
+        {% include "delete_poll.html" %}
+    {% endif %}
+
     <div class="card">
         <div class="card-body">
             {{ poll.description }}
@@ -89,4 +93,9 @@
 
 {% block script %}
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% if delete is defined and delete %}
+        <script>
+            $('#delete-modal').modal('show')
+        </script>
+    {% endif %}
 {% endblock %}
