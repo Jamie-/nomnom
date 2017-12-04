@@ -33,6 +33,7 @@
                         {% endif %}
                         <div class="card-body">
                             <h4 class="card-title">Name my {{ p.title }}</h4>
+                            <h5 class="card-text float-right" id="tag">{{ p.tag }}</h5>
                             <p class="card-text">{{ p.description }}</p>
                         </div>
                         {% if p.get_responses(3)|length > 0 %}
