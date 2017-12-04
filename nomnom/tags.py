@@ -11,7 +11,7 @@ def analyze_entities(text, encoding='UTF32'):
         body = {
             'document': {
                 'type': 'PLAIN_TEXT',
-                'content': text,
+                'content': 'Name my ' + text,
             },
             'encoding_type': encoding,
         }
