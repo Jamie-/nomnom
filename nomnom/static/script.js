@@ -11,7 +11,6 @@ $('.vote').click(function() {
             // Update up-vote, down-vote and flag-vote scores
             element.parent().parent().find('.up-score span').html(response['up']);
             element.parent().parent().find('.down-score span').html(response['down']);
-            element.parent().parent().find('.flag-score span').html(response['flag']);
         },
         error: function(error) {
             console.log(error);
