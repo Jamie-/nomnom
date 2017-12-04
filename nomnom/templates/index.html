@@ -32,9 +32,13 @@
                             <img class="card-img-top" src="{{ p.image_url }}">
                         {% endif %}
                         <div class="card-body">
-                            <h4 class="card-title">Name my {{ p.title }}</h4>
+                            <div class="container">
+                                <h4 class="card-title float-left">Name my {{ p.title }}</h4>
                             <h5 class="card-text float-right" id="tag">{{ p.tag }}</h5>
-                            <p class="card-text">{{ p.description }}</p>
+                            </div>
+                            <div class="container d-flex">
+                                <p class="card-text">{{ p.description }}</p>
+                            </div>
                         </div>
                         {% if p.get_responses(3)|length > 0 %}
                             <ul class="list-group list-group-flush list-group-striped">
