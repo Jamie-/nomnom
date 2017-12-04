@@ -9,5 +9,7 @@ if os.name == 'nt':
     sys.platform = ''
 
 # Tagging library import for GAE
-from google.appengine.ext import vendor
-vendor.add('gae_lib') # Add any libraries install in the "lib" folder.
+import os
+if 'Google App Engine' in os.environ['SERVER_SOFTWARE']:
+    from google.appengine.ext import vendor
+    vendor.add('gae_lib') # Add any libraries install in the "lib" folder.
