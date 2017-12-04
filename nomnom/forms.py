@@ -16,3 +16,7 @@ class CreateForm(FlaskForm):
 class ResponseForm(FlaskForm):
     response = fields.StringField('response', validators=[validators.DataRequired(), Language()])
     submit = fields.SubmitField(label='Add')
+
+# Check user intends to delete poll
+class DeleteForm(FlaskForm):
+    submit = fields.SubmitField(label='Delete')

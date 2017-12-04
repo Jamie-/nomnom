@@ -43,9 +43,15 @@ def delete_poll(poll_id, delete_key):
         flask.abort(404)
     if poll.delete_key != delete_key:
         flask.abort(403)
-    poll.key.delete()
-    flask.flash('Poll deleted successfully.', 'success')
-    return flask.redirect('/', code=302)  # Redirect back to home page
+    delete_form = forms.DeleteForm()
+    if delete_form.validate_on_submit():
+        poll.key.delete()
+        import time
+        time.sleep(0.5)
+        flask.flash('Poll deleted successfully.', 'success')
+        return flask.redirect('/', code=302)  # Redirect back to home page
+    form = forms.ResponseForm()
+    return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, delete_form=delete_form, delete=True)
 
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
