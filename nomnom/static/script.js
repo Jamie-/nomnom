@@ -8,7 +8,7 @@ $('.vote').click(function() {
         success: function(response) {
             // Update total score
             element.parent().parent().parent().find('.score').html(response['score']);
-            // Update up-vote and down-vote scores
+            // Update up-vote, down-vote and flag-vote scores
             element.parent().parent().find('.up-score span').html(response['up']);
             element.parent().parent().find('.down-score span').html(response['down']);
         },

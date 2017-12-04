@@ -67,6 +67,8 @@ def poll_vote(poll_id, vote_type):
         r.upvote(cookie)
     elif vote_type.lower() == 'down':
         r.downvote(cookie)
+    elif vote_type.lower() == 'flag':
+        r.update_flag(cookie)
 
     resp = flask.jsonify({'score': (r.upv - r.dnv), 'up': r.upv, 'down': r.dnv})
     resp.set_cookie('voteData', cookie)
