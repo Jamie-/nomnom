@@ -46,6 +46,8 @@ def delete_poll(poll_id, delete_key):
     delete_form = forms.DeleteForm()
     if delete_form.validate_on_submit():
         poll.key.delete()
+        import time
+        time.sleep(0.5)
         flask.flash('Poll deleted successfully.', 'success')
         return flask.redirect('/', code=302)  # Redirect back to home page
     form = forms.ResponseForm()
