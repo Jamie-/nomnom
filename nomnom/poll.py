@@ -1,4 +1,5 @@
 from google.appengine.ext import ndb
+import nomnom.tags as tags
 from mail import Email
 import uuid
 
@@ -10,6 +11,7 @@ class Poll(ndb.Model):
     email = ndb.StringProperty()
     image_url = ndb.StringProperty()
     delete_key = ndb.StringProperty()
+    tag = ndb.StringProperty()
 
     def get_id(self):
         return self.key.urlsafe()
@@ -24,7 +26,8 @@ class Poll(ndb.Model):
     # Add poll to datastore
     @classmethod
     def add(cls, title, description, email, image_url):
-        p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()))
+        content_tag = tags.entities_text(title)
+        p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()), tag=content_tag)
         p.put()  # Add to datastore
         if email is not None:
             Email.send_mail(email, p.get_id(), p.delete_key)
