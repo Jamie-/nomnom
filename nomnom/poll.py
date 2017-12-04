@@ -64,6 +64,7 @@ class Response(ndb.Model):
     flag = ndb.IntegerProperty()
     score = ndb.ComputedProperty(lambda self: self.upv - self.dnv)
     voted_users = ndb.JsonProperty()
+    flagged_users = ndb.JsonProperty()
 
     # Initialise a new response object with 0 upv and dnv maintaining kwargs to parent
     def __init__(self, **kwargs):
@@ -72,6 +73,7 @@ class Response(ndb.Model):
         self.dnv = 0
         self.flag = 0
         self.voted_users = {}
+        self.flagged_users = {}
 
 
     def get_id(self):
@@ -116,9 +118,12 @@ class Response(ndb.Model):
         self.put()
 
     # Increase flag count
-    def update_flag(self):
-        self.flag += 1
-        self.put()
+    def update_flag(self, cookie_value):
+        # Only allow users to flag once
+        if cookie_value not in self.flagged_users:
+            self.flagged_users[cookie_value] = 0
+            self.flag += 1
+            self.put()
 
     # Add response to datastore
     @classmethod
