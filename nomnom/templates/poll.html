@@ -59,6 +59,12 @@
                         </button>
                         <span>{{ r.dnv }}</span>
                     </td>
+                    <td class="text-center flag-score" style="width: 10%;">
+                        <button class="vote" data-vote="flag" data-resp-id="{{ r.get_id() }}">
+                            <i class="fa fa-flag"></i>
+                        </button>
+                        <span>{{ r.flag }}</span>
+                    </td>
                 </tr>
             {% endfor %}
         </table>

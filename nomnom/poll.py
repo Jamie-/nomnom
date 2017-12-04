@@ -61,6 +61,7 @@ class Response(ndb.Model):
     response_str = ndb.StringProperty()
     upv = ndb.IntegerProperty()
     dnv = ndb.IntegerProperty()
+    flag = ndb.IntegerProperty()
     score = ndb.ComputedProperty(lambda self: self.upv - self.dnv)
     voted_users = ndb.JsonProperty()
 
@@ -69,6 +70,7 @@ class Response(ndb.Model):
         super(Response, self).__init__(**kwargs) # Call parent constructor
         self.upv = 0
         self.dnv = 0
+        self.flag = 0
         self.voted_users = {}
 
 
@@ -111,6 +113,11 @@ class Response(ndb.Model):
             self.dnv += 1
             self.voted_users[cookieValue] = -1
 
+        self.put()
+
+    # Increase flag count
+    def update_flag(self):
+        self.flag += 1
         self.put()
 
     # Add response to datastore
