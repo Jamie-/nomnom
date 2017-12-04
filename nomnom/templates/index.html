@@ -29,17 +29,20 @@
                 <div class="container" id="poll-list">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Name My {{ p.title }}</h4>
+                            <h4 class="card-title" style="float: left;">Name My {{ p.title }}</h4>
+                            <h5 class="card-text" id="tag" style="float: right;">{{ p.tag }}</h5>
+                        </div>
+                        <div class="card-body">
                             <p class="card-text">{{ p.description }}</p>
                         </div>
                         {% if p.get_responses(3)|length > 0 %}
                             <table class="table table-striped table-inverse">
                                 {% for r in p.get_responses(3) %}
                                     <tr>
-                                        <td class="text-center score" style="width: 10%;"><i class="fa fa-trophy"></i> <span>{{ r.upv - r.dnv }}</span></td>
+                                        <td class="text-center score" style="width: 15%;"><i class="fa fa-trophy"></i> <span>{{ r.upv - r.dnv }}</span></td>
                                         <td>{{ r.response_str }}</td>
-                                        <td class="text-center up-score" style="width: 10%;"><a href="#" class="vote" data-vote="up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}"><i class="fa fa-arrow-up"></i></a> <span>{{ r.upv }}</span></td>
-                                        <td class="text-center down-score" style="width: 10%;"><a href="#" class="vote" data-vote="down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}"><i class="fa fa-arrow-down"></i></a> <span>{{ r.dnv }}</span></td>
+                                        <td class="text-center up-score" style="width: 15%;"><a href="#" class="vote" data-vote="up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}"><i class="fa fa-arrow-up"></i></a> <span>{{ r.upv }}</span></td>
+                                        <td class="text-center down-score" style="width: 15%;"><a href="#" class="vote" data-vote="down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}"><i class="fa fa-arrow-down"></i></a> <span>{{ r.dnv }}</span></td>
                                     </tr>
                                 {% endfor %}
                             </table>
@@ -88,3 +91,6 @@
         });
     </script>
 {% endblock %}
+
+
+

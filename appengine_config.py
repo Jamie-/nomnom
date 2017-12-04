@@ -7,3 +7,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
 if os.name == 'nt':
     os.name = None
     sys.platform = ''
+
+# appengine_config.py
+from google.appengine.ext import vendor
+
+# Add any libraries install in the "lib" folder.
+vendor.add('gae_lib')
