@@ -83,7 +83,7 @@ def error_403(error):
 
 @app.errorhandler(404)
 def error_404(error):
-    return flask.render_template('error.html', title='404', heading='Error 404', text="Oh no, that's an error!")
+    return flask.render_template('error.html', title='404', heading='Error 404', text="This page does not exist.")
 
 @app.errorhandler(405)
 def error_405(error):
