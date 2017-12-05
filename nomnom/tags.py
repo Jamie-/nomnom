@@ -1,10 +1,8 @@
 import googleapiclient.discovery
 
-
 def entities_text(text):
     response = analyze_entities(text)
     return response
-
 
 def analyze_entities(text, encoding='UTF32'):
     try:
