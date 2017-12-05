@@ -27,6 +27,10 @@ body > div.container {
     margin-left: 20px;
 }
 
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: ivory;
+}
+
 /* Brand Colours */
 
 .bg-dark {
