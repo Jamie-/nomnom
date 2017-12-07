@@ -14,21 +14,16 @@ body > div.container {
     margin-bottom: 20px;
 }
 
-.list-group-striped li:nth-child(odd) {
-    background-color: ivory;
+/* Set table striping colour */
+.list-group-striped li:nth-child(odd),
+.table-striped tbody tr:nth-of-type(odd){
+    background-color: #FFFFF0;
 }
 
+/* Poll list on homepage */
 #poll-list .list-group-item {
-    border-left: 1px solid #dddddd;
-    border-right: 1px solid #dddddd;
-    border-top: 1px solid #dddddd;
-    border-bottom: 1px solid #dddddd;
-    margin-right: 20px;
-    margin-left: 20px;
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: ivory;
+    border: 1px solid #dddddd;
+    margin: 0 20px;
 }
 
 /* Brand Colours */
