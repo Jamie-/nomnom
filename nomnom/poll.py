@@ -29,7 +29,7 @@ class Poll(ndb.Model):
         content_tag = tags.entities_text(title)
         p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()), tag=content_tag)
         p.put()  # Add to datastore
-        if email is not None:
+        if email:
             Email.send_mail(email, p.get_id(), p.delete_key)
         return p
 
