@@ -26,6 +26,11 @@ body > div.container {
     margin: 0 20px;
 }
 
+/* Make containers in cards on the homepage have no padding */
+#poll-list .card-body > .container {
+    padding: 0;
+}
+
 /* Brand Colours */
 
 .bg-dark {
