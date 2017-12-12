@@ -18,6 +18,11 @@ class Poll(ndb.Model):
     flag = ndb.IntegerProperty()
     flagged_users = ndb.JsonProperty()
 
+    def __init__(self, **kwargs):
+        super(Poll, self).__init__(**kwargs)
+        self.flag = 0
+        self.flagged_users = {}
+
     def get_id(self):
         return self.key.urlsafe()
 
@@ -34,28 +39,42 @@ class Poll(ndb.Model):
         content_tag = tags.entities_text(title)
         p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()), tag=content_tag)
         p.put()  # Add to datastore
+        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'key':p.key.urlsafe()})
         if email:
             Email.send_mail(email, p.get_id(), p.delete_key)
         return p
 
     # Fetch all polls from datastore
     @classmethod
-    def fetch_all(cls, order_by=None):
+    def fetch_all(cls, order_by=None, flag_count=3):
         if (order_by is None):  # First as most common case
-            return Poll.query().fetch()
+            return Poll.query(Poll.flag <flag_count).fetch()
         elif (order_by == "newest"):
-            return Poll.query().order(-Poll.datetime).fetch()
+            return Poll.query(Poll.flag <flag_count).order(-Poll.datetime).fetch()
         elif (order_by == "oldest"):
-            return Poll.query().order(Poll.datetime).fetch()
+            return Poll.query(Poll.flag <flag_count).order(Poll.datetime).fetch()
         elif (order_by == "hottest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
+            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "coldest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
+            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "easiest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
+            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
         elif (order_by == "hardest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: -Response.query(ancestor=poll.key).count())
+            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -Response.query(ancestor=poll.key).count())
         raise ValueError()  # order_by not in specified list
+
+    # If the wordfilter flags something, automatically hide it
+    def mod_flag(self):
+        self.flag += 3
+        self.put()
+
+    # Increase flag count
+    def update_flag(self, cookie_value):
+        # Only allow users to flag once
+        if cookie_value not in self.flagged_users:
+            self.flagged_users[cookie_value] = 0
+            self.flag += 1
+            self.put()
 
     # Get poll from datastore by ID
     @classmethod

@@ -8,13 +8,11 @@ class Filter:
     def __init__(self):
         self._url = "http://www.purgomalum.com/service/containsprofanity?text="
 
-    def is_safe(self, string):
-        print "Checking: \'"+string + "'"
+    def contains_slurs(self, string):
         r = requests.get(self._url+string)
-        print r.text
         if r.text == 'true':
-            return False
-        else:
             return True
+        else:
+            return False
 
 
