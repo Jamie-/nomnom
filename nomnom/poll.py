@@ -81,6 +81,9 @@ class Poll(ndb.Model):
     def get_poll(cls, id):
         key = ndb.Key(urlsafe=id)
         return key.get()
+    @classmethod
+    def get_flagged(cls, flag_count=3):
+        return Poll.query(Poll.flag >= flag_count).fetch()
 
 
 # Response object model
@@ -152,7 +155,7 @@ class Response(ndb.Model):
     # Increase flag count
     def update_flag(self, cookie_value):
         # Only allow users to flag once
-        if cookie_value not in self.flagged_users:
+        if (cookie_value not in self.flagged_users) and (self.flag > -1):
             self.flagged_users[cookie_value] = 0
             self.flag += 1
             self.put()

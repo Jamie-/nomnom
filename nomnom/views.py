@@ -76,7 +76,9 @@ def poll_vote(poll_id, vote_type):
 
 @app.route('/admin/moderation')
 def admin_moderation():
-    return flask.render_template('moderation.html', )
+    polls = Poll.get_flagged()
+    #responses = Response.get_flagged()
+    return flask.render_template('moderation.html', polls=polls)
 
 ## Error Handlers
 

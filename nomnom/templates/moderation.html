@@ -1,0 +1,46 @@
+{% extends "template.html" %}
+
+{% block container %}
+   <h1> Flagged Polls</h1>
+    <div class="row">
+        {% if polls|length > 0 %}
+            <table class="table">
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Image</th>
+                <th scope="col">Action</th>
+            </tr>
+            {% for p in polls %}
+                <tr>
+                <td>{{ p.title}}</td>
+                <td>{{p.description}}</td>
+                <td>
+                {% if p.image_url is not none %}
+                <img width = 200 src="{{ p.image_url }}">
+                {% endif %}
+                </td>
+                <td>
+                    <button class="vote" data-vote="delete" data-poll-id="{{ p.get_id() }}">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    <button class="vote" data-vote="delete" data-poll-id="{{ p.get_id() }}">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </td>
+                </tr>
+            {% endfor %}
+            </table>
+
+        {% else %}
+            <div class="container text-center">
+                <h2>None. </h2>
+            </div>
+        {% endif %}
+
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{{ url_for('static', filename='moderation.js') }}"></script>
+{% endblock %}
