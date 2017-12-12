@@ -12,6 +12,8 @@ class Poll(ndb.Model):
     image_url = ndb.StringProperty()
     delete_key = ndb.StringProperty()
     tag = ndb.StringProperty()
+    flag = ndb.IntegerProperty()
+    flagged_users = ndb.JsonProperty()
 
     def get_id(self):
         return self.key.urlsafe()
@@ -118,6 +120,11 @@ class Response(ndb.Model):
             self.dnv += 1
             self.voted_users[cookieValue] = -1
 
+        self.put()
+
+    # If the wordfilter flags something, automatically hide it
+    def mod_flag(self):
+        self.flag += 3
         self.put()
 
     # Increase flag count
