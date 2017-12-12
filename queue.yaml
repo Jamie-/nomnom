@@ -1,0 +1,3 @@
+queue:
+- name: filter-queue
+  rate: 2/s

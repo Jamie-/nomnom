@@ -11,3 +11,5 @@ def url_enc(url):
 app.jinja_env.globals.update(url_enc=url_enc)
 
 from nomnom import views
+from nomnom import workers
+

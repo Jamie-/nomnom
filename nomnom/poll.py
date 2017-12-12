@@ -1,4 +1,7 @@
+import json
+
 from google.appengine.ext import ndb
+from google.appengine.api import taskqueue
 import nomnom.tags as tags
 from mail import Email
 import uuid
@@ -19,11 +22,11 @@ class Poll(ndb.Model):
         return self.key.urlsafe()
 
     # Get list of response objects
-    def get_responses(self, n=None):
+    def get_responses(self, n=None, flag_count=3):
         if n is None:
-            return sorted(Response.query(ancestor=self.key).fetch(), key=lambda response: -response.score)
+            return sorted(Response.query(Response.flag < flag_count, ancestor=self.key).fetch(), key=lambda response: -response.score)
         else:
-            return sorted(Response.query(ancestor=self.key).fetch(n), key=lambda response: -response.score)[:n]
+            return sorted(Response.query(Response.flag < flag_count, ancestor=self.key).fetch(n), key=lambda response: -response.score)[:n]
 
     # Add poll to datastore
     @classmethod
@@ -140,6 +143,7 @@ class Response(ndb.Model):
     def add(cls, poll, response_str):
         r = Response(parent=poll.key, response_str=response_str)
         r.put()
+        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'key':r.key.urlsafe()})
         return r
 
     # Get response from datastore

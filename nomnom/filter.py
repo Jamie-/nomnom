@@ -1,5 +1,3 @@
-import unittest
-from wtforms import ValidationError
 import requests
 
 ################
@@ -20,19 +18,3 @@ class Filter:
             return True
 
 
-####################
-# Language Checker #
-####################
-class Language(object):
-    def __init__(self):
-        self._filter = Filter()
-        self._message = 'There is inappropriate language in this field.'
-
-    def __call__(self, form, field):
-        string = field.data
-        if not self._filter.is_safe(string):
-            raise ValidationError(self._message)
-
-
-if __name__ == '__main__':
-    unittest.main()

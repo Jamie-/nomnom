@@ -74,6 +74,9 @@ def poll_vote(poll_id, vote_type):
     resp.set_cookie('voteData', cookie)
     return resp
 
+@app.route('/admin/moderation')
+def admin_moderation():
+    return flask.render_template('moderation.html', )
 
 ## Error Handlers
 
