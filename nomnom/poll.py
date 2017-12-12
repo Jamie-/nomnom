@@ -10,16 +10,22 @@ class NomNomModel(ndb.Model):
     flag = ndb.IntegerProperty()
     flagged_users = ndb.JsonProperty()
 
-
-def __init__(self, **kwargs):
-    super(NomNomModel, self).__init__(**kwargs)
-    self.flag = 0
-    self.flagged_users = {}
+    def __init__(self, **kwargs):
+        super(NomNomModel, self).__init__(**kwargs)
+        self.flag = 0
+        self.flagged_users = {}
 
     # If the wordfilter flags something, automatically hide it
     def mod_flag(self):
         self.flag += 3
         self.put()
+
+    def mod_approve(self):
+        self.flag = -1
+        self.put()
+
+    def mod_delete(self):
+        self.key.delete()
 
     # Increase flag count
     def update_flag(self, cookie_value):
@@ -81,19 +87,6 @@ class Poll(NomNomModel):
             return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -Response.query(ancestor=poll.key).count())
         raise ValueError()  # order_by not in specified list
 
-    # If the wordfilter flags something, automatically hide it
-    def mod_flag(self):
-        self.flag += 3
-        self.put()
-
-    # Increase flag count
-    def update_flag(self, cookie_value):
-        # Only allow users to flag once
-        if cookie_value not in self.flagged_users:
-            self.flagged_users[cookie_value] = 0
-            self.flag += 1
-            self.put()
-
     # Get poll from datastore by ID
     @classmethod
     def get_poll(cls, id):
@@ -122,6 +115,9 @@ class Response(NomNomModel):
 
     def get_id(self):
         return self.key.id()
+
+    def get_poll_id(self):
+        return self.key.parent().urlsafe()
 
     # Add up-vote to response
     def upvote(self, cookieValue):
@@ -175,3 +171,7 @@ class Response(NomNomModel):
         poll = ndb.Key(urlsafe=poll_id).get()
         resp_id = int(response_id)
         return Response.get_by_id(resp_id, parent=poll.key)
+
+    @classmethod
+    def get_flagged(cls, flag_count=3):
+        return Response.query(Response.flag >= flag_count).fetch()

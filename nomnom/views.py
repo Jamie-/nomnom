@@ -77,31 +77,50 @@ def poll_vote(poll_id, vote_type):
 @app.route('/admin/moderation')
 def admin_moderation():
     polls = Poll.get_flagged()
-    #responses = Response.get_flagged()
-    return flask.render_template('moderation.html', polls=polls)
+    responses = Response.get_flagged()
+    return flask.render_template('moderation.html', polls=polls, responses=responses)
+
+@app.route('/admin/moderation/<string:poll_id>/action/<string:action_id>', methods=['POST'])
+def admin_moderation_action(poll_id, action_id):
+    p = Poll.get_poll(poll_id)
+    if action_id.startswith('poll'):
+        if action_id.endswith('approve'):
+            p.mod_approve()
+        elif action_id.endswith('delete'):
+            p.mod_delete()
+        return ''
+    elif action_id.startswith('response'):
+        r = Response.get_response(poll_id, flask.request.form['resp_id'])
+        if action_id.endswith('approve'):
+            r.mod_approve()
+        elif action_id.endswith('delete'):
+            r.mod_delete()
+        return ''
+    return ''
+
 
 ## Error Handlers
 
 @app.errorhandler(400)
 def error_400(error):
-    return flask.render_template('error.html', title='400', heading='Error 400', text="Oh no, that's an error!")
+    return flask.render_template('error.html', title='400', heading='Error 400', text="Oh no, that's an error!"), 400
 
 @app.errorhandler(401)
 def error_401(error):
-    return flask.render_template('error.html', title='401', heading='Error 401', text="Oh no, that's an error!")
+    return flask.render_template('error.html', title='401', heading='Error 401', text="Oh no, that's an error!"), 401
 
 @app.errorhandler(403)
 def error_403(error):
-    return flask.render_template('error.html', title='403', heading='Error 403', text="Oh no, that's an error!")
+    return flask.render_template('error.html', title='403', heading='Error 403', text="Oh no, that's an error!"), 403
 
 @app.errorhandler(404)
 def error_404(error):
-    return flask.render_template('error.html', title='404', heading='Error 404', text="This page does not exist.")
+    return flask.render_template('error.html', title='404', heading='Error 404', text="This page does not exist."), 404
 
 @app.errorhandler(405)
 def error_405(error):
-    return flask.render_template('error.html', title='405', heading='Error 405', text="Oh no, that's an error!")
+    return flask.render_template('error.html', title='405', heading='Error 405', text="Oh no, that's an error!"), 405
 
 @app.errorhandler(500)
 def error_500(error):
-    return flask.render_template('error.html', title='500', heading='Error 500', text="Oh no, that's an error!")
+    return flask.render_template('error.html', title='500', heading='Error 500', text="Oh no, that's an error!"), 500

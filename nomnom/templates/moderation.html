@@ -1,43 +1,73 @@
 {% extends "template.html" %}
 
 {% block container %}
-   <h1> Flagged Polls</h1>
     <div class="row">
+        <h1> Flagged Polls</h1>
         {% if polls|length > 0 %}
             <table class="table">
-            <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Description</th>
-                <th scope="col">Image</th>
-                <th scope="col">Action</th>
-            </tr>
-            {% for p in polls %}
                 <tr>
-                <td>{{ p.title}}</td>
-                <td>{{p.description}}</td>
-                <td>
-                {% if p.image_url is not none %}
-                <img width = 200 src="{{ p.image_url }}">
-                {% endif %}
-                </td>
-                <td>
-                    <button class="vote" data-vote="delete" data-poll-id="{{ p.get_id() }}">
-                        <i class="fa fa-check"></i>
-                    </button>
-                    <button class="vote" data-vote="delete" data-poll-id="{{ p.get_id() }}">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </td>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Action</th>
                 </tr>
-            {% endfor %}
+                {% for p in polls %}
+                    <tr>
+                        <td>{{ p.title }}</td>
+                        <td>{{ p.description }}</td>
+                        <td>
+                            {% if p.image_url is not none %}
+                                <img width=200 src="{{ p.image_url }}">
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="vote" data-vote="poll-approve" data-poll-id="{{ p.get_id() }}">
+                                <i class="fa fa-check"></i>
+                            </button>
+                            <button class="vote" data-vote="poll-delete" data-poll-id="{{ p.get_id() }}">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
             </table>
 
         {% else %}
             <div class="container text-center">
-                <h2>None. </h2>
+                <h2>None.</h2>
             </div>
         {% endif %}
+        <h1>Flagged Responses</h1>
+        {% if responses|length > 0 %}
+            <table class="table">
+                <tr>
+                    <th scope="col">Text</th>
+                    <th scope="col">Action</th>
+                </tr>
+                {% for r in responses %}
+                    <tr>
+                        <td>
+                            {{ r.response_str }}
+                        </td>
 
+                        <td>
+                            <button class="vote" data-vote="response-approve" data-resp-id="{{ r.get_id() }}"
+                                    data-poll-id="{{ r.get_poll_id() }}">
+                                <i class="fa fa-check"></i>
+                            </button>
+                            <button class="vote" data-vote="response-delete" data-resp-id="{{ r.get_id() }}"
+                                    data-poll-id="{{ r.get_poll_id() }}">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+        <div class="container text-center">
+            <h2>None.</h2>
+        </div>
+    {% endif %}
     </div>
 {% endblock %}
 
