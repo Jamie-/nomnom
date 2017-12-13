@@ -1,6 +1,5 @@
 import flask
 from nomnom import app
-import logging
 import forms
 from poll import Poll, Response
 import uuid
