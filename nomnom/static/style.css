@@ -106,3 +106,10 @@ button.vote {
     color: #800000;
     padding: 0;
 }
+button.poll-vote{
+    float: right;
+    border: none;
+    background: transparent;
+    color: #800000;
+    padding: 0;
+}

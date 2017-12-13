@@ -17,3 +17,16 @@ $('.vote').click(function() {
         }
     });
 });
+$('.poll-vote').click(function () {
+   element = $(this);
+   $.ajax({
+        url: '/poll/' + $(this).data('poll-id') + '/vote/' + $(this).data('vote'),
+        data: {resp_id: $(this).data('resp-id')},
+        type: 'POST',
+        success: function(response) {
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+});

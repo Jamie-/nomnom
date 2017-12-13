@@ -61,16 +61,20 @@ def poll_vote(poll_id, vote_type):
         cookie = flask.request.cookies.get('voteData')
     else:
         cookie = str(uuid.uuid4())  # Generate cookie
-
-    r = Response.get_response(poll_id, flask.request.form['resp_id'])
-    if vote_type.lower() == 'up':
-        r.upvote(cookie)
-    elif vote_type.lower() == 'down':
-        r.downvote(cookie)
-    elif vote_type.lower() == 'flag':
-        r.update_flag(cookie)
-
-    resp = flask.jsonify({'score': (r.upv - r.dnv), 'up': r.upv, 'down': r.dnv})
+    resp = flask.jsonify({})
+    if vote_type.startswith('resp'):
+        r = Response.get_response(poll_id, flask.request.form['resp_id'])
+        if vote_type.lower() == 'resp-up':
+            r.upvote(cookie)
+        elif vote_type.lower() == 'resp-down':
+            r.downvote(cookie)
+        elif vote_type.lower() == 'resp-flag':
+            r.update_flag(cookie)
+        resp = flask.jsonify({'score': (r.upv - r.dnv), 'up': r.upv, 'down': r.dnv})
+    elif vote_type.startswith('poll'):
+        p = Poll.get_poll(poll_id)
+        if vote_type.lower() == 'poll-flag':
+            p.update_flag(cookie)
     resp.set_cookie('voteData', cookie)
     return resp
 

@@ -6,6 +6,7 @@ import nomnom.tags as tags
 from mail import Email
 import uuid
 
+
 class NomNomModel(ndb.Model):
     flag = ndb.IntegerProperty()
     flagged_users = ndb.JsonProperty()
@@ -63,7 +64,7 @@ class Poll(NomNomModel):
         content_tag = tags.entities_text(title)
         p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()), tag=content_tag)
         p.put()  # Add to datastore
-        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'key':p.key.urlsafe()})
+        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
         if email:
             Email.send_mail(email, p.get_id(), p.delete_key)
         return p
@@ -162,7 +163,7 @@ class Response(NomNomModel):
     def add(cls, poll, response_str):
         r = Response(parent=poll.key, response_str=response_str)
         r.put()
-        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'key':r.key.urlsafe()})
+        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
         return r
 
     # Get response from datastore
