@@ -17,3 +17,9 @@ $('.vote').click(function() {
         }
     });
 });
+
+// Share button popover
+$('#share').popover({
+    placement: 'bottom',
+    template: '<div class="popover share-popover" role="tooltip"><div class="arrow"></div><div class="pop-header"><h3 class="popover-header"></h3><button class="float-right">&times;</button></div><textarea class="popover-body"></textarea></div>'
+});
