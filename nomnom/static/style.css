@@ -100,9 +100,42 @@ a:hover {
     color: #ff0000;
 }
 
+.fa-flag:hover,
+.fa-flag:focus {
+    color: #353535;
+}
+
 button.vote {
     border: none;
     background: transparent;
     color: #800000;
     padding: 0;
+}
+
+.fa-question-circle {
+    color: #3b5998;
+}
+
+.fa-user {
+    color: black;
+}
+
+.fa-map-marker {
+    color:red;
+}
+
+.fa-building {
+    color: #b2a9a9
+}
+
+.fa-calendar {
+    color:blue;
+}
+
+.fa-picture-o {
+    color: green;
+}
+
+.fa-beer {
+    color: #edbe40
 }
