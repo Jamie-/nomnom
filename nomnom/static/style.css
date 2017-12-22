@@ -31,6 +31,15 @@ body > div.container {
     padding: 0;
 }
 
+.share-popover h3 {
+    padding: 0;
+}
+
+.share-popover .pop-header {
+    width: 100%;
+    display: block;
+}
+
 /* Brand Colours */
 
 .bg-dark {

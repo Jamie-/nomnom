@@ -18,7 +18,7 @@
 
     <div class="card share-buttons">
         <div class="card-body">
-            <span class="share fa fa-share-alt-square"></span>
+            <span id="share" data-share-url="{{ request.base_url }}" class="share fa fa-share-alt-square"></span>
             <a href="https://www.facebook.com/dialog/share?app_id=145634995501895&display=popup&href={{ url_enc(request.base_url) }}" class="social-btn" role="button">
                 <span class="fa fa-facebook-square facebook"></span>
             </a>
