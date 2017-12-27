@@ -21,6 +21,12 @@
                 </a>
             </li>
         </ul>
+        <div class="pull-right">
+            <form action="/search" method="get">
+                <div><input type="text" name="searchTerm">
+                    <input type="submit" value="Search"></div>
+            </form>
+        </div>
     {% endif %}
 
     <div class="row">
@@ -81,7 +87,6 @@
                 <h4>Why don't you <a href="/create">create one</a>?</h4>
             </div>
         {% endif %}
-
     </div>
 {% endblock %}
 

@@ -74,6 +74,14 @@ def poll_vote(poll_id, vote_type):
     resp.set_cookie('voteData', cookie)
     return resp
 
+# Search
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    form = forms.CreateForm()
+    if form.validate_on_submit():
+        flask.flash('Poll created successfully', 'success')
+        return flask.render_template('create.html', form=form)
+    return flask.render_template('create.html', form=form)
 
 ## Error Handlers
 
