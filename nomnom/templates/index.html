@@ -28,7 +28,7 @@
             {% for p in polls %}
                 <div class="container" id="poll-list">
                     <div class="card">
-                        {% if p.image_url is not none %}
+                        {% if p.image_url is not none and p.image_url != "" %}
                             <img class="card-img-top" src="{{ p.image_url }}">
                         {% endif %}
                         <div class="card-body">
