@@ -16,6 +16,11 @@ depends: # Install all dependancies into `lib`
 run: # Run app locally
 	/usr/bin/env python $(gcloud-sdk)/platform/google_appengine/dev_appserver.py --host 127.0.0.1 .
 
+deploy-plus: # deploy everything
+	gcloud app deploy --quiet
+	gcloud app deploy index.yaml --quiet
+	gcloud app deploy queue.yaml --quiet
+
 deploy: # Deploy app to AppEngine
 	gcloud app deploy --quiet
 
