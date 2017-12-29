@@ -8,8 +8,9 @@ import uuid
 @app.route('/')
 def index():
     order = flask.request.args.get("order")
+    tag = flask.request.args.get("tag")
     try:
-        return flask.render_template('index.html', polls=Poll.fetch_all(order), order=order)
+        return flask.render_template('index.html', polls=Poll.fetch_all(order), order=order, tag=tag)
     except ValueError:
         flask.abort(400)  # Args invalid
 
@@ -82,7 +83,7 @@ def sort(self):
 # Search
 @app.route('/search', methods=['GET', 'POST'])
 def search(self):
-    search = flask.request.args.get("searchTerm").lower()
+    search = flask.request.args.get("search").lower()
     allPolls = Poll.fetch_all()
     returnedPolls = list()
     for p in allPolls:
