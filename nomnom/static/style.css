@@ -109,9 +109,45 @@ a:hover {
     color: #ff0000;
 }
 
+.fa-flag:hover,
+.fa-flag:focus {
+    color: #353535;
+}
+
 button.vote {
     border: none;
     background: transparent;
     color: #800000;
     padding: 0;
+}
+
+
+/* Tag Icon Colours */
+
+#tag .fa-question-circle {
+    color: #3b5998;
+}
+
+#tag .fa-user {
+    color: #000000;
+}
+
+#tag .fa-map-marker {
+    color: #ff0000;
+}
+
+#tag .fa-building {
+    color: #b2a9a9;
+}
+
+#tag .fa-calendar {
+    color: #3C5798;
+}
+
+#tag .fa-picture-o {
+    color: #008000;
+}
+
+#tag .fa-beer {
+    color: #edbe40
 }

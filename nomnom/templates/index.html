@@ -70,7 +70,21 @@
                         {% endif %}
                         <div class="card-body">
                             <a href="/poll/{{ p.get_id() }}" class="btn btn-primary">Join in!</a>
-                            <h4 class="card-text float-right" id="tag">{{ p.tag }}</h4>
+                            {% if p.tag == 'OTHER' %}
+                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-question-circle"></i> {{ p.tag }}</h4>
+                            {% elif p.tag == 'PERSON' %}
+                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-user"></i> {{ p.tag }}</h4>
+                            {% elif p.tag == 'PLACE' %}
+                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-map-marker"></i> {{ p.tag }}</h4>
+                            {% elif p.tag == 'ORGANIZATION' %}
+                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-building"></i> {{ p.tag }}</h4>
+                            {% elif p.tag == 'EVENT' %}
+                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-calendar"></i> {{ p.tag }}</h4>
+                            {% elif p.tag == 'WORK OF ART' %}
+                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-picture-o"></i> {{ p.tag }}</h4>
+                            {% elif p.tag == 'CONSUMER GOOD' %}
+                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-beer"></i> {{ p.tag }}</h4>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
