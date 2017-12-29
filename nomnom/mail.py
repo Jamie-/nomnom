@@ -4,7 +4,7 @@ import urllib  # requests module not supported by GAE so using urllib instead
 import logging
 from nomnom import app
 
-BASE_URL = 'http://localhost:8080/poll/'  # TODO Temporary URL
+BASE_URL = 'https://nomnom-online.appspot.com/poll/'
 
 class Email:
 
