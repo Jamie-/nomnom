@@ -112,30 +112,30 @@ button.vote {
     padding: 0;
 }
 
-.fa-question-circle {
+#tag .fa-question-circle {
     color: #3b5998;
 }
 
-.fa-user {
-    color: black;
+#tag .fa-user {
+    color: #000000;
 }
 
-.fa-map-marker {
-    color:red;
+#tag .fa-map-marker {
+    color: #ff0000;
 }
 
-.fa-building {
-    color: #b2a9a9
+#tag .fa-building {
+    color: #b2a9a9;
 }
 
-.fa-calendar {
-    color:blue;
+#tag .fa-calendar {
+    color: #3C5798;
 }
 
-.fa-picture-o {
-    color: green;
+#tag .fa-picture-o {
+    color: #008000;
 }
 
-.fa-beer {
+#tag .fa-beer {
     color: #edbe40
 }
