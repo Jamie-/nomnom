@@ -25,6 +25,16 @@
             <form action="/search" method="get">
                 <div><input type="text" name="searchTerm">
                     <input type="submit" value="Search"></div>
+                <div>Search In:</div>
+                <ul class="nav nav-pills nav-stacked">
+                    <li><a href="/sort?tag=OTHER">OTHER</a></li>
+                    <li><a href="/sort?tag=PERSON">PERSON</a></li>
+                    <li><a href="/sort?tag=LOCATION">LOCATION</a></li>
+                    <li><a href="/sort?tag=ORGANIZATION">ORGANIZATION</a></li>
+                    <li><a href="/sort?tag=EVENT">EVENT</a></li>
+                    <li><a href="/sort?tag=WORK_OF_ART">WORK OF ART</a></li>
+                    <li><a href="/sort?tag=CONSUMER_GOOD">CONSUMER GOOD</a></li>
+                </ul>
             </form>
         </div>
     {% endif %}

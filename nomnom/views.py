@@ -69,22 +69,28 @@ def poll_vote(poll_id, vote_type):
         r.downvote(cookie)
     elif vote_type.lower() == 'flag':
         r.update_flag(cookie)
-
     resp = flask.jsonify({'score': (r.upv - r.dnv), 'up': r.upv, 'down': r.dnv})
     resp.set_cookie('voteData', cookie)
     return resp
 
+# Sort by category
+@app.route('/sort', methods=['GET', 'POST'])
+def sort(self):
+    tag = flask.request.args.get("tag")
+    return flask.render_template('index.html', polls=Poll.query().filter(Poll.tag == tag))
+
 # Search
 @app.route('/search', methods=['GET', 'POST'])
-def search():
-    form = forms.CreateForm()
-    if form.validate_on_submit():
-        flask.flash('Poll created successfully', 'success')
-        return flask.render_template('create.html', form=form)
-    return flask.render_template('create.html', form=form)
+def search(self):
+    search = flask.request.args.get("searchTerm").lower()
+    allPolls = Poll.fetch_all()
+    returnedPolls = list()
+    for p in allPolls:
+        if search in p.title.lower():
+            returnedPolls.append(p)
+    return flask.render_template('index.html', polls=returnedPolls)
 
 ## Error Handlers
-
 @app.errorhandler(400)
 def error_400(error):
     return flask.render_template('error.html', title='400', heading='Error 400', text="Oh no, that's an error!")
