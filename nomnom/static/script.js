@@ -17,6 +17,7 @@ $('.vote').click(function() {
         }
     });
 });
+//flag a poll
 $('.poll-vote').click(function () {
    element = $(this);
    $.ajax({
@@ -24,6 +25,7 @@ $('.poll-vote').click(function () {
         data: {resp_id: $(this).data('resp-id')},
         type: 'POST',
         success: function(response) {
+            //No score, so nothing to update
         },
         error: function(error) {
             console.log(error);

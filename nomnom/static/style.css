@@ -100,12 +100,15 @@ a:hover {
     color: #ff0000;
 }
 
+/* the upvote, downvote and flag buttons for responses */
 button.vote {
     border: none;
     background: transparent;
     color: #800000;
     padding: 0;
 }
+
+/* the flag button for polls */
 button.poll-vote{
     float: right;
     border: none;

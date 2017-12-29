@@ -4,7 +4,7 @@ import nomnom.tags as tags
 from mail import Email
 import uuid
 
-
+# Moderation code, used in both models, so done as a parent class
 class NomNomModel(ndb.Model):
     flag = ndb.IntegerProperty()
     flagged_users = ndb.JsonProperty()
@@ -19,10 +19,12 @@ class NomNomModel(ndb.Model):
         self.flag += 3
         self.put()
 
+    # approve a flagged object, and then make sure it can't be flagged again
     def mod_approve(self):
         self.flag = -1
         self.put()
 
+    # delete a flagged object (no delete key needed)
     def mod_delete(self):
         self.key.delete()
 
@@ -45,11 +47,12 @@ class Poll(NomNomModel):
     delete_key = ndb.StringProperty()
     tag = ndb.StringProperty()
 
-
+    # get the id of the poll
     def get_id(self):
         return self.key.urlsafe()
 
     # Get list of response objects
+    # flag_count is the number of flags that are required before being excluded from the search (defaults to 3)
     def get_responses(self, n=None, flag_count=3):
         if n is None:
             return sorted(Response.query(Response.flag < flag_count, ancestor=self.key).fetch(), key=lambda response: -response.score)
@@ -62,12 +65,14 @@ class Poll(NomNomModel):
         content_tag = tags.entities_text(title)
         p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()), tag=content_tag)
         p.put()  # Add to datastore
+        # add a job to a task queue that will check the poll for bad language
         taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
         if email:
             Email.send_mail(email, p.get_id(), p.delete_key)
         return p
 
     # Fetch all polls from datastore
+    # flag_count is the number of flags that are required before being excluded from the search (defaults to 3)
     @classmethod
     def fetch_all(cls, order_by=None, flag_count=3):
         if (order_by is None):  # First as most common case
@@ -91,6 +96,8 @@ class Poll(NomNomModel):
     def get_poll(cls, id):
         key = ndb.Key(urlsafe=id)
         return key.get()
+
+    # Get the flagged polls from the datastore
     @classmethod
     def get_flagged(cls, flag_count=3):
         return Poll.query(Poll.flag >= flag_count).fetch()
@@ -111,10 +118,11 @@ class Response(NomNomModel):
         self.dnv = 0
         self.voted_users = {}
 
-
+    # Get the id of the response
     def get_id(self):
         return self.key.id()
 
+    # Get the id of the parent poll
     def get_poll_id(self):
         return self.key.parent().urlsafe()
 
@@ -161,6 +169,7 @@ class Response(NomNomModel):
     def add(cls, poll, response_str):
         r = Response(parent=poll.key, response_str=response_str)
         r.put()
+        # schedule a thread to check the poll for bad language
         taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
         return r
 
@@ -171,6 +180,7 @@ class Response(NomNomModel):
         resp_id = int(response_id)
         return Response.get_by_id(resp_id, parent=poll.key)
 
+    # Get flagged responses
     @classmethod
     def get_flagged(cls, flag_count=3):
         return Response.query(Response.flag >= flag_count).fetch()

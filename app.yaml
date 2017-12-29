@@ -9,6 +9,8 @@ handlers:
   static_files: nomnom/static/favicon.ico
   upload: nomnom/static/favicon\.ico
 
+# The admin section, requires a google account with app admin privileges to access
+# GAE workers have these privileges, so we hide them there
 - url: /admin/.*
   script: main.app
   login: admin

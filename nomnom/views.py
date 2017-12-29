@@ -61,7 +61,9 @@ def poll_vote(poll_id, vote_type):
     else:
         cookie = str(uuid.uuid4())  # Generate cookie
     resp = flask.jsonify({})
+    #check the start of vote_type to determin the type of object that the user is voting on
     if vote_type.startswith('resp'):
+        # if the user is voting on a response
         r = Response.get_response(poll_id, flask.request.form['resp_id'])
         if vote_type.lower() == 'resp-up':
             r.upvote(cookie)
@@ -70,6 +72,7 @@ def poll_vote(poll_id, vote_type):
         elif vote_type.lower() == 'resp-flag':
             r.update_flag(cookie)
         resp = flask.jsonify({'score': (r.upv - r.dnv), 'up': r.upv, 'down': r.dnv})
+    # if the user is voting on a poll
     elif vote_type.startswith('poll'):
         p = Poll.get_poll(poll_id)
         if vote_type.lower() == 'poll-flag':
@@ -77,25 +80,33 @@ def poll_vote(poll_id, vote_type):
     resp.set_cookie('voteData', cookie)
     return resp
 
+# moderation panel
 @app.route('/admin/moderation')
 def admin_moderation():
     polls = Poll.get_flagged()
     responses = Response.get_flagged()
     return flask.render_template('moderation.html', polls=polls, responses=responses)
 
+# moderation tools
 @app.route('/admin/moderation/<string:poll_id>/action/<string:action_id>', methods=['POST'])
 def admin_moderation_action(poll_id, action_id):
     p = Poll.get_poll(poll_id)
+    # if the object is a poll
     if action_id.startswith('poll'):
+        # approve the poll
         if action_id.endswith('approve'):
             p.mod_approve()
+        # remove the poll
         elif action_id.endswith('delete'):
             p.mod_delete()
         return ''
+    # if the object is a response
     elif action_id.startswith('response'):
         r = Response.get_response(poll_id, flask.request.form['resp_id'])
+        # approve the response
         if action_id.endswith('approve'):
             r.mod_approve()
+        # delete the response
         elif action_id.endswith('delete'):
             r.mod_delete()
         return ''
