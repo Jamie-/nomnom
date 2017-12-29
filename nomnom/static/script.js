@@ -17,7 +17,8 @@ $('.vote').click(function() {
         }
     });
 });
-//flag a poll
+
+// Flag a poll
 $('.poll-flag').click(function () {
    element = $(this);
    $.ajax({
@@ -32,3 +33,31 @@ $('.poll-flag').click(function () {
         }
     });
 });
+
+// Share button popover
+$('#share').popover({
+    html: true,
+    placement: 'bottom',
+    title: 'Share this poll!<span class="close">&times;</span>',
+    content: function() {
+        return '<input id="sharelink" type="text" size="30" data-trigger="manual" readonly onclick="copyToClip(this)" value="' + $(this).data('share-url') + '">';
+    }
+}).on('shown.bs.popover', function() {
+    // Add listener for close button
+    $('.close').click(function() {
+        $(this).parents('.popover').popover('hide');
+    });
+});
+
+// Copy sharing link to clipboard
+function copyToClip(element) {
+    element.focus();
+    element.select();
+    var success = document.execCommand('copy');
+    var resp = success ? 'Copied!' : 'Unable to copy :(';
+    // Show tooltip for 0.5s
+    $(element).tooltip('hide').attr('data-title', resp).tooltip('show');
+    setTimeout(function() {
+        $(element).tooltip('hide');
+    }, 500);
+}
