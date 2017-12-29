@@ -13,6 +13,12 @@ class Email:
         post_url = BASE_URL + poll_id
         delete_url = BASE_URL + poll_id + '/delete/' + delete_key
 
+        # Read in email body content
+        with open("nomnom/templates/email_template.html", "r") as email_file:
+            email = email_file.read()
+        # Fill placeholders with URLs
+        email_html = email.format(post_url, delete_url)
+
         headers = {
             'Authorization': 'Basic {0}'.format(base64.b64encode('api:' + app.config['MAILGUN_API_KEY'])),
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -23,6 +29,7 @@ class Email:
             'subject': 'New Poll Created - NomNom',
             'text': 'Click this link to view your recent post: ' + post_url + '\n' +
                     'Click this link to delete your post: ' + delete_url,
+            'html': email_html
         })
 
         conn = httplib.HTTPSConnection('api.mailgun.net', 443)
