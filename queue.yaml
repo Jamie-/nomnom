@@ -1,0 +1,4 @@
+# Task queue for the wordfilter, runs at two times a second
+queue:
+- name: filter-queue
+  rate: 2/s

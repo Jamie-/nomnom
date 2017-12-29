@@ -13,7 +13,9 @@
         {% endif %}
         <div class="card-body">
             {{ poll.description }}
+             <button class="poll-flag" data-vote="poll-flag" data-poll-id = "{{ poll.get_id() }}"><i class="fa fa-flag"></i> </button>
         </div>
+
     </div>
 
     <div class="card share-buttons">
@@ -48,19 +50,19 @@
                     <td class="text-center" style="width: 10%;"><i class="fa fa-trophy"></i> <span class="score">{{ r.upv - r.dnv }}</span></td>
                     <td>{{ r.response_str }}</td>
                     <td class="text-center up-score" style="width: 10%;">
-                        <button class="vote" data-vote="up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
+                        <button class="vote" data-vote="resp-up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
                             <i class="fa fa-arrow-up"></i>
                         </button>
                         <span>{{ r.upv }}</span>
                     </td>
                     <td class="text-center down-score" style="width: 10%;">
-                        <button class="vote" data-vote="down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
+                        <button class="vote" data-vote="resp-down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
                             <i class="fa fa-arrow-down"></i>
                         </button>
                         <span>{{ r.dnv }}</span>
                     </td>
                     <td class="text-center flag-score" style="width: 10%;">
-                        <button class="vote" data-vote="flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
+                        <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
                             <i class="fa fa-flag"></i>
                         </button>
                     </td>

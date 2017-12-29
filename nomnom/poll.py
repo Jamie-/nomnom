@@ -1,10 +1,44 @@
 from google.appengine.ext import ndb
+from google.appengine.api import taskqueue
 import nomnom.tags as tags
 from mail import Email
 import uuid
 
+# Moderation code, used in both models, so done as a parent class
+class NomNomModel(ndb.Model):
+    flag = ndb.IntegerProperty()
+    flagged_users = ndb.JsonProperty()
+
+    def __init__(self, **kwargs):
+        super(NomNomModel, self).__init__(**kwargs)
+        self.flag = 0
+        self.flagged_users = {}
+
+    # If the wordfilter flags something, automatically hide it
+    def mod_flag(self):
+        self.flag += 3
+        self.put()
+
+    # approve a flagged object, and then make sure it can't be flagged again
+    def mod_approve(self):
+        self.flag = -1
+        self.put()
+
+    # delete a flagged object (no delete key needed)
+    def mod_delete(self):
+        self.key.delete()
+
+    # Increase flag count
+    def update_flag(self, cookie_value):
+        # Only allow users to flag once
+        if (cookie_value not in self.flagged_users) and (self.flag > -1):
+            self.flagged_users[cookie_value] = 0
+            self.flag += 1
+            self.put()
+
+
 # Poll object model
-class Poll(ndb.Model):
+class Poll(NomNomModel):
     title = ndb.StringProperty()
     description = ndb.TextProperty()
     datetime = ndb.DateTimeProperty(auto_now_add=True)
@@ -13,15 +47,17 @@ class Poll(ndb.Model):
     delete_key = ndb.StringProperty()
     tag = ndb.StringProperty()
 
+    # get the id of the poll
     def get_id(self):
         return self.key.urlsafe()
 
     # Get list of response objects
-    def get_responses(self, n=None):
+    # flag_count is the number of flags that are required before being excluded from the search (defaults to 3)
+    def get_responses(self, n=None, flag_count=3):
         if n is None:
-            return sorted(Response.query(ancestor=self.key).fetch(), key=lambda response: -response.score)
+            return sorted(Response.query(Response.flag < flag_count, ancestor=self.key).fetch(), key=lambda response: -response.score)
         else:
-            return sorted(Response.query(ancestor=self.key).fetch(n), key=lambda response: -response.score)[:n]
+            return sorted(Response.query(Response.flag < flag_count, ancestor=self.key).fetch(n), key=lambda response: -response.score)[:n]
 
     # Add poll to datastore
     @classmethod
@@ -29,27 +65,30 @@ class Poll(ndb.Model):
         content_tag = tags.entities_text(title)
         p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()), tag=content_tag)
         p.put()  # Add to datastore
+        # add a job to a task queue that will check the poll for bad language
+        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
         if email:
             Email.send_mail(email, p.get_id(), p.delete_key)
         return p
 
     # Fetch all polls from datastore
+    # flag_count is the number of flags that are required before being excluded from the search (defaults to 3)
     @classmethod
-    def fetch_all(cls, order_by=None):
+    def fetch_all(cls, order_by=None, flag_count=3):
         if (order_by is None):  # First as most common case
-            return Poll.query().fetch()
+            return Poll.query(Poll.flag <flag_count).fetch()
         elif (order_by == "newest"):
-            return Poll.query().order(-Poll.datetime).fetch()
+            return Poll.query(Poll.flag <flag_count).order(-Poll.datetime).fetch()
         elif (order_by == "oldest"):
-            return Poll.query().order(Poll.datetime).fetch()
+            return Poll.query(Poll.flag <flag_count).order(Poll.datetime).fetch()
         elif (order_by == "hottest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
+            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "coldest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
+            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "easiest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
+            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
         elif (order_by == "hardest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: -Response.query(ancestor=poll.key).count())
+            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -Response.query(ancestor=poll.key).count())
         raise ValueError()  # order_by not in specified list
 
     # Get poll from datastore by ID
@@ -58,29 +97,34 @@ class Poll(ndb.Model):
         key = ndb.Key(urlsafe=id)
         return key.get()
 
+    # Get the flagged polls from the datastore
+    @classmethod
+    def get_flagged(cls, flag_count=3):
+        return Poll.query(Poll.flag >= flag_count).fetch()
+
 
 # Response object model
-class Response(ndb.Model):
+class Response(NomNomModel):
     response_str = ndb.StringProperty()
     upv = ndb.IntegerProperty()
     dnv = ndb.IntegerProperty()
-    flag = ndb.IntegerProperty()
     score = ndb.ComputedProperty(lambda self: self.upv - self.dnv)
     voted_users = ndb.JsonProperty()
-    flagged_users = ndb.JsonProperty()
 
     # Initialise a new response object with 0 upv and dnv maintaining kwargs to parent
     def __init__(self, **kwargs):
         super(Response, self).__init__(**kwargs) # Call parent constructor
         self.upv = 0
         self.dnv = 0
-        self.flag = 0
         self.voted_users = {}
-        self.flagged_users = {}
 
-
+    # Get the id of the response
     def get_id(self):
         return self.key.id()
+
+    # Get the id of the parent poll
+    def get_poll_id(self):
+        return self.key.parent().urlsafe()
 
     # Add up-vote to response
     def upvote(self, cookieValue):
@@ -120,19 +164,13 @@ class Response(ndb.Model):
 
         self.put()
 
-    # Increase flag count
-    def update_flag(self, cookie_value):
-        # Only allow users to flag once
-        if cookie_value not in self.flagged_users:
-            self.flagged_users[cookie_value] = 0
-            self.flag += 1
-            self.put()
-
     # Add response to datastore
     @classmethod
     def add(cls, poll, response_str):
         r = Response(parent=poll.key, response_str=response_str)
         r.put()
+        # schedule a thread to check the poll for bad language
+        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
         return r
 
     # Get response from datastore
@@ -141,3 +179,8 @@ class Response(ndb.Model):
         poll = ndb.Key(urlsafe=poll_id).get()
         resp_id = int(response_id)
         return Response.get_by_id(resp_id, parent=poll.key)
+
+    # Get flagged responses
+    @classmethod
+    def get_flagged(cls, flag_count=3):
+        return Response.query(Response.flag >= flag_count).fetch()

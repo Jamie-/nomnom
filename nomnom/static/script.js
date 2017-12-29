@@ -18,6 +18,22 @@ $('.vote').click(function() {
     });
 });
 
+// Flag a poll
+$('.poll-flag').click(function () {
+   element = $(this);
+   $.ajax({
+        url: '/poll/' + $(this).data('poll-id') + '/vote/' + $(this).data('vote'),
+        data: {resp_id: $(this).data('resp-id')},
+        type: 'POST',
+        success: function(response) {
+            //No score, so nothing to update
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+});
+
 // Share button popover
 $('#share').popover({
     html: true,
