@@ -109,7 +109,7 @@ button.vote {
 }
 
 /* the flag button for polls */
-button.poll-vote{
+button.poll-flag{
     float: right;
     border: none;
     background: transparent;

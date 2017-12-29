@@ -18,7 +18,7 @@ $('.vote').click(function() {
     });
 });
 //flag a poll
-$('.poll-vote').click(function () {
+$('.poll-flag').click(function () {
    element = $(this);
    $.ajax({
         url: '/poll/' + $(this).data('poll-id') + '/vote/' + $(this).data('vote'),
