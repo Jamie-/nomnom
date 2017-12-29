@@ -1,6 +1,5 @@
 import flask
 from nomnom import app
-from google.appengine.ext.ndb import Key
 from poll import Response, Poll
 from filter import Filter
 
@@ -13,6 +12,7 @@ def check_response():
     if filter.contains_slurs(response.response_str):
         response.mod_flag()
     return '', 200
+
 
 @app.route('/admin/worker/checkpoll', methods=['POST'])
 def check_poll():

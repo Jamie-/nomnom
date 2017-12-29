@@ -1,4 +1,4 @@
-import requests
+import urllib2
 
 ################
 # Filter Class #
@@ -9,8 +9,9 @@ class Filter:
         self._url = "http://www.purgomalum.com/service/containsprofanity?text="
 
     def contains_slurs(self, string):
-        r = requests.get(self._url+string)
-        if r.text == 'true':
+        r = urllib2.urlopen(self._url+string)
+        text = r.read()
+        if text == 'true':
             return True
         else:
             return False
