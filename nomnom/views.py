@@ -10,7 +10,7 @@ def index():
     order = flask.request.args.get("order")
     tag = flask.request.args.get("tag")
     try:
-        return flask.render_template('index.html', polls=Poll.fetch_all(order, tag), order=order)
+        return flask.render_template('index.html', polls=Poll.fetch_all(order, tag), order=order, tag=tag)
     except ValueError:
         flask.abort(400)  # Args invalid
 

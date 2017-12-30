@@ -88,8 +88,12 @@
             $(function() {
               $('.custom-select').on('change', function(){
                 var selected = $(this).find("option:selected").val();
-                // Redirect to show polls of that tag
-                window.location.href ="/?tag=" + selected;
+                // Redirect to show polls of that tag if there is a tag
+                if (selected != "") {
+                    window.location.href = "/?tag=" + selected;
+                } else {
+                    window.location.href = "/";
+                }
               });
             });
         </script>

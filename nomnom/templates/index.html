@@ -6,17 +6,20 @@
     {% if polls|length > 0 %}
         <ul class="nav nav-tabs" style="margin-bottom: 20px">
             <li class="nav-item">
-                <a class="nav-link{% if order == "newest" %} active{% endif %}" href="?order=newest">
+                <a class="nav-link{% if order == "newest" %} active{% endif %}"
+                   href="{% if tag %}?order=newest&tag={{ tag }}{% else %}?order=newest{% endif %}">
                     <i class="fa fa-hourglass"></i> Newest
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link{% if order == "hottest" %} active{% endif %}" href="?order=hottest">
+                <a class="nav-link{% if order == "hottest" %} active{% endif %}" href="?order=hottest"
+                   href="{% if tag == '' %} ?order=hottest {% else %}?order=hottest&tag={{ tag }}{% endif %}">
                     <i class="fa fa-fire"></i> Hottest
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link{% if order == "easiest" %} active{% endif %}" href="?order=easiest">
+                <a class="nav-link{% if order == "easiest" %} active{% endif %}" href="?order=easiest"
+                   href="{% if tag == '' %} ?order=easiest {% else %}?order=easiest&tag={{ tag }}{% endif %}">
                     <i class="fa fa-thumbs-up"></i> Easiest
                 </a>
             </li>
@@ -25,10 +28,6 @@
             <form action="/search" method="get">
                 <div><input type="text" name="search">
                     <input type="submit" value="Search"></div>
-                <div>Search In:</div>
-                <ul class="nav nav-pills nav-stacked">
-
-                </ul>
             </form>
         </div>
     {% endif %}
@@ -92,6 +91,16 @@
             </div>
         {% endif %}
     </div>
+    <script>
+        $(document).on('shown.bs.tab', function (e) {
+           alert("h");
+        });
+        $('[data-target=#first-tab]').click( function(event){
+            alert("h");
+            var order = $(event.target).text().toLowerCase();
+            window.location.href = window.location.href + order;
+        });
+    </script>
 {% endblock %}
 
 {% block script %}
