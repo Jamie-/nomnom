@@ -15,7 +15,7 @@
             <title>{{ APP_NAME }}</title>
         {% endif %}
     </head>
-    <body>
+    <body onload="loadSelect()">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <button class="navbar-toggler bg-dark" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -28,6 +28,20 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/create">Create a Poll</a>
+                        </li>
+                        <li class="nav-item">
+                            <div>
+                                <select class="custom-select" id="dropdown-tags">
+                                  <option value="PEOPLE">People</option>
+                                  <option value="LOCATION">Locations</option>
+                                  <option value="ORGANISATION">Organisations</option>
+                                  <option value="EVENT">Events</option>
+                                  <option value="WORK_OF_ART">Works of Art</option>
+                                  <option value="CONSUMER_GOOD">Consumer Goods</option>
+                                  <option value="">None</option>
+                                  <option value="OTHER">Other</option>
+                                </select>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -55,7 +69,29 @@
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
-
-        {% block script %}{% endblock %}
+        <script>
+            function loadSelect() {
+                // get tag from url if there is a tag set
+                var url = window.location.href,
+                tag = url.substring(url.indexOf("tag=")+4),
+                dropdown = document.getElementById('dropdown-tags');
+                if(url.indexOf("tag=")>-1){
+                    // If there is another param after, remove it
+                    if(tag.indexOf('&')>-1){
+                        tag = tag.substring(0,tag.indexOf("&"));
+                    }
+                    dropdown.value = tag;
+                } else {
+                    dropdown.value = "";
+                }
+            }
+            $(function() {
+              $('.custom-select').on('change', function(){
+                var selected = $(this).find("option:selected").val();
+                // Redirect to show polls of that tag
+                window.location.href ="/?tag=" + selected;
+              });
+            });
+        </script>
     </body>
 </html>
