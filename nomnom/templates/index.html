@@ -47,19 +47,19 @@
                                         {{ r.response_str }}
                                         <div class="pull-right">
                                             <span class="up-score">
-                                                <button class="vote" data-vote="up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
+                                                <button class="vote" data-vote="resp-up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
                                                     <i class="fa fa-arrow-up"></i>
                                                 </button>
                                                 <span style="margin-right: 10px;">{{ r.upv }}</span>
                                             </span>
                                             <span class="down-score">
-                                                <button class="vote" data-vote="down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
+                                                <button class="vote" data-vote="resp-down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
                                                     <i class="fa fa-arrow-down"></i>
                                                 </button>
                                                 <span>{{ r.dnv }}</span>
                                             </span>
                                             <span class="flag-score">
-                                                <button class="vote" data-vote="flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
+                                                <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
                                                     <i class="fa fa-flag"></i>
                                                 </button>
                                             </span>
