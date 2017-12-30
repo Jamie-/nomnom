@@ -8,7 +8,6 @@ import uuid
 class NomNomModel(ndb.Model):
     flag = ndb.IntegerProperty()
     flagged_users = ndb.JsonProperty()
-    datetime = ndb.DateTimeProperty(auto_now_add=True)
 
     def __init__(self, **kwargs):
         super(NomNomModel, self).__init__(**kwargs)
@@ -46,6 +45,7 @@ class Poll(NomNomModel):
     image_url = ndb.StringProperty()
     delete_key = ndb.StringProperty()
     tag = ndb.StringProperty()
+    datetime = ndb.DateTimeProperty(auto_now_add=True)
 
     # get the id of the poll
     def get_id(self):
@@ -78,7 +78,7 @@ class Poll(NomNomModel):
         if (order_by is None):  # First as most common case
             return Poll.query(Poll.flag <flag_count).fetch()
         elif (order_by == "newest"):
-            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -poll.datetime)
+            return sorted(Poll.query().order(-Poll.datetime).fetch(), key=lambda poll: -poll.flag)[:Poll.query(Poll.flag <flag_count).count()]
         elif (order_by == "hottest"):
             return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "easiest"):
