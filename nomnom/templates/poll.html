@@ -8,7 +8,7 @@
     {% endif %}
 
     <div class="card">
-        {% if poll.image_url is not none %}
+        {% if poll.image_url is not none and poll.image_url != "" %}
             <img class="card-img-top" src="{{ poll.image_url }}">
         {% endif %}
         <div class="card-body">
