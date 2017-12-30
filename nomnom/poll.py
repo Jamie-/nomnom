@@ -35,21 +35,25 @@ class Poll(ndb.Model):
 
     # Fetch all polls from datastore
     @classmethod
-    def fetch_all(cls, order_by=None):
+    def fetch_all(cls, order_by=None, tag_value=None):
+        # If there is a tag then write query
+        query = Poll.query()
+        if(tag_value is not None):
+            query = Poll.query(Poll.tag == tag_value)
         if (order_by is None):  # First as most common case
-            return Poll.query().fetch()
+            return query.fetch()
         elif (order_by == "newest"):
-            return Poll.query().order(-Poll.datetime).fetch()
+            return query.order(-Poll.datetime).fetch()
         elif (order_by == "oldest"):
-            return Poll.query().order(Poll.datetime).fetch()
+            return query.order(Poll.datetime).fetch()
         elif (order_by == "hottest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
+            return sorted(query.fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "coldest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
+            return sorted(query.fetch(), key=lambda poll: sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "easiest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
+            return sorted(query.fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
         elif (order_by == "hardest"):
-            return sorted(Poll.query().fetch(), key=lambda poll: -Response.query(ancestor=poll.key).count())
+            return sorted(query.fetch(), key=lambda poll: -Response.query(ancestor=poll.key).count())
         raise ValueError()  # order_by not in specified list
 
     # Get poll from datastore by ID
