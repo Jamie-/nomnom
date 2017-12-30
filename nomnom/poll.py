@@ -8,6 +8,7 @@ import uuid
 class NomNomModel(ndb.Model):
     flag = ndb.IntegerProperty()
     flagged_users = ndb.JsonProperty()
+    datetime = ndb.DateTimeProperty(auto_now_add=True)
 
     def __init__(self, **kwargs):
         super(NomNomModel, self).__init__(**kwargs)
@@ -41,7 +42,6 @@ class NomNomModel(ndb.Model):
 class Poll(NomNomModel):
     title = ndb.StringProperty()
     description = ndb.TextProperty()
-    datetime = ndb.DateTimeProperty(auto_now_add=True)
     email = ndb.StringProperty()
     image_url = ndb.StringProperty()
     delete_key = ndb.StringProperty()
@@ -78,17 +78,11 @@ class Poll(NomNomModel):
         if (order_by is None):  # First as most common case
             return Poll.query(Poll.flag <flag_count).fetch()
         elif (order_by == "newest"):
-            return Poll.query(Poll.flag <flag_count).order(-Poll.datetime).fetch()
-        elif (order_by == "oldest"):
-            return Poll.query(Poll.flag <flag_count).order(Poll.datetime).fetch()
+            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -poll.datetime)
         elif (order_by == "hottest"):
             return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
-        elif (order_by == "coldest"):
-            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "easiest"):
             return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
-        elif (order_by == "hardest"):
-            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -Response.query(ancestor=poll.key).count())
         raise ValueError()  # order_by not in specified list
 
     # Get poll from datastore by ID
