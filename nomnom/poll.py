@@ -121,21 +121,21 @@ class Response(NomNomModel):
         return self.key.parent().urlsafe()
 
     # Add up-vote to response
-    def upvote(self, cookieValue):
+    def upvote(self, cookie_value):
         vote_value = 0
-        if cookieValue in self.voted_users:
-            vote_value = self.voted_users[cookieValue]
+        if cookie_value in self.voted_users:
+            vote_value = self.voted_users[cookie_value]
 
         if vote_value == 1:  # User has previously upvoted (so toggle vote)
             self.upv -= 1
-            self.voted_users[cookieValue] = 0
+            self.voted_users[cookie_value] = 0
         elif vote_value == 0:  # User has no previous vote
             self.upv += 1
-            self.voted_users[cookieValue] = 1
+            self.voted_users[cookie_value] = 1
         elif vote_value == -1:  # User has previously downvoted (so change vote)
             self.upv += 1
             self.dnv -= 1
-            self.voted_users[cookieValue] = 1
+            self.voted_users[cookie_value] = 1
 
         self.put()
 
