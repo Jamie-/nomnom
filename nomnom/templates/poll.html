@@ -15,7 +15,7 @@
             {{ poll.description }}
              <button class="poll-flag" data-vote="poll-flag" data-poll-id = "{{ poll.get_id() }}">
                  {% if poll.flagged_users[cookie] == 1 %}
-                     <i class="fa fa-flag" style="color:#1da1f2"></i>
+                     <i class="fa fa-flag" style="color:#ff0000"></i>
                  {% else %}
                      <i class="fa fa-flag"></i>
                  {% endif %}
@@ -79,7 +79,7 @@
                         <span>
                             <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
                                 {% if r.flagged_users[cookie] == 1 %}
-                                    <i class="fa fa-flag" style="color:#1da1f2"></i>
+                                    <i class="fa fa-flag" style="color:#ff0000"></i>
                                 {% else %}
                                     <i class="fa fa-flag"></i>
                                 {% endif %}

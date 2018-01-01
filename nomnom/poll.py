@@ -32,7 +32,7 @@ class NomNomModel(ndb.Model):
     def update_flag(self, cookie_value):
         # Only allow users to flag once
         if (cookie_value not in self.flagged_users) and (self.flag > -1):
-            self.flagged_users[cookie_value] = 0
+            self.flagged_users[cookie_value] = 1
             self.flag += 1
             self.put()
 
