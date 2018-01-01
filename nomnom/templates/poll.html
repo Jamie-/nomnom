@@ -52,13 +52,21 @@
                     <td class="text-center up-score" style="width: 30%;">
                         <span>
                             <button class="vote" data-vote="resp-up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                                <i class="fa fa-arrow-up"></i>
+                                {% if r.voted_users[cookie] == 1 %}
+                                    <i class="fa fa-arrow-up" style="color:#00ff00"></i>
+                                {% else %}
+                                    <i class="fa fa-arrow-up"></i>
+                                {% endif %}
                             </button>
                             <span>{{ r.upv }}</span>
                         </span>
                         <span>
                             <button class="vote" data-vote="resp-down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                                <i class="fa fa-arrow-down"></i>
+                                {% if r.voted_users[cookie] == -1 %}
+                                    <i class="fa fa-arrow-down" style="color:#ff0000"></i>
+                                {% else %}
+                                    <i class="fa fa-arrow-down"></i>
+                                {% endif %}
                             </button>
                             <span>{{ r.dnv }}</span>
                         </span>
