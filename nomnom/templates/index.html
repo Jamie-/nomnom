@@ -68,7 +68,11 @@
                                             </span>
                                             <span class="flag-score">
                                                 <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
-                                                    <i class="fa fa-flag"></i>
+                                                    {% if r.flagged_users[cookie] == 1 %}
+                                                        <i class="fa fa-flag" style="color:#1da1f2"></i>
+                                                    {% else %}
+                                                        <i class="fa fa-flag"></i>
+                                                    {% endif %}
                                                 </button>
                                             </span>
                                         </div>

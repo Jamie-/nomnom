@@ -13,7 +13,13 @@
         {% endif %}
         <div class="card-body">
             {{ poll.description }}
-             <button class="poll-flag" data-vote="poll-flag" data-poll-id = "{{ poll.get_id() }}"><i class="fa fa-flag"></i> </button>
+             <button class="poll-flag" data-vote="poll-flag" data-poll-id = "{{ poll.get_id() }}">
+                 {% if poll.flagged_users[cookie] == 1 %}
+                     <i class="fa fa-flag" style="color:#1da1f2"></i>
+                 {% else %}
+                     <i class="fa fa-flag"></i>
+                 {% endif %}
+             </button>
         </div>
 
     </div>
@@ -72,7 +78,11 @@
                         </span>
                         <span>
                             <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                                <i class="fa fa-flag"></i>
+                                {% if r.flagged_users[cookie] == 1 %}
+                                    <i class="fa fa-flag" style="color:#1da1f2"></i>
+                                {% else %}
+                                    <i class="fa fa-flag"></i>
+                                {% endif %}
                             </button>
                         </span>
                     </td>
