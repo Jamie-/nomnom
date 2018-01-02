@@ -27,24 +27,30 @@ def create():
 # Search
 @app.route('/search')
 def search():
-    search = flask.request.args.get("q").lower() # Search terms
-    tag = flask.request.args.get("tag")
-    order = flask.request.args.get("order")
-    all_polls = Poll.fetch_all(order, tag)
-    returned_polls = []
-    include = False
-    for p in all_polls:
-        if search in p.title.lower():
-            include=True
-        if search in p.description.lower():
-            include = True
-        responses = p.get_responses()
-        for r in responses:
-            if search in r.response_str.lower():
+    try:
+        search = flask.request.args.get("q").lower() # Search terms
+        tag = flask.request.args.get("tag")
+        if len(tag) == 0:  # If tag is empty, set to none
+            tag = None
+        order = flask.request.args.get("order")
+        all_polls = Poll.fetch_all(order, tag)
+        returned_polls = []
+        include = False
+        for p in all_polls:
+            if search in p.title.lower():
                 include = True
-        if p not in returned_polls and include:
-             returned_polls.append(p)
-    return flask.render_template('index.html', polls=returned_polls, order=order, tag=tag)
+            if search in p.description.lower():
+                include = True
+            responses = p.get_responses()
+            for r in responses:
+                if search in r.response_str.lower():
+                    include = True
+            if p not in returned_polls and include:
+                 returned_polls.append(p)
+            include = False
+        return flask.render_template('index.html', polls=returned_polls, order=order, tag=tag)
+    except ValueError:
+        flask.abort(400)  # Order arg invalid
 
 # View poll and add responses
 @app.route('/poll/<string:poll_id>', methods=['GET', 'POST'])
