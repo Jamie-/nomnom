@@ -83,7 +83,7 @@ class Poll(NomNomModel):
         if (order_by is None):  # First as most common case
             return sorted(query.fetch())
         elif (order_by == "newest"):
-            return sorted(query.order(-Poll.datetime).fetch(), key=lambda poll: -poll.flag)[:query.count()]
+            return query.order(Poll.flag).order(-Poll.datetime).fetch()
         elif (order_by == "hottest"):
             return sorted(query.fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "easiest"):
