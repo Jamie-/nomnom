@@ -32,7 +32,7 @@ class NomNomModel(ndb.Model):
     def update_flag(self, cookie_value):
         # Only allow users to flag once
         if (cookie_value not in self.flagged_users) and (self.flag > -1):
-            self.flagged_users[cookie_value] = 0
+            self.flagged_users[cookie_value] = 1
             self.flag += 1
             self.put()
 
@@ -41,11 +41,11 @@ class NomNomModel(ndb.Model):
 class Poll(NomNomModel):
     title = ndb.StringProperty()
     description = ndb.TextProperty()
-    datetime = ndb.DateTimeProperty(auto_now_add=True)
     email = ndb.StringProperty()
     image_url = ndb.StringProperty()
     delete_key = ndb.StringProperty()
     tag = ndb.StringProperty()
+    datetime = ndb.DateTimeProperty(auto_now_add=True)
 
     # get the id of the poll
     def get_id(self):
@@ -74,21 +74,20 @@ class Poll(NomNomModel):
     # Fetch all polls from datastore
     # flag_count is the number of flags that are required before being excluded from the search (defaults to 3)
     @classmethod
-    def fetch_all(cls, order_by=None, flag_count=3):
+    def fetch_all(cls, order_by=None, tag_value=None, flag_count=3):
+        query = Poll.query(Poll.flag < flag_count)
+        # If there is a tag then limit to that tag
+        if (tag_value is not None):
+            query = Poll.query(Poll.flag < flag_count, Poll.tag == tag_value)
+
         if (order_by is None):  # First as most common case
-            return Poll.query(Poll.flag <flag_count).fetch()
+            return sorted(query.fetch())
         elif (order_by == "newest"):
-            return Poll.query(Poll.flag <flag_count).order(-Poll.datetime).fetch()
-        elif (order_by == "oldest"):
-            return Poll.query(Poll.flag <flag_count).order(Poll.datetime).fetch()
+            return query.order(Poll.flag).order(-Poll.datetime).fetch()
         elif (order_by == "hottest"):
-            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
-        elif (order_by == "coldest"):
-            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
+            return sorted(query.fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "easiest"):
-            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
-        elif (order_by == "hardest"):
-            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -Response.query(ancestor=poll.key).count())
+            return sorted(query.fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
         raise ValueError()  # order_by not in specified list
 
     # Get poll from datastore by ID
@@ -127,21 +126,21 @@ class Response(NomNomModel):
         return self.key.parent().urlsafe()
 
     # Add up-vote to response
-    def upvote(self, cookieValue):
+    def upvote(self, cookie_value):
         vote_value = 0
-        if cookieValue in self.voted_users:
-            vote_value = self.voted_users[cookieValue]
+        if cookie_value in self.voted_users:
+            vote_value = self.voted_users[cookie_value]
 
         if vote_value == 1:  # User has previously upvoted (so toggle vote)
             self.upv -= 1
-            self.voted_users[cookieValue] = 0
+            self.voted_users[cookie_value] = 0
         elif vote_value == 0:  # User has no previous vote
             self.upv += 1
-            self.voted_users[cookieValue] = 1
+            self.voted_users[cookie_value] = 1
         elif vote_value == -1:  # User has previously downvoted (so change vote)
             self.upv += 1
             self.dnv -= 1
-            self.voted_users[cookieValue] = 1
+            self.voted_users[cookie_value] = 1
 
         self.put()
 

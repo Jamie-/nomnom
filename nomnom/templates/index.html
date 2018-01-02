@@ -6,17 +6,17 @@
     {% if polls|length > 0 %}
         <ul class="nav nav-tabs" style="margin-bottom: 20px">
             <li class="nav-item">
-                <a class="nav-link{% if order == "newest" %} active{% endif %}" href="?order=newest">
+                <a class="nav-link{% if order == "newest" %} active{% endif %}" href="?order=newest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
                     <i class="fa fa-hourglass"></i> Newest
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link{% if order == "hottest" %} active{% endif %}" href="?order=hottest">
+                <a class="nav-link{% if order == "hottest" %} active{% endif %}" href="?order=hottest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
                     <i class="fa fa-fire"></i> Hottest
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link{% if order == "easiest" %} active{% endif %}" href="?order=easiest">
+                <a class="nav-link{% if order == "easiest" %} active{% endif %}" href="?order=easiest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
                     <i class="fa fa-thumbs-up"></i> Easiest
                 </a>
             </li>
@@ -48,20 +48,20 @@
                                             {{ r.response_str }}
                                             <div class="pull-right">
                                                 <span class="up-score">
-                                                    <button class="vote" data-vote="up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
-                                                        <i class="fa fa-arrow-up"></i>
+                                                    <button class="vote" data-vote="resp-up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
+                                                        <i class="fa fa-arrow-up {% if r.voted_users[cookie] == 1 %}upvote{% endif %}"></i>
                                                     </button>
                                                     <span style="margin-right: 10px;">{{ r.upv }}</span>
                                                 </span>
                                                 <span class="down-score">
-                                                    <button class="vote" data-vote="down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
-                                                        <i class="fa fa-arrow-down"></i>
+                                                    <button class="vote" data-vote="resp-down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
+                                                        <i class="fa fa-arrow-down {% if r.voted_users[cookie] == -1 %}downvote{% endif %}"></i>
                                                     </button>
                                                     <span>{{ r.dnv }}</span>
                                                 </span>
                                                 <span class="flag-score">
-                                                    <button class="vote" data-vote="flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
-                                                        <i class="fa fa-flag"></i>
+                                                    <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
+                                                        <i class="fa fa-flag {% if r.flagged_users[cookie] == 1 %}flag-active{% endif %}"></i>
                                                     </button>
                                                 </span>
                                             </div>
@@ -97,7 +97,6 @@
                 <h4>Why don't you <a href="/create">create one</a>?</h4>
             </div>
         {% endif %}
-
     </div>
 {% endblock %}
 

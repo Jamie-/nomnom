@@ -29,7 +29,25 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/create">Create a Poll</a>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/">All</a>
+                                <a class="dropdown-item" href="/?tag=PERSON">People</a>
+                                <a class="dropdown-item" href="/?tag=LOCATION">Locations</a>
+                                <a class="dropdown-item" href="/?tag=ORGANIZATION">Organisations</a>
+                                <a class="dropdown-item" href="/?tag=EVENT">Events</a>
+                                <a class="dropdown-item" href="/?tag=WORK OF ART">Works of Art</a>
+                                <a class="dropdown-item" href="/?tag=CONSUMER GOOD">Consumer Goods</a>
+                                <a class="dropdown-item" href="/?tag=OTHER">Other</a>
+                            </div>
+                        </li>
                     </ul>
+                    <form class="form-inline my-2 my-lg-0" action="/search" method="get" id="searchForm">
+                        {% if tag is defined and tag is not none %}<input type="hidden" id="search-tag" name="tag" value="{{ tag }}">{% endif %}
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q" {% if search_term %}value="{{ search_term }}{% endif %}">
+                        <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+                    </form>
                 </div>
             </div>
         </nav>
