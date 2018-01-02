@@ -13,7 +13,9 @@
         {% endif %}
         <div class="card-body">
             {{ poll.description }}
-             <button class="poll-flag" data-vote="poll-flag" data-poll-id = "{{ poll.get_id() }}"><i class="fa fa-flag"></i> </button>
+             <button class="poll-flag" data-vote="poll-flag" data-poll-id = "{{ poll.get_id() }}">
+                 <i class="fa fa-flag {% if poll.flagged_users[cookie] == 1 %}flag-active{% endif %}"></i>
+             </button>
         </div>
 
     </div>
@@ -52,19 +54,19 @@
                     <td class="text-center up-score" style="width: 30%;">
                         <span>
                             <button class="vote" data-vote="resp-up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                                <i class="fa fa-arrow-up"></i>
+                                <i class="fa fa-arrow-up {% if r.voted_users[cookie] == 1 %}upvote{% endif %}"></i>
                             </button>
                             <span>{{ r.upv }}</span>
                         </span>
                         <span>
                             <button class="vote" data-vote="resp-down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                                <i class="fa fa-arrow-down"></i>
+                                <i class="fa fa-arrow-down {% if r.voted_users[cookie] == -1 %}downvote{% endif %}"></i>
                             </button>
                             <span>{{ r.dnv }}</span>
                         </span>
                         <span>
                             <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                                <i class="fa fa-flag"></i>
+                                <i class="fa fa-flag {% if r.flagged_users[cookie] == 1 %}flag-active{% endif %}"></i>
                             </button>
                         </span>
                     </td>

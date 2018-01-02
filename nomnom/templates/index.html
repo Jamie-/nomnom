@@ -48,19 +48,19 @@
                                         <div class="pull-right">
                                             <span class="up-score">
                                                 <button class="vote" data-vote="resp-up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
-                                                    <i class="fa fa-arrow-up"></i>
+                                                    <i class="fa fa-arrow-up {% if r.voted_users[cookie] == 1 %}upvote{% endif %}"></i>
                                                 </button>
                                                 <span style="margin-right: 10px;">{{ r.upv }}</span>
                                             </span>
                                             <span class="down-score">
                                                 <button class="vote" data-vote="resp-down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
-                                                    <i class="fa fa-arrow-down"></i>
+                                                    <i class="fa fa-arrow-down {% if r.voted_users[cookie] == -1 %}downvote{% endif %}"></i>
                                                 </button>
                                                 <span>{{ r.dnv }}</span>
                                             </span>
                                             <span class="flag-score">
                                                 <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
-                                                    <i class="fa fa-flag"></i>
+                                                    <i class="fa fa-flag {% if r.flagged_users[cookie] == 1 %}flag-active{% endif %}"></i>
                                                 </button>
                                             </span>
                                         </div>
