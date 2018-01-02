@@ -8,8 +8,7 @@ import uuid
 def index():
     order = flask.request.args.get("order")
     try:
-        return flask.render_template('index.html', polls=Poll.fetch_all(order),
-                                     order=order, cookie=flask.request.cookies.get('voteData'))
+        return flask.render_template('index.html', polls=Poll.fetch_all(order), order=order, cookie=flask.request.cookies.get('voteData'))
     except ValueError:
         flask.abort(400)  # Args invalid
 
@@ -33,8 +32,7 @@ def poll(poll_id):
     if form.validate_on_submit():
         Response.add(poll, form.response.data)
         flask.flash('Response added', 'success')
-    return flask.render_template('poll.html', title=poll.title, poll=poll,
-                                 responses=poll.get_responses(), form=form, cookie=flask.request.cookies.get('voteData'))
+    return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, cookie=flask.request.cookies.get('voteData'))
 
 # Delete a poll
 @app.route('/poll/<string:poll_id>/delete/<string:delete_key>', methods=['GET', 'POST'])
@@ -52,8 +50,7 @@ def delete_poll(poll_id, delete_key):
         flask.flash('Poll deleted successfully.', 'success')
         return flask.redirect('/', code=302)  # Redirect back to home page
     form = forms.ResponseForm()
-    return flask.render_template('poll.html', title=poll.title, poll=poll,
-                                 responses=poll.get_responses(), form=form, delete_form=delete_form, delete=True)
+    return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, delete_form=delete_form, delete=True)
 
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
