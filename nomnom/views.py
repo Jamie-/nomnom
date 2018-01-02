@@ -27,24 +27,24 @@ def create():
 # Search
 @app.route('/search')
 def search():
-    search = flask.request.args.get("q").lower()
+    search = flask.request.args.get("q").lower() # Search terms
     tag = flask.request.args.get("tag")
     order = flask.request.args.get("order")
-    allPolls = Poll.fetch_all(order, tag)
-    returnedPolls = list()
-    addToPoll = False
-    for p in allPolls:
+    all_polls = Poll.fetch_all(order, tag)
+    returned_polls = []
+    include = False
+    for p in all_polls:
         if search in p.title.lower():
-            addToPoll=True
+            include=True
         if search in p.description.lower():
-            addToPoll = True
+            include = True
         responses = p.get_responses()
         for r in responses:
             if search in r.response_str.lower():
-                addToPoll = True
-        if p not in returnedPolls and addToPoll:
-             returnedPolls.append(p)
-    return flask.render_template('index.html', polls=returnedPolls, order=order, tag=tag)
+                include = True
+        if p not in returned_polls and include:
+             returned_polls.append(p)
+    return flask.render_template('index.html', polls=returned_polls, order=order, tag=tag)
 
 # View poll and add responses
 @app.route('/poll/<string:poll_id>', methods=['GET', 'POST'])
