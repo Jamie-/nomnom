@@ -82,16 +82,6 @@
             </div>
         {% endif %}
     </div>
-    <script>
-        $(document).on('shown.bs.tab', function (e) {
-           alert("h");
-        });
-        $('[data-target=#first-tab]').click( function(event){
-            alert("h");
-            var order = $(event.target).text().toLowerCase();
-            window.location.href = window.location.href + order;
-        });
-    </script>
 {% endblock %}
 
 {% block script %}
