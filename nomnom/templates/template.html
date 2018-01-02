@@ -44,7 +44,7 @@
                         </li>
                     </ul>
                     <form class="form-inline my-2 my-lg-0" action="/search" method="get" id="searchForm">
-                        <input type="hidden" id="search-tag" name="tag" {% if tag is defined %}value="{{ tag }}"{% endif %}>
+                        <input type="hidden" id="search-tag" name="tag" {% if tag is defined and tag is not none %}value="{{ tag }}"{% endif %}>
                         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
                         <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
                     </form>
