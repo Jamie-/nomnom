@@ -24,6 +24,21 @@ def create():
         return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
 
+# Search
+@app.route('/search')
+def search():
+    search = flask.request.args.get("search").lower()
+    tag = flask.request.args.get("tag")
+    order = flask.request.args.get("order")
+    allPolls = Poll.fetch_all(order, tag)
+    returnedPolls = list()
+    for p in allPolls:
+        if search in p.title.lower():
+            returnedPolls.append(p)
+        if search in p.description.lower():
+            returnedPolls.append(p)
+    return flask.render_template('index.html', polls=returnedPolls, order=order, tag=tag)
+
 # View poll and add responses
 @app.route('/poll/<string:poll_id>', methods=['GET', 'POST'])
 def poll(poll_id):
@@ -73,23 +88,6 @@ def poll_vote(poll_id, vote_type):
     resp = flask.jsonify({'score': (r.upv - r.dnv), 'up': r.upv, 'down': r.dnv})
     resp.set_cookie('voteData', cookie)
     return resp
-
-# Sort by category
-@app.route('/sort', methods=['GET', 'POST'])
-def sort(self):
-    tag = flask.request.args.get("tag")
-    return flask.render_template('index.html', polls=Poll.query().filter(Poll.tag == tag))
-
-# Search
-@app.route('/search', methods=['GET', 'POST'])
-def search(self):
-    search = flask.request.args.get("search").lower()
-    allPolls = Poll.fetch_all()
-    returnedPolls = list()
-    for p in allPolls:
-        if search in p.title.lower():
-            returnedPolls.append(p)
-    return flask.render_template('index.html', polls=returnedPolls)
 
 ## Error Handlers
 @app.errorhandler(400)
