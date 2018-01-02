@@ -112,6 +112,9 @@ a:hover {
     box-shadow: none;
 }
 
+.dropdown-item.active, .dropdown-item:active {
+    background-color: #800000;
+}
 
 /* Font Awesome Icon Hovers */
 
