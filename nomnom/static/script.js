@@ -7,22 +7,27 @@ $('.vote').click(function() {
         type: 'POST',
         success: function(response) {
             // Update total score
-            element.parent().parent().parent().find('.score').html(response['score']);
+            var score = element.parent().parent().find('.score');
+            if (score.length !== 0) {
+                score.html(response['score']);
+            } else {
+                element.parent().parent().parent().find('.score').html(response['score']);
+            }
             // Update up-vote, down-vote and flag-vote scores
             element.parent().parent().find('.up-score span').html(response['up']);
             element.parent().parent().find('.down-score span').html(response['down']);
             // Show arrow as pressed
             if (response['up'] === 1) {
                 element.find('i').addClass('upvote');
+                element.parent().parent().find('.down-score i').removeClass('downvote');
             } else {
                 element.find('i').removeClass('upvote');
-                //TODO Clear style on down-vote icon
             }
             if (response['down'] === 1) {
                 element.find('i').addClass('downvote');
+                element.parent().parent().find('.up-score i').removeClass('upvote');
             } else {
                 element.find('i').removeClass('downvote');
-                //TODO Clear style on up-vote icon
             }
         },
         error: function(error) {
