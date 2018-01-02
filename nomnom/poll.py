@@ -81,7 +81,7 @@ class Poll(NomNomModel):
             query = Poll.query(Poll.flag < flag_count, Poll.tag == tag_value)
 
         if (order_by is None):  # First as most common case
-            return sorted(query.fetch()
+            return sorted(query.fetch())
         elif (order_by == "newest"):
             return sorted(query.order(-Poll.datetime).fetch(), key=lambda poll: -poll.flag)[:query.count()]
         elif (order_by == "hottest"):
