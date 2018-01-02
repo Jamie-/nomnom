@@ -28,9 +28,12 @@ def create():
 @app.route('/search')
 def search():
     try:
-        search = flask.request.args.get("q").lower() # Search terms
+        search = flask.request.args.get("q")  # Search terms
+        if search is None:  # When using /search, q should always be provided
+            flask.abort(400)
+        search = search.lower()
         tag = flask.request.args.get("tag")
-        if len(tag) == 0:  # If tag is empty, set to none
+        if tag is not None and len(tag) == 0:  # If tag is empty, set to none
             tag = None
         order = flask.request.args.get("order")
         all_polls = Poll.fetch_all(order, tag)
@@ -48,7 +51,7 @@ def search():
             if p not in returned_polls and include:
                  returned_polls.append(p)
             include = False
-        return flask.render_template('index.html', polls=returned_polls, order=order, tag=tag)
+        return flask.render_template('index.html', polls=returned_polls, order=order, tag=tag, search_term=search)
     except ValueError:
         flask.abort(400)  # Order arg invalid
 
