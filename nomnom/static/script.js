@@ -11,6 +11,19 @@ $('.vote').click(function() {
             // Update up-vote, down-vote and flag-vote scores
             element.parent().parent().find('.up-score span').html(response['up']);
             element.parent().parent().find('.down-score span').html(response['down']);
+            // Show arrow as pressed
+            if (response['up'] === 1) {
+                element.find('i').addClass('upvote');
+            } else {
+                element.find('i').removeClass('upvote');
+                //TODO Clear style on down-vote icon
+            }
+            if (response['down'] === 1) {
+                element.find('i').addClass('downvote');
+            } else {
+                element.find('i').removeClass('downvote');
+                //TODO Clear style on up-vote icon
+            }
         },
         error: function(error) {
             console.log(error);
@@ -27,7 +40,7 @@ $('.poll-flag').click(function () {
         type: 'POST',
         success: function(response) {
             // Show flag button as pressed
-            element.find('.fa-flag').addClass('flag-active');
+            element.find('i').addClass('flag-active');
         },
         error: function(error) {
             console.log(error);
