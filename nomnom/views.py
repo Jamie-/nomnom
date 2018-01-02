@@ -27,7 +27,7 @@ def create():
 # Search
 @app.route('/search')
 def search():
-    search = flask.request.args.get("search").lower()
+    search = flask.request.args.get("q").lower()
     tag = flask.request.args.get("tag")
     order = flask.request.args.get("order")
     allPolls = Poll.fetch_all(order, tag)
