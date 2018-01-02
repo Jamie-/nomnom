@@ -74,15 +74,20 @@ class Poll(NomNomModel):
     # Fetch all polls from datastore
     # flag_count is the number of flags that are required before being excluded from the search (defaults to 3)
     @classmethod
-    def fetch_all(cls, order_by=None, flag_count=3):
+    def fetch_all(cls, order_by=None, tag_value=None, flag_count=3):
+        query = Poll.query(Poll.flag < flag_count)
+        # If there is a tag then limit to that tag
+        if (tag_value is not None):
+            query = Poll.query(Poll.flag < flag_count, Poll.tag == tag_value)
+
         if (order_by is None):  # First as most common case
-            return Poll.query(Poll.flag <flag_count).fetch()
+            return sorted(query.fetch())
         elif (order_by == "newest"):
-            return sorted(Poll.query().order(-Poll.datetime).fetch(), key=lambda poll: -poll.flag)[:Poll.query(Poll.flag <flag_count).count()]
+            return query.order(Poll.flag).order(-Poll.datetime).fetch()
         elif (order_by == "hottest"):
-            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
+            return sorted(query.fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
         elif (order_by == "easiest"):
-            return sorted(Poll.query(Poll.flag <flag_count).fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
+            return sorted(query.fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
         raise ValueError()  # order_by not in specified list
 
     # Get poll from datastore by ID

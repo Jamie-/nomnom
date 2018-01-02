@@ -94,6 +94,27 @@ a:hover {
     box-shadow: none;
 }
 
+.btn-outline-secondary {
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.btn-outline-secondary:hover {
+    background-color: rgba(255,255,255,.75);
+    border-color: rgba(255,255,255,.75);
+}
+
+.btn-outline-secondary:not([disabled]):not(.disabled).active,
+.btn-outline-secondary:not([disabled]):not(.disabled):active,
+.show > .btn-outline-secondary.dropdown-toggle {
+    background-color: rgba(255,255,255,.75);
+    border-color: rgba(255,255,255,.75);
+    box-shadow: none;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    background-color: #800000;
+}
 
 /* Font Awesome Icon Hovers */
 

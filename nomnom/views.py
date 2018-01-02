@@ -7,8 +7,9 @@ import uuid
 @app.route('/')
 def index():
     order = flask.request.args.get("order")
+    tag = flask.request.args.get("tag")
     try:
-        return flask.render_template('index.html', polls=Poll.fetch_all(order), order=order, cookie=flask.request.cookies.get('voteData'))
+        return flask.render_template('index.html', polls=Poll.fetch_all(order, tag), order=order, tag=tag, cookie=flask.request.cookies.get('voteData'))
     except ValueError:
         flask.abort(400)  # Args invalid
 
@@ -21,6 +22,37 @@ def create():
         flask.flash('Poll created successfully', 'success')
         return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
+
+# Search
+@app.route('/search')
+def search():
+    try:
+        search = flask.request.args.get("q")  # Search terms
+        if search is None:  # When using /search, q should always be provided
+            flask.abort(400)
+        search = search.lower()
+        tag = flask.request.args.get("tag")
+        if tag is not None and len(tag) == 0:  # If tag is empty, set to none
+            tag = None
+        order = flask.request.args.get("order")
+        all_polls = Poll.fetch_all(order, tag)
+        returned_polls = []
+        include = False
+        for p in all_polls:
+            if search in p.title.lower():
+                include = True
+            if search in p.description.lower():
+                include = True
+            responses = p.get_responses()
+            for r in responses:
+                if search in r.response_str.lower():
+                    include = True
+            if p not in returned_polls and include:
+                 returned_polls.append(p)
+            include = False
+        return flask.render_template('index.html', polls=returned_polls, order=order, tag=tag, search_term=search)
+    except ValueError:
+        flask.abort(400)  # Order arg invalid
 
 # View poll and add responses
 @app.route('/poll/<string:poll_id>', methods=['GET', 'POST'])
