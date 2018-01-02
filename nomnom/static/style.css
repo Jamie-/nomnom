@@ -146,6 +146,10 @@ button.poll-flag {
     padding: 0;
 }
 
+/* Tag Text */
+#tag {
+    line-height: 2.5rem;
+}
 
 /* Tag Icon Colours */
 
