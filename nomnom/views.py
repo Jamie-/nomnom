@@ -32,11 +32,18 @@ def search():
     order = flask.request.args.get("order")
     allPolls = Poll.fetch_all(order, tag)
     returnedPolls = list()
+    addToPoll = False
     for p in allPolls:
         if search in p.title.lower():
-            returnedPolls.append(p)
+            addToPoll=True
         if search in p.description.lower():
-            returnedPolls.append(p)
+            addToPoll = True
+        responses = p.get_responses()
+        for r in responses:
+            if search in r.response_str.lower():
+                addToPoll = True
+        if p not in returnedPolls and addToPoll:
+             returnedPolls.append(p)
     return flask.render_template('index.html', polls=returnedPolls, order=order, tag=tag)
 
 # View poll and add responses
