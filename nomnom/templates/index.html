@@ -12,14 +12,14 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link{% if order == "hottest" %} active{% endif %}" href="?order=hottest"
-                   href="{% if tag == '' %} ?order=hottest {% else %}?order=hottest&tag={{ tag }}{% endif %}">
+                <a class="nav-link{% if order == "hottest" %} active{% endif %}"
+                   href="{% if tag %}?order=hottest&tag={{ tag }}{% else %}?order=hottest{% endif %}">
                     <i class="fa fa-fire"></i> Hottest
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link{% if order == "easiest" %} active{% endif %}" href="?order=easiest"
-                   href="{% if tag == '' %} ?order=easiest {% else %}?order=easiest&tag={{ tag }}{% endif %}">
+                <a class="nav-link{% if order == "easiest" %} active{% endif %}"
+                   href="{% if tag %}?order=easiest&tag={{ tag }}{% else %}?order=easiest{% endif %}">
                     <i class="fa fa-thumbs-up"></i> Easiest
                 </a>
             </li>
