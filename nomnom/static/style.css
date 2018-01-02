@@ -132,6 +132,11 @@ button.poll-flag {
     padding: 0;
 }
 
+/* Flagged Poll */
+.flag-active {
+    color: #ff0000;
+}
+
 
 /* Tag Icon Colours */
 

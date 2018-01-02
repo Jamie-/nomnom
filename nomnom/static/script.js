@@ -26,7 +26,8 @@ $('.poll-flag').click(function () {
         data: {resp_id: $(this).data('resp-id')},
         type: 'POST',
         success: function(response) {
-            //No score, so nothing to update
+            // Show flag button as pressed
+            element.find('.fa-flag').addClass('flag-active');
         },
         error: function(error) {
             console.log(error);
