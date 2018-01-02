@@ -36,10 +36,11 @@ class Poll(ndb.Model):
     # Fetch all polls from datastore
     @classmethod
     def fetch_all(cls, order_by=None, tag_value=None):
-        # If there is a tag then write query
         query = Poll.query()
-        if(tag_value is not None):
+        # If there is a tag then limit to that tag
+        if (tag_value is not None):
             query = Poll.query(Poll.tag == tag_value)
+
         if (order_by is None):  # First as most common case
             return query.fetch()
         elif (order_by == "newest"):
