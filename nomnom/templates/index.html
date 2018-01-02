@@ -25,70 +25,72 @@
 
     <div class="row">
         {% if polls|length > 0 %}
-            {% for p in polls %}
-                <div class="container" id="poll-list">
-                    <div class="card">
-                        {% if p.image_url is not none and p.image_url != "" %}
-                            <img class="card-img-top" src="{{ p.image_url }}">
-                        {% endif %}
-                        <div class="card-body">
-                            <div class="container">
-                                <h6 class="card-text">Name my</h6>
-                                <h1 class="card-title">{{ p.title }}</h1>
-                                <p class="card-text">{{ p.description }}</p>
+            <div class="container">
+                <div class="card-columns" id="poll-list">
+                    {% for p in polls %}
+                        <div class="card">
+                            {% if p.image_url is not none and p.image_url != "" %}
+                                <img class="card-img-top" src="{{ p.image_url }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <div class="container">
+                                    <h6 class="card-text">Name my</h6>
+                                    <h1 class="card-title">{{ p.title }}</h1>
+                                    <p class="card-text">{{ p.description }}</p>
+                                </div>
+                            </div>
+                            {% if p.get_responses(3)|length > 0 %}
+                                <ul class="list-group list-group-flush list-group-striped">
+                                    {% for r in p.get_responses(3) %}
+                                        <li class="list-group-item">
+                                            <i class="fa fa-trophy"></i>
+                                            <span class="score" style="margin-right: 20px;">{{ r.upv - r.dnv }}</span>
+                                            {{ r.response_str }}
+                                            <div class="pull-right">
+                                                <span class="up-score">
+                                                    <button class="vote" data-vote="resp-up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
+                                                        <i class="fa fa-arrow-up {% if r.voted_users[cookie] == 1 %}upvote{% endif %}"></i>
+                                                    </button>
+                                                    <span style="margin-right: 10px;">{{ r.upv }}</span>
+                                                </span>
+                                                <span class="down-score">
+                                                    <button class="vote" data-vote="resp-down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
+                                                        <i class="fa fa-arrow-down {% if r.voted_users[cookie] == -1 %}downvote{% endif %}"></i>
+                                                    </button>
+                                                    <span>{{ r.dnv }}</span>
+                                                </span>
+                                                <span class="flag-score">
+                                                    <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
+                                                        <i class="fa fa-flag {% if r.flagged_users[cookie] == 1 %}flag-active{% endif %}"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                            <div class="card-body">
+                                <a href="/poll/{{ p.get_id() }}" class="btn btn-primary">Join in!</a>
+                                {% if p.tag == 'OTHER' %}
+                                    <h5 class="card-text float-right" id="tag"> <i class="fa fa-question-circle"></i> CONSUMER GOOD</h5>
+                                {% elif p.tag == 'PERSON' %}
+                                    <h5 class="card-text float-right" id="tag"> <i class="fa fa-user"></i> {{ p.tag }}</h5>
+                                {% elif p.tag == 'PLACE' %}
+                                    <h5 class="card-text float-right" id="tag"> <i class="fa fa-map-marker"></i> {{ p.tag }}</h5>
+                                {% elif p.tag == 'ORGANIZATION' %}
+                                    <h5 class="card-text float-right" id="tag"> <i class="fa fa-building"></i> {{ p.tag }}</h5>
+                                {% elif p.tag == 'EVENT' %}
+                                    <h5 class="card-text float-right" id="tag"> <i class="fa fa-calendar"></i> {{ p.tag }}</h5>
+                                {% elif p.tag == 'WORK OF ART' %}
+                                    <h5 class="card-text float-right" id="tag"> <i class="fa fa-picture-o"></i> {{ p.tag }}</h5>
+                                {% elif p.tag == 'CONSUMER GOOD' %}
+                                    <h5 class="card-text float-right" id="tag"> <i class="fa fa-beer"></i> {{ p.tag }}</h5>
+                                {% endif %}
                             </div>
                         </div>
-                        {% if p.get_responses(3)|length > 0 %}
-                            <ul class="list-group list-group-flush list-group-striped">
-                                {% for r in p.get_responses(3) %}
-                                    <li class="list-group-item">
-                                        <i class="fa fa-trophy"></i>
-                                        <span class="score" style="margin-right: 20px;">{{ r.upv - r.dnv }}</span>
-                                        {{ r.response_str }}
-                                        <div class="pull-right">
-                                            <span class="up-score">
-                                                <button class="vote" data-vote="resp-up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
-                                                    <i class="fa fa-arrow-up {% if r.voted_users[cookie] == 1 %}upvote{% endif %}"></i>
-                                                </button>
-                                                <span style="margin-right: 10px;">{{ r.upv }}</span>
-                                            </span>
-                                            <span class="down-score">
-                                                <button class="vote" data-vote="resp-down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
-                                                    <i class="fa fa-arrow-down {% if r.voted_users[cookie] == -1 %}downvote{% endif %}"></i>
-                                                </button>
-                                                <span>{{ r.dnv }}</span>
-                                            </span>
-                                            <span class="flag-score">
-                                                <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ p.get_id() }}">
-                                                    <i class="fa fa-flag {% if r.flagged_users[cookie] == 1 %}flag-active{% endif %}"></i>
-                                                </button>
-                                            </span>
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                        <div class="card-body">
-                            <a href="/poll/{{ p.get_id() }}" class="btn btn-primary">Join in!</a>
-                            {% if p.tag == 'OTHER' %}
-                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-question-circle"></i> {{ p.tag }}</h4>
-                            {% elif p.tag == 'PERSON' %}
-                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-user"></i> {{ p.tag }}</h4>
-                            {% elif p.tag == 'PLACE' %}
-                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-map-marker"></i> {{ p.tag }}</h4>
-                            {% elif p.tag == 'ORGANIZATION' %}
-                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-building"></i> {{ p.tag }}</h4>
-                            {% elif p.tag == 'EVENT' %}
-                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-calendar"></i> {{ p.tag }}</h4>
-                            {% elif p.tag == 'WORK OF ART' %}
-                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-picture-o"></i> {{ p.tag }}</h4>
-                            {% elif p.tag == 'CONSUMER GOOD' %}
-                                <h4 class="card-text float-right" id="tag"> <i class="fa fa-beer"></i> {{ p.tag }}</h4>
-                            {% endif %}
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+            </div>
         {% else %}
             <div class="container text-center">
                 <h2>Oh no, there are no polls at the moment.</h2>

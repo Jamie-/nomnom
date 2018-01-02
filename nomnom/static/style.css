@@ -4,8 +4,22 @@ body > div.container {
     padding-top: 2rem;
 }
 
+/* Main home poll list page */
+
 #poll-list .card {
     margin-bottom: 20px;
+}
+
+@media (max-width: 767px) {
+    .card-columns {
+        column-count: 1;
+    }
+}
+
+@media (min-width: 768px) {
+    .card-columns {
+        column-count: 2;
+    }
 }
 
 .site-logo {
@@ -158,6 +172,10 @@ button.poll-flag {
     color: #ff0000;
 }
 
+/* Tag Text */
+#tag {
+    line-height: 2.5rem;
+}
 
 /* Tag Icon Colours */
 
