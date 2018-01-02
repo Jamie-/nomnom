@@ -1,6 +1,11 @@
 {% extends "template.html" %}
 
 {% block container %}
+    {% if poll.flag >= 3 %}
+        <div class="alert alert-danger" role="alert">
+            This poll has been flagged for moderation and will not appear on the main page or in any search results.
+        </div>
+    {% endif %}
     <h1 class="text-center">Name my {{ poll.title }}</h1>
 
     {% if delete is defined and delete %}
