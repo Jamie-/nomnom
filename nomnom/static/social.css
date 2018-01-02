@@ -42,3 +42,10 @@
     padding: 0;
 }
 
+
+/* Sharing link popover & tooltip customisations */
+
+.popover-header {
+    text-align: center;
+    color: #353535;
+}

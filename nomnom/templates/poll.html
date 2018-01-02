@@ -1,6 +1,11 @@
 {% extends "template.html" %}
 
 {% block container %}
+    {% if poll.flag >= 3 %}
+        <div class="alert alert-danger" role="alert">
+            This poll has been flagged for moderation and will not appear on the main page or in any search results.
+        </div>
+    {% endif %}
     <h1 class="text-center">Name my {{ poll.title }}</h1>
 
     {% if delete is defined and delete %}
@@ -8,17 +13,21 @@
     {% endif %}
 
     <div class="card">
-        {% if poll.image_url is not none %}
+        {% if poll.image_url is not none and poll.image_url != "" %}
             <img class="card-img-top" src="{{ poll.image_url }}">
         {% endif %}
         <div class="card-body">
             {{ poll.description }}
+             <button class="poll-flag" data-vote="poll-flag" data-poll-id = "{{ poll.get_id() }}">
+                 <i class="fa fa-flag {% if poll.flagged_users[cookie] == 1 %}flag-active{% endif %}"></i>
+             </button>
         </div>
+
     </div>
 
     <div class="card share-buttons">
         <div class="card-body">
-            <span class="share fa fa-share-alt-square"></span>
+            <span id="share" data-share-url="{{ request.base_url }}" class="share fa fa-share-alt-square"></span>
             <a href="https://www.facebook.com/dialog/share?app_id=145634995501895&display=popup&href={{ url_enc(request.base_url) }}" class="social-btn" role="button">
                 <span class="fa fa-facebook-square facebook"></span>
             </a>
@@ -47,22 +56,24 @@
                 <tr>
                     <td class="text-center" style="width: 10%;"><i class="fa fa-trophy"></i> <span class="score">{{ r.upv - r.dnv }}</span></td>
                     <td>{{ r.response_str }}</td>
-                    <td class="text-center up-score" style="width: 10%;">
-                        <button class="vote" data-vote="up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                            <i class="fa fa-arrow-up"></i>
-                        </button>
-                        <span>{{ r.upv }}</span>
-                    </td>
-                    <td class="text-center down-score" style="width: 10%;">
-                        <button class="vote" data-vote="down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                            <i class="fa fa-arrow-down"></i>
-                        </button>
-                        <span>{{ r.dnv }}</span>
-                    </td>
-                    <td class="text-center flag-score" style="width: 10%;">
-                        <button class="vote" data-vote="flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                            <i class="fa fa-flag"></i>
-                        </button>
+                    <td class="text-center up-score" style="width: 30%;">
+                        <span>
+                            <button class="vote" data-vote="resp-up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
+                                <i class="fa fa-arrow-up {% if r.voted_users[cookie] == 1 %}upvote{% endif %}"></i>
+                            </button>
+                            <span>{{ r.upv }}</span>
+                        </span>
+                        <span>
+                            <button class="vote" data-vote="resp-down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
+                                <i class="fa fa-arrow-down {% if r.voted_users[cookie] == -1 %}downvote{% endif %}"></i>
+                            </button>
+                            <span>{{ r.dnv }}</span>
+                        </span>
+                        <span>
+                            <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
+                                <i class="fa fa-flag {% if r.flagged_users[cookie] == 1 %}flag-active{% endif %}"></i>
+                            </button>
+                        </span>
                     </td>
                 </tr>
             {% endfor %}

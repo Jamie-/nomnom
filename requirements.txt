@@ -1,4 +1,4 @@
 flask_wtf==0.14.2
 google==1.9.3
 google-api-python-client
-werkzeug==0.12.1
+werkzeug==0.12.2
