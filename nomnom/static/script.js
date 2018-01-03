@@ -17,13 +17,13 @@ $('.vote').click(function() {
             element.parent().parent().find('.up-score span').html(response['up']);
             element.parent().parent().find('.down-score span').html(response['down']);
             // Show arrow as pressed
-            if (response['up'] === 1) {
+            if (element.data('vote') === "resp-up") {
                 element.find('i').addClass('upvote');
                 element.parent().parent().find('.down-score i').removeClass('downvote');
             } else {
                 element.find('i').removeClass('upvote');
             }
-            if (response['down'] === 1) {
+            if (element.data('vote') === "resp-down") {
                 element.find('i').addClass('downvote');
                 element.parent().parent().find('.up-score i').removeClass('upvote');
             } else {
