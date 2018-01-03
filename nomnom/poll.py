@@ -46,6 +46,12 @@ class Poll(NomNomModel):
     delete_key = ndb.StringProperty()
     tag = ndb.StringProperty()
     datetime = ndb.DateTimeProperty(auto_now_add=True)
+    visible = ndb.BooleanProperty()
+
+    # can't flag invisible polls
+    def update_flag(self, cookie_value):
+        if self.visible:
+            super(Poll, self).update_flag(cookie_value)
 
     # get the id of the poll
     def get_id(self):
@@ -61,12 +67,14 @@ class Poll(NomNomModel):
 
     # Add poll to datastore
     @classmethod
-    def add(cls, title, description, email, image_url):
+    def add(cls, title, description, email, image_url, visible):
         content_tag = tags.entities_text(title)
-        p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()), tag=content_tag)
+        p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()), tag=content_tag, visible=visible)
         p.put()  # Add to datastore
-        # add a job to a task queue that will check the poll for bad language
-        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
+        # don't check hidden polls
+        if visible:
+            # add a job to a task queue that will check the poll for bad language
+            taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
         if email:
             Email.send_mail(email, p.get_id(), p.delete_key)
         return p
@@ -75,11 +83,10 @@ class Poll(NomNomModel):
     # flag_count is the number of flags that are required before being excluded from the search (defaults to 3)
     @classmethod
     def fetch_all(cls, order_by=None, tag_value=None, flag_count=3):
-        query = Poll.query(Poll.flag < flag_count)
+        query = Poll.query(Poll.visible == True, Poll.flag < flag_count)
         # If there is a tag then limit to that tag
         if (tag_value is not None):
-            query = Poll.query(Poll.flag < flag_count, Poll.tag == tag_value)
-
+            query = Poll.query(Poll.visible == True, Poll.flag < flag_count, Poll.tag == tag_value)
         if (order_by is None):  # First as most common case
             return sorted(query.fetch())
         elif (order_by == "newest"):
@@ -168,9 +175,18 @@ class Response(NomNomModel):
     def add(cls, poll, response_str):
         r = Response(parent=poll.key, response_str=response_str)
         r.put()
-        # schedule a thread to check the poll for bad language
-        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
+        # if the poll is public schedule a thread to check the response for bad language
+        if r.poll_visible():
+            taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
         return r
+
+    def poll_visible(self):
+        return self.key.parent().get().visible
+
+    # don't check responses to hidden polls
+    def update_flag(self, cookie_value):
+        if self.poll_visible():
+            super(Response, self).update_flag(cookie_value)
 
     # Get response from datastore
     @classmethod
