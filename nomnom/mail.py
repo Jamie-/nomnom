@@ -9,15 +9,15 @@ BASE_URL = 'https://nomnom-online.appspot.com/poll/'
 class Email:
 
     @classmethod
-    def send_mail(cls, to, poll_id, delete_key):
+    def send_mail(cls, to, poll_id, delete_key, poll_title):
         post_url = BASE_URL + poll_id
         delete_url = BASE_URL + poll_id + '/delete/' + delete_key
 
         # Read in email body content
-        with open("nomnom/templates/email_template.html", "r") as email_file:
+        with open("nomnom/templates/email_html.html", "r") as email_file:
             email = email_file.read()
         # Fill placeholders with URLs
-        email_html = email.format(post_url, delete_url)
+        email_html = email.format(poll_title, post_url, delete_url)
 
         headers = {
             'Authorization': 'Basic {0}'.format(base64.b64encode('api:' + app.config['MAILGUN_API_KEY'])),

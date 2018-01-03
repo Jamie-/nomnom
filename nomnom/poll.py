@@ -68,7 +68,7 @@ class Poll(NomNomModel):
         # add a job to a task queue that will check the poll for bad language
         taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
         if email:
-            Email.send_mail(email, p.get_id(), p.delete_key)
+            Email.send_mail(email, p.get_id(), p.delete_key, title)
         return p
 
     # Fetch all polls from datastore
