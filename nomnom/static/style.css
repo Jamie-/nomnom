@@ -10,16 +10,24 @@ body > div.container {
     margin-bottom: 20px;
 }
 
-@media (max-width: 767px) {
-    .card-columns {
-        column-count: 1;
+@media (min-width: 767px) {
+    .masonry { /* Masonry container */
+        column-count: 2;
+        column-gap: 1em;
+        horizontalOrder: true;
     }
 }
 
-@media (min-width: 768px) {
-    .card-columns {
-        column-count: 2;
-    }
+.item { /* Masonry bricks or child elements */
+    display: inline-block;
+    margin: 0 0 1em;
+    width: 100%;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .site-logo {

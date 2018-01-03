@@ -14,7 +14,7 @@
 
     <div class="card">
         {% if poll.image_url is not none and poll.image_url != "" %}
-            <img class="card-img-top" src="{{ poll.image_url }}">
+            <img class="img img-responsive full-width" src="{{ poll.image_url }}">
         {% endif %}
         <div class="card-body">
             {{ poll.description }}
@@ -22,7 +22,6 @@
                  <i class="fa fa-flag {% if poll.flagged_users[cookie] == 1 %}flag-active{% endif %}"></i>
              </button>
         </div>
-
     </div>
 
     <div class="card share-buttons">
