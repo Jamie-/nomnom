@@ -11,15 +11,16 @@ body > div.container {
 }
 
 @media (min-width: 767px) {
-    .item {
-        max-width: 48%;
-        float: left;
-        margin-left: 1.5%;
+    .masonry { /* Masonry container */
+        column-count: 2;
+        column-gap: 1em;
+        horizontalOrder: true;
     }
 }
 
 .item { /* Masonry bricks or child elements */
     display: inline-block;
+    margin: 0 0 1em;
     width: 100%;
 }
 
@@ -28,7 +29,6 @@ img {
   width: 100%;
   height: auto;
 }
-
 
 .site-logo {
     display: block;
