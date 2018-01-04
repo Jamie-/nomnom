@@ -9,6 +9,7 @@ class CreateForm(FlaskForm):
     email = fields.StringField('email', validators=[validators.Email(), validators.Optional()])
     image_url = fields.StringField('image-url', validators=[validators.URL(), validators.Optional()])
     description = fields.StringField('description', widget=widgets.TextArea(), validators=[validators.DataRequired()])
+    private = fields.BooleanField('privat', validators=[validators.Optional()])
     submit = fields.SubmitField(label='Create')
 
 # Add response to a poll
