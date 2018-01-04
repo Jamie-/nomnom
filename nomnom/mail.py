@@ -14,7 +14,7 @@ class Email:
         delete_url = BASE_URL + poll_id + '/delete/' + delete_key
 
         # Read in email body content
-        with open("nomnom/templates/email_html.html", "r") as email_file:
+        with open("nomnom/templates/email_html_template.html", "r") as email_file:
             email = email_file.read()
         # Fill placeholders with URLs
         email_html = email.format(poll_title, poll_url, delete_url, poll_image)
