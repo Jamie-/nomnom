@@ -33,7 +33,7 @@
                                 {% if p.image_url is not none and p.image_url != "" %}
                                     <img class="img img-responsive full-width" src="{{ p.image_url }}">
                                 {% endif %}
-                                <div class="card-body">
+                                <div class="card-body poll-card-header">
                                     <div class="container">
                                         <h6 class="card-text">Name my</h6>
                                         <h1 class="card-title">{{ p.title }}</h1>
@@ -125,6 +125,34 @@
             </div>
         {% endraw %}
     </script>
+    <script id="responseTemplate" type="text/x-jsrender">
+        {% raw %}
+            <li class="list-group-item">
+                <i class="fa fa-trophy"></i>
+                <span class="score" style="margin-right: 20px;">{{:score}}</span>
+                {{:string}}
+                <div class="pull-right">
+                    <span class="up-score">
+                        <button class="vote" data-vote="resp-up" data-resp-id="{{:id}}" data-poll-id="{{:poll}}">
+                            <i class="fa fa-arrow-up" title="Up Vote"></i>
+                        </button>
+                        <span style="margin-right: 5px;">{{:upv}}</span>
+                    </span>
+                    <span class="down-score">
+                        <button class="vote" data-vote="resp-down" data-resp-id="{{:id}}" data-poll-id="{{:poll}}">
+                            <i class="fa fa-arrow-down" title="Down Vote"></i>
+                        </button>
+                        <span style="margin-right: 5px;">{{:dnv}}</span>
+                    </span>
+                    <span class="flag-score">
+                        <button class="vote" data-vote="resp-flag" data-resp-id="{{:id}}" data-poll-id="{{:poll}}">
+                            <i class="fa fa-flag" title="Flag as Inappropriate"></i>
+                        </button>
+                    </span>
+                </div>
+            </li>
+        {% endraw %}
+    </script>
     <script>
         var socket = io.connect('http{% if is_production() %}s{% endif %}://' + document.domain + ':' + location.port);
         {% if not is_production() %}
@@ -158,15 +186,12 @@
             }
         });
 
-        // Check to see if poll-list created, if not, create it!
-        function handleEmpty() {
+        function handlePoll(data) {
+            // If no polls yet created, create structure
             if ($('#poll-list').length === 0) {
                 $('#index-container').html('<div class="container"><div class="masonry" id="poll-list"></div></div>');
             }
-        }
 
-        function handlePoll(data) {
-            handleEmpty(); // If no polls yet created, create structure
             // Load and fill poll HTML template
             var tmpl = $.templates("#pollTemplate");
             var tmpl_data = {
@@ -201,6 +226,8 @@
                 default:
                     tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-question-circle"></i> ' + data['tag'] +'</h5>';
             }
+
+            // Insert poll
             $('#poll-list').append(tmpl.render(tmpl_data));
             {% if not is_production() %}
                 console.log("Added poll!");
@@ -208,8 +235,32 @@
         }
 
         function handleResponse(data) {
-            console.log("Data type: response");
-            console.log(data);
+            // Check response structure exists in poll, if not, create it
+            if ($('#poll-' + data['poll'] + ' ul').length === 0) {
+                $('#poll-' + data['poll'] + ' .poll-card-header').after('<ul class="list-group list-group-flush list-group-striped"></div>');
+            }
+
+            // Check limit of 3 responses has not been reached, if so don't do anything
+            if ($('#poll-' + data['poll'] + ' li').length >= 3) {
+                return;
+            }
+
+            // Load and fill response template
+            var tmpl = $.templates("#responseTemplate");
+            var tmpl_data = {
+                id: data['id'],
+                poll: data['poll'],
+                string: data['string'],
+                score: data['score'],
+                upv: data['upv'],
+                dnv: data['dnv']
+            };
+
+            // Insert response
+            $('#poll-' + data['poll'] + ' ul').append(tmpl.render(tmpl_data));
+            {% if not is_production() %}
+                console.log("Added response!");
+            {% endif %}
         }
 
         function handleVote(data) {
