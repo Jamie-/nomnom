@@ -5,10 +5,6 @@
         <div class="alert alert-danger" role="alert">
             This poll has been flagged for moderation and will not appear on the main page or in any search results.
         </div>
-    {% elif not poll.visible %}
-        <div class="alert alert-warning" role="alert">
-            This poll is private and will not appear on the main page or in any search results.
-        </div>
     {% endif %}
     <h1 class="text-center">Name my {{ poll.title }}</h1>
 

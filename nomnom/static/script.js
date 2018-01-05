@@ -17,17 +17,26 @@ $('.vote').click(function() {
             element.parent().parent().find('.up-score span').html(response['up']);
             element.parent().parent().find('.down-score span').html(response['down']);
             // Show arrow as pressed
-            if (response['up'] === 1) {
-                element.find('i').addClass('upvote');
+            if (element.data('vote') === "resp-up") {
+                if(element.find('i').hasClass('upvote'))
+                    element.find('i').removeClass('upvote');
+                else
+                    element.find('i').addClass('upvote');
                 element.parent().parent().find('.down-score i').removeClass('downvote');
             } else {
                 element.find('i').removeClass('upvote');
             }
-            if (response['down'] === 1) {
-                element.find('i').addClass('downvote');
+            if (element.data('vote') === "resp-down") {
+                if(element.find('i').hasClass('downvote'))
+                    element.find('i').removeClass('downvote');
+                else
+                    element.find('i').addClass('downvote');
                 element.parent().parent().find('.up-score i').removeClass('upvote');
             } else {
                 element.find('i').removeClass('downvote');
+            }
+            if (element.data('vote') === "resp-flag") {
+                element.find('i').addClass('flag-active');
             }
         },
         error: function(error) {
