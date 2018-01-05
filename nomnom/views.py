@@ -23,7 +23,7 @@ def create():
         return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
 
-# Search
+# Queries the database to find polls related to a string
 @app.route('/search')
 def search():
     try:
@@ -63,8 +63,15 @@ def poll(poll_id):
             flask.abort(404)
         form = forms.ResponseForm()
         if form.validate_on_submit():
-            Response.add(poll, form.response.data)
-            flask.flash('Response added', 'success')
+            # Check that response doesn't already exist
+            addResponse = True
+            responses = poll.get_responses()
+            for r in responses:
+                if form.response.data == r.response_str:
+                    addResponse = False
+            if addResponse:
+                Response.add(poll, form.response.data)
+                flask.flash('Response added', 'success')
         return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, cookie=flask.request.cookies.get('voteData'))
     except:  # Poll.get_poll() with an invalid ID can return one of many exceptions so leaving this for general case
         # More info see: https://github.com/googlecloudplatform/datastore-ndb-python/issues/143
