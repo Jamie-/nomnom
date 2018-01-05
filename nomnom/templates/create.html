@@ -49,18 +49,18 @@
             <small class="form-text text-muted">Header photo for your poll.</small>
         </div>
         <div class="form-group">
-            <label>Private Poll</label>
-            <div class="input-group">
+            <div class="form-check">
                 {% if form.private.errors %}
-                    {{ form.private(class='form-control is-invalid') }}
+                    {{ form.private(class='form-check-input is-invalid') }}
                 {% else %}
-                    {{ form.private(class='form-control') }}
+                    {{ form.private(class='form-check-input') }}
                 {% endif %}
+                <label class="form-check-label" for="private">Private Poll</label>
+                {% for error in form.private.errors %}
+                    <div class="invalid-feedback d-flex">{{ error }}</div>
+                {% endfor %}
+                <small class="form-text text-muted">Private polls are not moderated, but are also not publicly visible. You must know the URL to access it.</small>
             </div>
-            {% for error in form.private.errors %}
-                <div class="invalid-feedback d-flex">{{ error }}</div>
-            {% endfor %}
-            <small class="form-text text-muted">Private polls are not moderated, but are also not publicly visible</small>
         </div>
         <div class="form-group">
             <label>Description</label>

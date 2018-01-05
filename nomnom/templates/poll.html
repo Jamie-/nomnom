@@ -23,9 +23,9 @@
         <div class="card-body">
             {{ poll.description }}
             {%  if poll.visible %}
-             <button class="poll-flag" data-vote="poll-flag" data-poll-id = "{{ poll.get_id() }}">
-                 <i class="fa fa-flag {% if poll.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
-             </button>
+                <button class="poll-flag" data-vote="poll-flag" data-poll-id = "{{ poll.get_id() }}">
+                    <i class="fa fa-flag {% if poll.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
+                </button>
             {% endif %}
         </div>
     </div>
@@ -75,9 +75,9 @@
                     </td>
                     <td class="text-center flag-score" style="width: 10%;">
                         {% if poll.visible %}
-                        <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                            <i class="fa fa-flag {% if r.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
-                        </button>
+                            <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
+                                <i class="fa fa-flag {% if r.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
+                            </button>
                         {% endif %}
                     </td>
                 </tr>
