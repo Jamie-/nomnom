@@ -43,7 +43,7 @@
                                 {% if p.get_responses(3)|length > 0 %}
                                     <ul class="list-group list-group-flush list-group-striped">
                                         {% for r in p.get_responses(3) %}
-                                            <li class="list-group-item">
+                                            <li class="list-group-item" id="poll-{{ p.get_id() }}-resp-{{ r.get_id() }}">
                                                 <i class="fa fa-trophy"></i>
                                                 <span class="score" style="margin-right: 20px;">{{ r.upv - r.dnv }}</span>
                                                 {{ r.response_str }}
@@ -127,7 +127,7 @@
     </script>
     <script id="responseTemplate" type="text/x-jsrender">
         {% raw %}
-            <li class="list-group-item">
+            <li class="list-group-item" id="poll-{{:poll}}-resp-{{:id}}">
                 <i class="fa fa-trophy"></i>
                 <span class="score" style="margin-right: 20px;">{{:score}}</span>
                 {{:string}}
@@ -264,8 +264,10 @@
         }
 
         function handleVote(data) {
-            console.log("Data type: vote");
-            console.log(data);
+            element = $('#poll-' + data['poll_id'] + '-resp-' + data['response_id']);
+            element.find('span.score').text(data['score']);
+            element.find('span.up-score span').text(data['upv']);
+            element.find('span.down-score span').text(data['dnv']);
         }
     </script>
 {% endblock %}

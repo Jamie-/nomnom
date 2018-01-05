@@ -46,6 +46,7 @@ def push_vote(response):
     if response.poll_visible():  # Only push if containing poll is visible
         data = {}
         data['vote'] = {}
+        data['vote']['poll_id'] = response.get_poll_id()
         data['vote']['response_id'] = response.get_id()
         data['vote']['score'] = response.score
         data['vote']['upv'] = response.upv
