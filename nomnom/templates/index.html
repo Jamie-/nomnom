@@ -23,7 +23,7 @@
         </ul>
     {% endif %}
 
-    <div class="row">
+    <div class="row" id="index-container">
         {% if polls|length > 0 %}
             <div class="container">
                 <div class="masonry" id="poll-list">
@@ -104,6 +104,27 @@
 
 {% block script %}
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!-- Poll Template -->
+    <script id="pollTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="item">
+                <div class="card">
+                    {{:image}}
+                    <div class="card-body">
+                        <div class="container">
+                            <h6 class="card-text">Name my</h6>
+                            <h1 class="card-title">{{:title}}</h1>
+                            <p class="card-text">{{:description}}</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <a href="/poll/{{:id}}" class="btn btn-primary">Join in!</a>
+                        {{:tag}}
+                    </div>
+                </div>
+            </div>
+        {% endraw %}
+    </script>
     <script>
         var socket = io.connect('http{% if is_production() %}s{% endif %}://' + document.domain + ':' + location.port);
         {% if not is_production() %}
@@ -116,15 +137,19 @@
         {% endif %}
 
         socket.on('json', function(json_data) {
-            console.log('Recieved data from server: ', json_data);
+            {% if not is_production() %}
+                console.log('Recieved data from server: ', json_data);
+            {% endif %}
             try {
                 var data = JSON.parse(json_data);
                 if ('poll' in data) {
-                    console.log("Data type: poll");
+                    handlePoll(data['poll']);
                 } else if ('response' in data) {
-                    console.log("Data type: response");
+                    handleResponse(data['response']);
+                } else if ('vote' in data) {
+                    handleVote(data['vote']);
                 } else {
-                    console.log("Data type: unknown")
+                    console.log("Data type: unknown");
                 }
             } catch (e) {
                 {% if not is_production() %}
@@ -132,5 +157,64 @@
                 {% endif %}
             }
         });
+
+        // Check to see if poll-list created, if not, create it!
+        function handleEmpty() {
+            if ($('#poll-list').length === 0) {
+                $('#index-container').html('<div class="container"><div class="masonry" id="poll-list"></div></div>');
+            }
+        }
+
+        function handlePoll(data) {
+            handleEmpty(); // If no polls yet created, create structure
+            // Load and fill poll HTML template
+            var tmpl = $.templates("#pollTemplate");
+            var tmpl_data = {
+                id: data['id'],
+                title: data['title'],
+                description: data['description']
+            };
+            if ('image_url' in data) {
+                tmpl_data.image = '<img class="img img-responsive full-width" src="' + data['image_url'] + '">';
+            } else {
+                tmpl_data.image = '';
+            }
+            switch(data['tag'].toUpperCase()) {
+                case 'PERSON':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-user"></i> ' + data['tag'] +'</h5>';
+                    break;
+                case 'PLACE':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-map-marker"></i> ' + data['tag'] +'</h5>';
+                    break;
+                case 'ORGANIZATION':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-building"></i> ' + data['tag'] +'</h5>';
+                    break;
+                case 'EVENT':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-calendar"></i> ' + data['tag'] +'</h5>';
+                    break;
+                case 'WORK OF ART':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-picture-o"></i> ' + data['tag'] +'</h5>';
+                    break;
+                case 'CONSUMER GOOD':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-beer"></i> ' + data['tag'] +'</h5>';
+                    break;
+                default:
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-question-circle"></i> ' + data['tag'] +'</h5>';
+            }
+            $('#poll-list').append(tmpl.render(tmpl_data));
+            {% if not is_production() %}
+                console.log("Added poll!");
+            {% endif %}
+        }
+
+        function handleResponse(data) {
+            console.log("Data type: response");
+            console.log(data);
+        }
+
+        function handleVote(data) {
+            console.log("Data type: vote");
+            console.log(data);
+        }
     </script>
 {% endblock %}
