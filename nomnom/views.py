@@ -67,7 +67,7 @@ def poll(poll_id):
             addResponse = True
             responses = poll.get_responses()
             for r in responses:
-                if form.response.data == r.response_str:
+                if form.response.data.lower() == r.response_str.lower():
                     addResponse = False
             if addResponse:
                 Response.add(poll, form.response.data)
