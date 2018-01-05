@@ -36,6 +36,9 @@
                                 {% endif %}
                                 <div class="card-body">
                                     <div class="container">
+                                        <button class="poll-flag float-right" data-vote="poll-flag" data-poll-id = "{{ p.get_id() }}">
+                                            <i class="fa fa-flag {% if p.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
+                                        </button>
                                         <h6 class="card-text">Name my</h6>
                                         <h1 class="card-title">{{ p.title }}</h1>
                                         <p class="card-text">{{ p.description }}</p>
