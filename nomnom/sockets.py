@@ -31,6 +31,7 @@ def push_response(response):
         data = {}
         data['response'] = {}
         data['response']['id'] = response.get_id()
+        data['response']['poll'] = response.get_poll_id()
         data['response']['string'] = response.response_str
         socketio.send(json.dumps(data), json=True)
     else:  # Only push to users viewing the poll
