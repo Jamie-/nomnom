@@ -1,5 +1,5 @@
 // Update score and return results on .vote event
-$('.vote').click(function() {
+$(document).on('click', '.vote', function() {
     element = $(this); // Element event handler bound to
     $.ajax({
         url: '/poll/' + $(this).data('poll-id') + '/vote/' + $(this).data('vote'),
@@ -47,7 +47,7 @@ $('.vote').click(function() {
 });
 
 // Flag a poll
-$('.poll-flag').click(function () {
+$(document).on('click', '.poll-flag', function() {
    element = $(this);
    $.ajax({
         url: '/poll/' + $(this).data('poll-id') + '/vote/' + $(this).data('vote'),
