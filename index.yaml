@@ -10,11 +10,6 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-- kind: Poll
-  properties:
-  - name: visible
-  - name: flag
-
 - kind: Response
   ancestor: yes
   properties:
