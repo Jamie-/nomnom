@@ -16,9 +16,9 @@ $('.vote').click(function() {
             // Update up-vote, down-vote and flag-vote scores
             element.parent().parent().find('.up-score span').html(response['up']);
             element.parent().parent().find('.down-score span').html(response['down']);
-            // Show arrow as pressed
+            // Show arrow as pressed when clicked
             if (element.data('vote') === "resp-up") {
-                if(element.find('i').hasClass('upvote'))
+                if (element.find('i').hasClass('upvote'))
                     element.find('i').removeClass('upvote');
                 else
                     element.find('i').addClass('upvote');
@@ -27,7 +27,7 @@ $('.vote').click(function() {
                 element.find('i').removeClass('upvote');
             }
             if (element.data('vote') === "resp-down") {
-                if(element.find('i').hasClass('downvote'))
+                if (element.find('i').hasClass('downvote'))
                     element.find('i').removeClass('downvote');
                 else
                     element.find('i').addClass('downvote');
@@ -35,6 +35,7 @@ $('.vote').click(function() {
             } else {
                 element.find('i').removeClass('downvote');
             }
+            // Show flag as pressed when clicked
             if (element.data('vote') === "resp-flag") {
                 element.find('i').addClass('flag-active');
             }
