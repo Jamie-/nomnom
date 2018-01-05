@@ -1,6 +1,7 @@
 from google.appengine.ext import ndb
 from google.appengine.api import taskqueue
 import nomnom.tags as tags
+from nomnom import events
 from mail import Email
 import uuid
 
@@ -77,6 +78,7 @@ class Poll(NomNomModel):
             taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
         if email:
             Email.send_mail(email, p.get_id(), p.delete_key)
+        events.poll_created_event(p)
         return p
 
     # Fetch all polls from datastore
@@ -149,6 +151,7 @@ class Response(NomNomModel):
             self.dnv -= 1
             self.voted_users[cookie_value] = 1
 
+        events.vote_event(self)
         self.put()
 
     # Add down-vote to response
@@ -168,6 +171,7 @@ class Response(NomNomModel):
             self.dnv += 1
             self.voted_users[cookieValue] = -1
 
+        events.vote_event(self)
         self.put()
 
     # Add response to datastore
@@ -178,6 +182,7 @@ class Response(NomNomModel):
         # if the poll is public schedule a thread to check the response for bad language
         if r.poll_visible():
             taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
+        events.response_event(r)
         return r
 
     def poll_visible(self):

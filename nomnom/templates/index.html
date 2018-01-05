@@ -104,4 +104,33 @@
 
 {% block script %}
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        var socket = io.connect('http{% if is_production() %}s{% endif %}://' + document.domain + ':' + location.port);
+        {% if not is_production() %}
+            socket.on('connect', function() {
+                console.log('Client connected to server');
+            });
+            socket.on('message', function(msg) {
+                console.log('Response from server: ', msg)
+            });
+        {% endif %}
+
+        socket.on('json', function(json_data) {
+            console.log('Recieved data from server: ', json_data);
+            try {
+                var data = JSON.parse(json_data);
+                if ('poll' in data) {
+                    console.log("Data type: poll");
+                } else if ('response' in data) {
+                    console.log("Data type: response");
+                } else {
+                    console.log("Data type: unknown")
+                }
+            } catch (e) {
+                {% if not is_production() %}
+                    console.log("ERROR: ", e);
+                {% endif %}
+            }
+        });
+    </script>
 {% endblock %}
