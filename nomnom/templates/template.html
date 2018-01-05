@@ -32,6 +32,16 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category</a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {% if tag_url is defined  and tag_url is not none%}
+                                <a class="dropdown-item" href="{{ tag_url[:-1] }}">All</a>
+                                <a class="dropdown-item" href="{{ tag_url }}tag=PERSON">People</a>
+                                <a class="dropdown-item" href="{{ tag_url }}tag=LOCATION">Locations</a>
+                                <a class="dropdown-item" href="{{ tag_url }}tag=ORGANIZATION">Organisations</a>
+                                <a class="dropdown-item" href="{{ tag_url }}tag=EVENT">Events</a>
+                                <a class="dropdown-item" href="{{ tag_url }}tag=WORK OF ART">Works of Art</a>
+                                <a class="dropdown-item" href="{{ tag_url }}tag=CONSUMER GOOD">Consumer Goods</a>
+                                <a class="dropdown-item" href="{{ tag_url }}tag=OTHER">Other</a>
+                                {% else %}
                                 <a class="dropdown-item" href="/">All</a>
                                 <a class="dropdown-item" href="/?tag=PERSON">People</a>
                                 <a class="dropdown-item" href="/?tag=LOCATION">Locations</a>
@@ -40,6 +50,7 @@
                                 <a class="dropdown-item" href="/?tag=WORK OF ART">Works of Art</a>
                                 <a class="dropdown-item" href="/?tag=CONSUMER GOOD">Consumer Goods</a>
                                 <a class="dropdown-item" href="/?tag=OTHER">Other</a>
+                                {% endif %}
                             </div>
                         </li>
                     </ul>
