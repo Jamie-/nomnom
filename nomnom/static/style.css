@@ -1,9 +1,5 @@
 /* Custom CSS File */
 
-body > div.container {
-    padding-top: 2rem;
-}
-
 /* Main home poll list page */
 
 #poll-list .card {
@@ -16,6 +12,11 @@ body > div.container {
         column-gap: 1em;
         horizontalOrder: true;
     }
+}
+
+.navbar {
+    position: fixed;
+    width: 100%;
 }
 
 .item { /* Masonry bricks or child elements */
@@ -33,6 +34,10 @@ img {
 .site-logo {
     display: block;
     max-height: 200px!important;
+}
+
+.logo-text{
+    alignment: center;
     margin-bottom: 20px;
 }
 
