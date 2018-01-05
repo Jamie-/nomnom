@@ -14,6 +14,13 @@ indexes:
   properties:
   - name: visible
   - name: flag
+  - name: datetime
+    direction: desc
+
+- kind: Poll
+  properties:
+  - name: visible
+  - name: flag
 
 - kind: Response
   ancestor: yes
