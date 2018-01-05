@@ -68,7 +68,7 @@ class Poll(NomNomModel):
     # Add poll to datastore
     @classmethod
     def add(cls, title, description, email, image_url, visible):
-        content_tag = tags.entities_text(title)
+        content_tag = tags.analyze_entities(title)
         p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()), tag=content_tag, visible=visible)
         p.put()  # Add to datastore
         # don't check hidden polls
