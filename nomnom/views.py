@@ -82,20 +82,24 @@ def poll(poll_id):
 # Delete a poll
 @app.route('/poll/<string:poll_id>/delete/<string:delete_key>', methods=['GET', 'POST'])
 def delete_poll(poll_id, delete_key):
-    poll = Poll.get_poll(poll_id)
-    if poll is None:
+    try:
+        poll = Poll.get_poll(poll_id)
+        if poll is None:
+            flask.abort(404)
+        if poll.delete_key != delete_key:
+            flask.abort(403)
+        delete_form = forms.DeleteForm()
+        if delete_form.validate_on_submit():
+            poll.key.delete()
+            import time
+            time.sleep(0.5)
+            flask.flash('Poll deleted successfully.', 'success')
+            return flask.redirect('/', code=302)  # Redirect back to home page
+        form = forms.ResponseForm()
+        return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, delete_form=delete_form, delete=True)
+    except:  # Poll.get_poll() with an invalid ID can return one of many exceptions so leaving this for general case
+        # More info see: https://github.com/googlecloudplatform/datastore-ndb-python/issues/143
         flask.abort(404)
-    if poll.delete_key != delete_key:
-        flask.abort(403)
-    delete_form = forms.DeleteForm()
-    if delete_form.validate_on_submit():
-        poll.key.delete()
-        import time
-        time.sleep(0.5)
-        flask.flash('Poll deleted successfully.', 'success')
-        return flask.redirect('/', code=302)  # Redirect back to home page
-    form = forms.ResponseForm()
-    return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, delete_form=delete_form, delete=True)
 
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
