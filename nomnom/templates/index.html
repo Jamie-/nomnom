@@ -27,9 +27,9 @@
     <div class="row">
         {% if polls|length > 0 %}
             <div class="container">
-                <div class="masonry" id="poll-list">
+                <div class="grid" data-masonry='{ "itemSelector": ".grid-item", "isFitWidth": true }' id="poll-list">
                     {% for p in polls %}
-                        <div class="item">
+                        <div class="grid-item">
                             <div class="card">
                                 {% if p.image_url is not none and p.image_url != "" %}
                                     <img class="img img-responsive full-width" src="{{ p.image_url }}">
