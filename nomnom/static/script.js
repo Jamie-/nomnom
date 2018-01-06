@@ -90,8 +90,3 @@ function copyToClip(element) {
         $(element).tooltip('hide');
     }, 500);
 }
-
-$('.grid').masonry({
-  itemSelector: '.grid-item',
-  isFitWidth: true
-});
