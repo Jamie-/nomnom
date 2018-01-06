@@ -1,13 +1,13 @@
 import flask
 from nomnom import app
 import forms
+import tags
 from poll import Poll, Response
-from tags import gen_tag_url
 import uuid
 
 @app.route('/')
 def index():
-    tag_url = gen_tag_url(flask.request)
+    tag_url = tags.gen_tag_url(flask.request)
     order = flask.request.args.get("order")
     tag = flask.request.args.get("tag")
     try:
@@ -29,7 +29,7 @@ def create():
 @app.route('/search')
 def search():
     try:
-        tag_url = gen_tag_url(flask.request)
+        tag_url = tags.gen_tag_url(flask.request)
         search = flask.request.args.get("q")  # Search terms
         if search is None:  # When using /search, q should always be provided
             flask.abort(400)
