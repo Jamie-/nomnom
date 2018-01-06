@@ -1,6 +1,7 @@
 from google.appengine.ext import ndb
 from google.appengine.api import taskqueue
 import nomnom.tags as tags
+import re
 from mail import Email
 import uuid
 
@@ -72,6 +73,13 @@ class Poll(NomNomModel):
             if r.response_str.lower().strip() == response_string.lower().strip():
                 return False
         return True
+
+    # Check if response has any letter
+    def check_valid_response(self, response_string):
+        match = re.search('[a-zA-Z]', response_string)
+        if match:
+            return True
+        return False
 
     # Add poll to datastore
     @classmethod
