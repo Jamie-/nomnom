@@ -68,7 +68,7 @@ def poll(poll_id):
                 Response.add(poll, form.response.data)
                 flask.flash('Response added', 'success')
             else:
-                flask.flash('This response has been posted before', 'success')
+                flask.flash("That response has already been submitted, why don't you upvote it?", 'warning')
         return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, cookie=flask.request.cookies.get('voteData'))
     except:  # Poll.get_poll() with an invalid ID can return one of many exceptions so leaving this for general case
         # More info see: https://github.com/googlecloudplatform/datastore-ndb-python/issues/143
