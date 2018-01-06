@@ -62,6 +62,11 @@ img {
     display: block;
 }
 
+/* Fix bizarre Bootstrap checkbox alignment bug */
+.form-check-input {
+    margin-left: 0;
+}
+
 /* Brand Colours */
 
 .bg-dark {
