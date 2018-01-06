@@ -31,20 +31,32 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category</a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="/">All</a>
-                                <a class="dropdown-item" href="/?tag=PERSON">People</a>
-                                <a class="dropdown-item" href="/?tag=PLACE">Locations</a>
-                                <a class="dropdown-item" href="/?tag=ORGANIZATION">Organisations</a>
-                                <a class="dropdown-item" href="/?tag=EVENT">Events</a>
-                                <a class="dropdown-item" href="/?tag=WORK OF ART">Works of Art</a>
-                                <a class="dropdown-item" href="/?tag=CONSUMER GOOD">Consumer Goods</a>
-                                <a class="dropdown-item" href="/?tag=OTHER">Other</a>
+                            <div class="dropdown-menu category-list" aria-labelledby="navbarDropdown">
+                                {% if tag_url is defined  and tag_url is not none%}
+                                    <a class="dropdown-item" href="{{ tag_url[:-1] }}"><span></span>All</a>
+                                    <a class="dropdown-item" href="{{ tag_url }}tag=PERSON"><span><i class="fa fa-user"></i></span>People</a>
+                                    <a class="dropdown-item" href="{{ tag_url }}tag=PLACE"><span><i class="fa fa-map-marker"></i></span>Locations</a>
+                                    <a class="dropdown-item" href="{{ tag_url }}tag=ORGANIZATION"><span><i class="fa fa-building"></i></span>Organisations</a>
+                                    <a class="dropdown-item" href="{{ tag_url }}tag=EVENT"><span><i class="fa fa-calendar"></i></span>Events</a>
+                                    <a class="dropdown-item" href="{{ tag_url }}tag=WORK OF ART"><span><i class="fa fa-picture-o"></i></span>Works of Art</a>
+                                    <a class="dropdown-item" href="{{ tag_url }}tag=CONSUMER GOOD"><span><i class="fa fa-beer"></i></span>Consumer Goods</a>
+                                    <a class="dropdown-item" href="{{ tag_url }}tag=OTHER"><span><i class="fa fa-question-circle"></i></span>Other</a>
+                                {% else %}
+                                    <a class="dropdown-item" href="/"><span></span>All</a>
+                                    <a class="dropdown-item" href="/?tag=PERSON"><span><i class="fa fa-user"></i></span>People</a>
+                                    <a class="dropdown-item" href="/?tag=PLACE"><span><i class="fa fa-map-marker"></i></span>Locations</a>
+                                    <a class="dropdown-item" href="/?tag=ORGANIZATION"><span><i class="fa fa-building"></i></span>Organisations</a>
+                                    <a class="dropdown-item" href="/?tag=EVENT"><span><i class="fa fa-calendar"></i></span>Events</a>
+                                    <a class="dropdown-item" href="/?tag=WORK OF ART"><span><i class="fa fa-picture-o"></i></span>Works of Art</a>
+                                    <a class="dropdown-item" href="/?tag=CONSUMER GOOD"><span><i class="fa fa-beer"></i></span>Consumer Goods</a>
+                                    <a class="dropdown-item" href="/?tag=OTHER"><span><i class="fa fa-question-circle"></i></span>Other</a>
+                                {% endif %}
                             </div>
                         </li>
                     </ul>
                     <form class="form-inline my-2 my-lg-0" action="/search" method="get" id="searchForm">
                         {% if tag is defined and tag is not none %}<input type="hidden" id="search-tag" name="tag" value="{{ tag }}">{% endif %}
+                        {% if order is defined and order is not none %}<input type="hidden" id="search-order" name="order" value="{{ order }}">{% endif %}
                         <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q" {% if search_term %}value="{{ search_term }}{% endif %}">
                         <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
                     </form>

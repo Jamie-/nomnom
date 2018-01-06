@@ -1,15 +1,17 @@
 import flask
 from nomnom import app
 import forms
+import tags
 from poll import Poll, Response
 import uuid
 
 @app.route('/')
 def index():
+    tag_url = tags.gen_tag_url(flask.request)
     order = flask.request.args.get("order")
     tag = flask.request.args.get("tag")
     try:
-        return flask.render_template('index.html', polls=Poll.fetch_all(order, tag), order=order, tag=tag, cookie=flask.request.cookies.get('voteData'))
+        return flask.render_template('index.html', polls=Poll.fetch_all(order, tag), tag_url=tag_url, order=order, tag=tag, cookie=flask.request.cookies.get('voteData'))
     except ValueError:
         flask.abort(400)  # Args invalid
 
@@ -23,14 +25,16 @@ def create():
         return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
 
-# Search
+# Queries the database to find polls related to a string
 @app.route('/search')
 def search():
     try:
+        tag_url = tags.gen_tag_url(flask.request)
         search = flask.request.args.get("q")  # Search terms
         if search is None:  # When using /search, q should always be provided
             flask.abort(400)
-        search = search.lower()
+        # Delete any trailing or inital spaces and not case sensitive
+        search = search.lower().strip()
         tag = flask.request.args.get("tag")
         if tag is not None and len(tag) == 0:  # If tag is empty, set to none
             tag = None
@@ -38,6 +42,7 @@ def search():
         all_polls = Poll.fetch_all(order, tag)
         returned_polls = []
         include = False
+        # Search for string in title, description and responses
         for p in all_polls:
             if search in p.title.lower():
                 include = True
@@ -50,7 +55,7 @@ def search():
             if p not in returned_polls and include:
                  returned_polls.append(p)
             include = False
-        return flask.render_template('index.html', polls=returned_polls, order=order, tag=tag, search_term=search)
+        return flask.render_template('index.html', polls=returned_polls, tag_url=tag_url, order=order, tag=tag, search_term=search)
     except ValueError:
         flask.abort(400)  # Order arg invalid
 
@@ -63,8 +68,12 @@ def poll(poll_id):
             flask.abort(404)
         form = forms.ResponseForm()
         if form.validate_on_submit():
-            Response.add(poll, form.response.data)
-            flask.flash('Response added', 'success')
+            # Check if the the response has been posted before
+            if poll.check_duplicate(form.response.data):
+                Response.add(poll, form.response.data)
+                flask.flash('Response added', 'success')
+            else:
+                flask.flash("That response has already been submitted, why don't you upvote it?", 'warning')
         return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, cookie=flask.request.cookies.get('voteData'))
     except:  # Poll.get_poll() with an invalid ID can return one of many exceptions so leaving this for general case
         # More info see: https://github.com/googlecloudplatform/datastore-ndb-python/issues/143
@@ -73,20 +82,24 @@ def poll(poll_id):
 # Delete a poll
 @app.route('/poll/<string:poll_id>/delete/<string:delete_key>', methods=['GET', 'POST'])
 def delete_poll(poll_id, delete_key):
-    poll = Poll.get_poll(poll_id)
-    if poll is None:
+    try:
+        poll = Poll.get_poll(poll_id)
+        if poll is None:
+            flask.abort(404)
+        if poll.delete_key != delete_key:
+            flask.abort(403)
+        delete_form = forms.DeleteForm()
+        if delete_form.validate_on_submit():
+            poll.key.delete()
+            import time
+            time.sleep(0.5)
+            flask.flash('Poll deleted successfully.', 'success')
+            return flask.redirect('/', code=302)  # Redirect back to home page
+        form = forms.ResponseForm()
+        return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, delete_form=delete_form, delete=True)
+    except:  # Poll.get_poll() with an invalid ID can return one of many exceptions so leaving this for general case
+        # More info see: https://github.com/googlecloudplatform/datastore-ndb-python/issues/143
         flask.abort(404)
-    if poll.delete_key != delete_key:
-        flask.abort(403)
-    delete_form = forms.DeleteForm()
-    if delete_form.validate_on_submit():
-        poll.key.delete()
-        import time
-        time.sleep(0.5)
-        flask.flash('Poll deleted successfully.', 'success')
-        return flask.redirect('/', code=302)  # Redirect back to home page
-    form = forms.ResponseForm()
-    return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, delete_form=delete_form, delete=True)
 
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])

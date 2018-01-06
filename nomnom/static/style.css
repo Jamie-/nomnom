@@ -1,7 +1,7 @@
 /* Custom CSS File */
 
 body > div.container {
-    padding-top: 2rem;
+    padding-top: 5rem;
 }
 
 /* Main home poll list page */
@@ -42,6 +42,18 @@ body > div.container {
     max-width: 1600px;
 }
 
+.navbar {
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+}
+
+.item { /* Masonry bricks or child elements */
+    display: inline-block;
+    width: 100%;
+    z-index: 2;
+}
+
 img {
   display: block;
   width: 100%;
@@ -51,6 +63,10 @@ img {
 .site-logo {
     display: block;
     max-height: 200px!important;
+}
+
+.logo-text{
+    text-align: center;
     margin-bottom: 20px;
 }
 
@@ -89,6 +105,23 @@ img {
 /* Fix bizarre Bootstrap checkbox alignment bug */
 .form-check-input {
     margin-left: 0;
+}
+
+/* Alignment of icons in category dropdown in navbar */
+.category-list span {
+    display: inline-block;
+    min-width: 25px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.category-list span i {
+    text-align: center;
+}
+
+.category-list a {
+    padding-left: 15px;
 }
 
 /* Brand Colours */

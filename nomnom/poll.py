@@ -65,6 +65,14 @@ class Poll(NomNomModel):
         else:
             return sorted(Response.query(Response.flag < flag_count, ancestor=self.key).fetch(n), key=lambda response: -response.score)[:n]
 
+    # Checks whether a certain string has already been submitted before
+    def check_duplicate(self, response_string):
+        responses = self.get_responses()
+        for r in responses:
+            if r.response_str.lower().strip() == response_string.lower().strip():
+                return False
+        return True
+
     # Add poll to datastore
     @classmethod
     def add(cls, title, description, email, image_url, visible):
@@ -180,10 +188,11 @@ class Response(NomNomModel):
             taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
         return r
 
+    # Check if the parent poll is visible.
     def poll_visible(self):
         return self.key.parent().get().visible
 
-    # don't check responses to hidden polls
+    # don't flag responses to hidden polls
     def update_flag(self, cookie_value):
         if self.poll_visible():
             super(Response, self).update_flag(cookie_value)
