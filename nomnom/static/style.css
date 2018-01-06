@@ -7,21 +7,20 @@ body > div.container {
 /* Main home poll list page */
 
 #poll-list .card {
-    margin-bottom: 20px;
+    width:27em;
+    margin: 0.6em;
 }
 
-@media (min-width: 767px) {
-    .masonry { /* Masonry container */
-        column-count: 2;
-        column-gap: 1em;
-        horizontalOrder: true;
+@media (max-width: 1000px) {
+    #poll-list .card {
+    width:100%;
+    max-width: 680px;
+    margin: 0.2em;
     }
 }
 
-.item { /* Masonry bricks or child elements */
-    display: inline-block;
-    margin: 0 0 1em;
-    width: 100%;
+.container {
+    max-width: 1600px;
 }
 
 img {
