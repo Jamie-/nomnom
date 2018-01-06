@@ -155,7 +155,7 @@
         {% endraw %}
     </script>
     <script>
-        var socket = io.connect('http{% if is_production() %}s{% endif %}://' + document.domain + ':' + location.port);
+        var socket = io.connect('http{% if is_production() %}s{% endif %}://' + document.domain + ':' + location.port + '/global');
         {% if not is_production() %}
             socket.on('connect', function() {
                 console.log('Client connected to server');

@@ -22,38 +22,42 @@ def push_poll(poll):
         if poll.image_url is not None and poll.image_url != "":
             data['poll']['image_url'] = poll.image_url
         data['poll']['tag'] = poll.tag
-        socketio.send(json.dumps(data), json=True)
+        socketio.send(json.dumps(data), json=True, namespace='/global')
 
 
 # Push response data to clients for live update
 def push_response(response):
-    if response.poll_visible():  # Only push if containing poll is visible
-        data = {}
-        data['response'] = {}
-        data['response']['id'] = response.get_id()
-        data['response']['poll'] = response.get_poll_id()
-        data['response']['string'] = response.response_str
-        data['response']['score'] = response.score
-        data['response']['upv'] = response.upv
-        data['response']['dnv'] = response.dnv
-        socketio.send(json.dumps(data), json=True)
-    else:  # Only push to users viewing the poll
-        pass  #TODO this
+    data = {}
+    data['response'] = {}
+    data['response']['id'] = response.get_id()
+    data['response']['poll'] = response.get_poll_id()
+    data['response']['string'] = response.response_str
+    data['response']['score'] = response.score
+    data['response']['upv'] = response.upv
+    data['response']['dnv'] = response.dnv
+
+    # Only push to global if containing poll is visible
+    if response.poll_visible():
+        socketio.send(json.dumps(data), json=True, namespace='/global')
+    # Push to viewers of the poll
+    socketio.send(json.dumps(data), json=True, namespace='/poll/'+response.get_poll_id())
 
 
 # Push votes to clients for live update
 def push_vote(response):
-    if response.poll_visible():  # Only push if containing poll is visible
-        data = {}
-        data['vote'] = {}
-        data['vote']['poll_id'] = response.get_poll_id()
-        data['vote']['response_id'] = response.get_id()
-        data['vote']['score'] = response.score
-        data['vote']['upv'] = response.upv
-        data['vote']['dnv'] = response.dnv
-        socketio.send(json.dumps(data), json=True)
-    else:  # Only push to users viewing the poll
-        pass  #TODO this
+    data = {}
+    data['vote'] = {}
+    data['vote']['poll_id'] = response.get_poll_id()
+    data['vote']['response_id'] = response.get_id()
+    data['vote']['score'] = response.score
+    data['vote']['upv'] = response.upv
+    data['vote']['dnv'] = response.dnv
+
+    # Only push to global if containing poll is visible
+    if response.poll_visible():
+        socketio.send(json.dumps(data), json=True, namespace='/global')
+    # Push to viewers of the poll
+    socketio.send(json.dumps(data), json=True, namespace='/poll/'+response.get_poll_id())
 
 
 # Add event handlers
