@@ -180,10 +180,11 @@ class Response(NomNomModel):
             taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
         return r
 
+    # Check if the parent poll is visible.
     def poll_visible(self):
         return self.key.parent().get().visible
 
-    # don't check responses to hidden polls
+    # don't flag responses to hidden polls
     def update_flag(self, cookie_value):
         if self.poll_visible():
             super(Response, self).update_flag(cookie_value)

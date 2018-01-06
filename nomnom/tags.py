@@ -1,5 +1,24 @@
 import googleapiclient.discovery
 
+
+def entities_text(text):
+    response = analyze_entities(text)
+    return response
+
+
+# check for search terms and sort orders for the url presented in the tag selection drop down
+def gen_tag_url(request):
+    if request.path == '/search':
+        tag_url = request.path + '?'
+    else:
+        tag_url = "/?"
+    if "q" in request.args:
+        tag_url = tag_url + "q=" + request.args.get("q") + "&"
+    if "order" in request.args:
+        tag_url = tag_url + "order=" + request.args.get("order") + "&"
+    return tag_url
+
+
 # analyses text to return a single category as a string
 def analyze_entities(text, encoding='UTF32'):
     try:

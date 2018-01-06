@@ -1,15 +1,17 @@
 import flask
 from nomnom import app
 import forms
+import tags
 from poll import Poll, Response
 import uuid
 
 @app.route('/')
 def index():
+    tag_url = tags.gen_tag_url(flask.request)
     order = flask.request.args.get("order")
     tag = flask.request.args.get("tag")
     try:
-        return flask.render_template('index.html', polls=Poll.fetch_all(order, tag), order=order, tag=tag, cookie=flask.request.cookies.get('voteData'))
+        return flask.render_template('index.html', polls=Poll.fetch_all(order, tag), tag_url=tag_url, order=order, tag=tag, cookie=flask.request.cookies.get('voteData'))
     except ValueError:
         flask.abort(400)  # Args invalid
 
@@ -27,6 +29,7 @@ def create():
 @app.route('/search')
 def search():
     try:
+        tag_url = tags.gen_tag_url(flask.request)
         search = flask.request.args.get("q")  # Search terms
         if search is None:  # When using /search, q should always be provided
             flask.abort(400)
@@ -50,7 +53,7 @@ def search():
             if p not in returned_polls and include:
                  returned_polls.append(p)
             include = False
-        return flask.render_template('index.html', polls=returned_polls, order=order, tag=tag, search_term=search)
+        return flask.render_template('index.html', polls=returned_polls, tag_url=tag_url, order=order, tag=tag, search_term=search)
     except ValueError:
         flask.abort(400)  # Order arg invalid
 
