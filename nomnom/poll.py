@@ -65,6 +65,14 @@ class Poll(NomNomModel):
         else:
             return sorted(Response.query(Response.flag < flag_count, ancestor=self.key).fetch(n), key=lambda response: -response.score)[:n]
 
+    # Checks whether a certain string has already been submitted before
+    def check_duplicate(self, response_string):
+        responses = self.get_responses()
+        for r in responses:
+            if r.response_str.lower().strip() == response_string.lower().strip():
+                return False
+        return True
+
     # Add poll to datastore
     @classmethod
     def add(cls, title, description, email, image_url, visible):
