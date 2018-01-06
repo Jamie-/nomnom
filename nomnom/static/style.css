@@ -1,7 +1,7 @@
 /* Custom CSS File */
 
 body > div.container {
-    padding-top: 2rem;
+    padding-top: 5rem;
 }
 
 /* Main home poll list page */
@@ -18,10 +18,16 @@ body > div.container {
     }
 }
 
+.navbar {
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+}
+
 .item { /* Masonry bricks or child elements */
     display: inline-block;
-    margin: 0 0 1em;
     width: 100%;
+    z-index: 2;
 }
 
 img {
@@ -33,6 +39,10 @@ img {
 .site-logo {
     display: block;
     max-height: 200px!important;
+}
+
+.logo-text{
+    text-align: center;
     margin-bottom: 20px;
 }
 
