@@ -25,7 +25,7 @@ def create():
         return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
 
-# Search
+# Queries the database to find polls related to a string
 @app.route('/search')
 def search():
     try:
@@ -33,7 +33,8 @@ def search():
         search = flask.request.args.get("q")  # Search terms
         if search is None:  # When using /search, q should always be provided
             flask.abort(400)
-        search = search.lower()
+        # Delete any trailing or inital spaces and not case sensitive
+        search = search.lower().strip()
         tag = flask.request.args.get("tag")
         if tag is not None and len(tag) == 0:  # If tag is empty, set to none
             tag = None
@@ -41,6 +42,7 @@ def search():
         all_polls = Poll.fetch_all(order, tag)
         returned_polls = []
         include = False
+        # Search for string in title, description and responses
         for p in all_polls:
             if search in p.title.lower():
                 include = True
