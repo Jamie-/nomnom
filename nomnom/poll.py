@@ -74,12 +74,23 @@ class Poll(NomNomModel):
                 return False
         return True
 
-    # Check if response has any letter
+    # Check if response is valid
     def check_valid_response(self, response_string):
-        match = re.search('[a-zA-Z]', response_string)
-        if match:
-            return True
-        return False
+        # Check length
+        if len(response_string) < 3:
+            return False
+        # Check if string contains alphabet letters
+        letters = 0
+        for c in response_string:
+            if c.isalpha():
+                letters += 1
+        if letters < (len(response_string) / 2):
+            return False
+        # Check for escape backslash
+        if "\\" in response_string:
+            return False
+        return True
+
 
     # Add poll to datastore
     @classmethod
