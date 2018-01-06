@@ -67,6 +67,23 @@ img {
     margin-left: 0;
 }
 
+/* Alignment of icons in category dropdown in navbar */
+.category-list span {
+    display: inline-block;
+    min-width: 25px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.category-list span i {
+    text-align: center;
+}
+
+.category-list a {
+    padding-left: 15px;
+}
+
 /* Brand Colours */
 
 .bg-dark {
