@@ -28,7 +28,7 @@
         {% if polls|length > 0 %}
             <div class="container">
                 <div class="grid" data-masonry='{ "itemSelector": ".grid-item", "isFitWidth": true }' id="poll-list">
-                    {% for p in polls %}
+                    {% for p in polls[:60] %}
                         <div class="grid-item">
                             <div class="card">
                                 {% if p.image_url is not none and p.image_url != "" %}

@@ -10,7 +10,7 @@ class CreateForm(FlaskForm):
     image_url = fields.StringField('image-url', validators=[validators.URL(), validators.Optional()])
     description = fields.StringField('description', widget=widgets.TextArea(), validators=[validators.DataRequired()])
     private = fields.BooleanField('privat', validators=[validators.Optional()])
-    submit = fields.SubmitField(label='Create')
+    submit = fields.SubmitField(label='Create', id='create-submit')
 
 # Add response to a poll
 class ResponseForm(FlaskForm):
