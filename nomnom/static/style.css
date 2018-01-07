@@ -1,27 +1,57 @@
 /* Custom CSS File */
 
 body > div.container {
-    padding-top: 2rem;
+    padding-top: 5rem;
 }
 
 /* Main home poll list page */
 
 #poll-list .card {
-    margin-bottom: 20px;
+    width:27em;
+    margin: 0.6em;
 }
 
-@media (min-width: 767px) {
-    .masonry { /* Masonry container */
-        column-count: 2;
-        column-gap: 1em;
-        horizontalOrder: true;
+@media (max-width: 900px) {
+    #poll-list .card {
+        width:600px;
     }
+}
+
+@media (max-width: 620px) {
+    #poll-list .card {
+    width:400px;
+    margin: 0.4em;
+    }
+}
+
+@media (max-width: 450px) {
+    #poll-list .card {
+    width:350px;
+    margin: 0.2em;
+    }
+}
+
+@media (max-width: 350px) {
+    #poll-list .card {
+    width:300px;
+    margin: 0.1em;
+    }
+}
+
+.container {
+    max-width: 1600px;
+}
+
+.navbar {
+    position: fixed;
+    width: 100%;
+    z-index: 100;
 }
 
 .item { /* Masonry bricks or child elements */
     display: inline-block;
-    margin: 0 0 1em;
     width: 100%;
+    z-index: 2;
 }
 
 img {
@@ -33,7 +63,24 @@ img {
 .site-logo {
     display: block;
     max-height: 200px!important;
+}
+
+.logo-text {
+    text-align: center;
     margin-bottom: 20px;
+}
+
+/* Masonry grid */
+.grid {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Layout fix for masonry wide container */
+.text-centers,
+#narrow-content {
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 /* Set table striping colour */
@@ -65,6 +112,23 @@ img {
 /* Fix bizarre Bootstrap checkbox alignment bug */
 .form-check-input {
     margin-left: 0;
+}
+
+/* Alignment of icons in category dropdown in navbar */
+.category-list span {
+    display: inline-block;
+    min-width: 25px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.category-list span i {
+    text-align: center;
+}
+
+.category-list a {
+    padding-left: 15px;
 }
 
 /* Brand Colours */

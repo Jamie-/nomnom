@@ -4,6 +4,7 @@ import nomnom.tags as tags
 from nomnom import events
 from mail import Email
 import uuid
+import re
 
 # Moderation code, used in both models, so done as a parent class
 class NomNomModel(ndb.Model):
@@ -68,6 +69,32 @@ class Poll(NomNomModel):
             return sorted(Response.query(Response.flag < flag_count, ancestor=self.key).fetch(), key=lambda response: -response.score)
         else:
             return sorted(Response.query(Response.flag < flag_count, ancestor=self.key).fetch(n), key=lambda response: -response.score)[:n]
+
+    # Checks whether a certain string has already been submitted before
+    def check_duplicate(self, response_string):
+        responses = self.get_responses()
+        for r in responses:
+            if r.response_str.lower().strip() == response_string.lower().strip():
+                return False
+        return True
+
+    # Check if response is valid
+    def check_valid_response(self, response_string):
+        # Check length
+        if len(response_string) < 3:
+            return False
+        # Check if string contains alphabet letters
+        letters = 0
+        for c in response_string:
+            if c.isalpha():
+                letters += 1
+        if letters < (len(response_string) / 2):
+            return False
+        # Check for escape backslash
+        if "\\" in response_string:
+            return False
+        return True
+
 
     # Add poll to datastore
     @classmethod
@@ -188,10 +215,11 @@ class Response(NomNomModel):
         events.response_event(r)
         return r
 
+    # Check if the parent poll is visible.
     def poll_visible(self):
         return self.key.parent().get().visible
 
-    # don't check responses to hidden polls
+    # don't flag responses to hidden polls
     def update_flag(self, cookie_value):
         if self.poll_visible():
             super(Response, self).update_flag(cookie_value)

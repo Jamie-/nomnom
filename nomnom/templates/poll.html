@@ -1,118 +1,118 @@
 {% extends "template.html" %}
 
 {% block container %}
-    {% if poll.flag >= 3 %}
-        <div class="alert alert-danger" role="alert">
-            This poll has been flagged for moderation and will not appear on the main page or in any search results.
-        </div>
-    {% elif not poll.visible %}
-        <div class="alert alert-warning" role="alert">
-            This poll is private and will not appear on the main page or in any search results.
-        </div>
-    {% endif %}
-    <h1 class="text-center">Name my {{ poll.title }}</h1>
-
-    {% if delete is defined and delete %}
-        {% include "delete_poll.html" %}
-    {% endif %}
-
-    <div class="card">
-        {% if poll.image_url is not none and poll.image_url != "" %}
-            <img class="img img-responsive full-width" src="{{ poll.image_url }}">
+    <div class="container" id="narrow-content">
+        {% if poll.flag >= 3 %}
+            <div class="alert alert-danger" role="alert">
+                This poll has been flagged for moderation and will not appear on the main page or in any search results.
+            </div>
+        {% elif not poll.visible %}
+            <div class="alert alert-warning" role="alert">
+                This poll is private and will not appear on the main page or in any search results.
+            </div>
         {% endif %}
-        <div class="card-body">
-            {{ poll.description }}
-            {%  if poll.visible %}
-                <button id="flag-poll-button" class="poll-flag" data-vote="poll-flag" data-poll-id = "{{ poll.get_id() }}">
-                    <i class="fa fa-flag {% if poll.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
-                </button>
+        <h1 class="text-center">Name my {{ poll.title }}</h1>
+
+        {% if delete is defined and delete %}
+            {% include "delete_poll.html" %}
+        {% endif %}
+
+        <div class="card">
+            {% if poll.image_url is not none and poll.image_url != "" %}
+                <img class="img img-responsive full-width" src="{{ poll.image_url }}">
             {% endif %}
-        </div>
-    </div>
-
-    <div class="card share-buttons">
-        <div class="card-body">
-            <span id="share" data-share-url="{{ request.base_url }}" class="share fa fa-share-alt-square"></span>
-            <a href="https://www.facebook.com/dialog/share?app_id=145634995501895&display=popup&href={{ url_enc(request.base_url) }}" class="social-btn" role="button">
-                <span class="fa fa-facebook-square facebook"></span>
-            </a>
-            <a href="https://www.reddit.com/submit?url={{ url_enc(request.base_url) }}" class="social-btn" role="button">
-                <span class="fa fa-reddit-square reddit"></span>
-            </a>
-            <a href="https://plus.google.com/share?url={{ url_enc(request.base_url) }}" class="social-btn" role="button">
-                <span class="fa fa-google-plus-square google-plus"></span>
-            </a>
-            <a href="https://twitter.com/intent/tweet?url={{ url_enc(request.base_url) }}" class="social-btn" role="button">
-                <span class="fa fa-twitter-square twitter"></span>
-            </a>
-            <a href="https://www.tumblr.com/widgets/share/tool?posttype=link&content={{ url_enc(request.base_url) }}" class="social-btn" role="button">
-                <span class="fa fa-tumblr-square tumblr"></span>
-            </a>
-            <a href="mailto:?body={{ url_enc(request.base_url) }}" class="social-btn" role="button">
-                <span class="fa fa-envelope-square share"></span>
-            </a>
-        </div>
-    </div>
-
-
-    {% if responses|length > 0 %}
-        <table class="table table-striped table-inverse" id="response-table">
-            {% for r in responses %}
-                <tr id="resp-{{ r.get_id() }}">
-                    <td class="text-center" style="width: 10%;"><i class="fa fa-trophy"></i> <span class="score">{{ r.upv - r.dnv }}</span></td>
-                    <td>{{ r.response_str }}</td>
-                    <td class="text-center up-score" style="width: 10%;">
-                        <button class="vote" data-vote="resp-up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                            <i class="fa fa-arrow-up {% if r.voted_users[cookie] == 1 %}upvote{% endif %}" title="Up Vote"></i>
-                        </button>
-                        <span>{{ r.upv }}</span>
-                    </td>
-                    <td class="text-center down-score" style="width: 10%;">
-                        <button class="vote" data-vote="resp-down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                            <i class="fa fa-arrow-down {% if r.voted_users[cookie] == -1 %}downvote{% endif %}" title="Down Vote"></i>
-                        </button>
-                        <span>{{ r.dnv }}</span>
-                    </td>
-                    <td class="text-center flag-score" style="width: 10%;">
-                        {% if poll.visible %}
-                            <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
-                                <i class="fa fa-flag {% if r.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
-                            </button>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <div class="card" style="margin-bottom: 20px;" id="no-responses-notice">
             <div class="card-body">
-                <h3 class="text-center">There are no responses yet, why don't you make one?</h3>
+                {{ poll.description }}
+                {%  if poll.visible %}
+                    <button id="flag-poll-button" class="poll-flag" data-vote="poll-flag" data-poll-id="{{ poll.get_id() }}">
+                        <i class="fa fa-flag {% if poll.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
+                    </button>
+                {% endif %}
             </div>
         </div>
-    {% endif %}
 
-    <div class="card">
-        <div class="card-body">
-            <form action="/poll/{{ poll.get_id() }}" method="post" name="response" class="text-centers">
-                {{ form.hidden_tag() }}
-                <div class="form-group">
-                    <label>Add a response:</label>
-                    {% if form.response.errors %}
-                        {{ form.response(class='form-control is-invalid') }}
-                    {% else %}
-                        {{ form.response(class='form-control') }}
-                    {% endif %}
-                    {% for error in form.response.errors %}
-                        <div class="invalid-feedback">{{ error }}</div>
-                    {% endfor %}
+        <div class="card share-buttons">
+            <div class="card-body">
+                <span id="share" data-share-url="{{ request.base_url }}" class="share fa fa-share-alt-square"></span>
+                <a href="https://www.facebook.com/dialog/share?app_id=145634995501895&display=popup&href={{ url_enc(request.base_url) }}" class="social-btn" role="button" target="blank">
+                    <span class="fa fa-facebook-square facebook"></span>
+                </a>
+                <a href="https://www.reddit.com/submit?url={{ url_enc(request.base_url) }}" class="social-btn" role="button" target="blank">
+                    <span class="fa fa-reddit-square reddit"></span>
+                </a>
+                <a href="https://plus.google.com/share?url={{ url_enc(request.base_url) }}" class="social-btn" role="button" target="blank">
+                    <span class="fa fa-google-plus-square google-plus"></span>
+                </a>
+                <a href="https://twitter.com/intent/tweet?url={{ url_enc(request.base_url) }}" class="social-btn" role="button" target="blank">
+                    <span class="fa fa-twitter-square twitter"></span>
+                </a>
+                <a href="https://www.tumblr.com/widgets/share/tool?posttype=link&content={{ url_enc(request.base_url) }}" class="social-btn" role="button" target="blank">
+                    <span class="fa fa-tumblr-square tumblr"></span>
+                </a>
+                <a href="mailto:?body={{ url_enc(request.base_url) }}" class="social-btn" role="button">
+                    <span class="fa fa-envelope-square share"></span>
+                </a>
+            </div>
+        </div>
+
+        {% if responses|length > 0 %}
+            <table class="table table-striped table-inverse" id="response-table">
+                {% for r in responses %}
+                    <tr id="resp-{{ r.get_id() }}">
+                        <td class="text-center" style="width: 10%;"><i class="fa fa-trophy"></i> <span class="score">{{ r.upv - r.dnv }}</span></td>
+                        <td>{{ r.response_str }}</td>
+                        <td class="text-center up-score" style="width: 10%;">
+                            <button class="vote" data-vote="resp-up" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
+                                <i class="fa fa-arrow-up {% if r.voted_users[cookie] == 1 %}upvote{% endif %}" title="Up Vote"></i>
+                            </button>
+                            <span>{{ r.upv }}</span>
+                        </td>
+                        <td class="text-center down-score" style="width: 10%;">
+                            <button class="vote" data-vote="resp-down" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
+                                <i class="fa fa-arrow-down {% if r.voted_users[cookie] == -1 %}downvote{% endif %}" title="Down Vote"></i>
+                            </button>
+                            <span>{{ r.dnv }}</span>
+                        </td>
+                        <td class="text-center flag-score" style="width: 10%;">
+                            {% if poll.visible %}
+                                <button class="vote" data-vote="resp-flag" data-resp-id="{{ r.get_id() }}" data-poll-id="{{ poll.get_id() }}">
+                                    <i class="fa fa-flag {% if r.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <div class="card" style="margin-bottom: 20px;" id="no-responses-notice">
+                <div class="card-body">
+                    <h3 class="text-center">There are no responses yet, why don't you make one?</h3>
                 </div>
-                <div class="text-center">
-                    {{ form.submit(class='btn btn-primary') }}
-                </div>
-            </form>
+            </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-body">
+                <form action="/poll/{{ poll.get_id() }}" method="post" name="response" class="text-centers">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        <label>Add a response:</label>
+                        {% if form.response.errors %}
+                            {{ form.response(class='form-control is-invalid') }}
+                        {% else %}
+                            {{ form.response(class='form-control') }}
+                        {% endif %}
+                        {% for error in form.response.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-center">
+                        {{ form.submit(class='btn btn-primary') }}
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-
 {% endblock %}
 
 {% block script %}

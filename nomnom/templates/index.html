@@ -2,6 +2,7 @@
 
 {% block container %}
     <img src="{{ url_for('static', filename='nomnom-logo.svg') }}" class="site-logo img-fluid mx-auto" alt="{{ APP_NAME }} Logo">
+    <h5 class="logo-text">You dream it, the crowd will name it</h5>
 
     {% if polls|length > 0 %}
         <ul class="nav nav-tabs" style="margin-bottom: 20px">
@@ -26,15 +27,18 @@
     <div class="row" id="index-container">
         {% if polls|length > 0 %}
             <div class="container">
-                <div class="masonry" id="poll-list">
+                <div class="grid" data-masonry='{ "itemSelector": ".grid-item", "isFitWidth": true }' id="poll-list">
                     {% for p in polls %}
-                        <div class="item">
-                            <div class="card" id="poll-{{ p.get_id() }}">
+                        <div class="grid-item">
+                            <div class="card"  id="poll-{{ p.get_id() }}">
                                 {% if p.image_url is not none and p.image_url != "" %}
                                     <img class="img img-responsive full-width" src="{{ p.image_url }}">
                                 {% endif %}
                                 <div class="card-body poll-card-header">
                                     <div class="container">
+                                        <button class="poll-flag float-right" data-vote="poll-flag" data-poll-id = "{{ p.get_id() }}">
+                                            <i class="fa fa-flag {% if p.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
+                                        </button>
                                         <h6 class="card-text">Name my</h6>
                                         <h1 class="card-title">{{ p.title }}</h1>
                                         <p class="card-text">{{ p.description }}</p>

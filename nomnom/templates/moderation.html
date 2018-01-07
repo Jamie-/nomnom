@@ -1,7 +1,7 @@
 {% extends "template.html" %}
 
 {% block container %}
-    <div class="row">
+    <div class="row" id="narrow-content">
         <h1> Flagged Polls</h1>
         {% if polls|length > 0 %}
             <table class="table">
