@@ -241,7 +241,7 @@
             }
 
             // Insert poll
-            $('#poll-list').append(tmpl.render(tmpl_data));
+            $('#poll-list').prepend(tmpl.render(tmpl_data));
             {% if not is_production() %}
                 console.log("Added poll!");
             {% endif %}
@@ -270,7 +270,7 @@
             };
 
             // Insert response
-            $('#poll-' + data.poll + ' ul').append(tmpl.render(tmpl_data));
+            $('#poll-' + data.poll + ' ul').prepend(tmpl.render(tmpl_data));
             {% if not is_production() %}
                 console.log("Added response!");
             {% endif %}

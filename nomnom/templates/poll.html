@@ -261,7 +261,7 @@
             }
 
             // Insert response
-            $('#response-table').find('tbody').append(tmpl.render(tmpl_data));
+            $('#response-table').find('tbody').prepend(tmpl.render(tmpl_data));
             {% if not is_production() %}
                 console.log("Added response!");
             {% endif %}
