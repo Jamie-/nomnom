@@ -276,3 +276,9 @@ button.poll-flag {
 #tag .fa-beer {
     color: #edbe40
 }
+
+.text-centers,
+#narrow-content {
+    max-width:900px;
+    margin: 0 auto;
+}
