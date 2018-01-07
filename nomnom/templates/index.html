@@ -38,7 +38,7 @@
                                         <h6 class="card-text">Name my</h6>
                                         <h1 class="card-title">{{ p.title }}</h1>
                                         <p class="card-text">{{ p.description }}</p>
-                                        <h1 id="date-poll">{{ p.datetime }}</h1>
+                                        <h2 class="date-poll">{{ p.datetime }}</h2>
                                     </div>
                                 </div>
                                 {% if p.get_responses(3)|length > 0 %}
@@ -107,14 +107,19 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
         var now = new Date(),
-            then = new Date(document.getElementById("date-poll").innerHTML),
-            distance = now- then;
-            // Time calculations for days, hours, minutes and seconds
-          var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-          var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-          var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            document.getElementById("date-poll").innerHTML = days + "d " + hours + "h "
-      + minutes + "m " + seconds + "s ";
+            pollDates = document.getElementsByClassName("date-poll");
+        for (var i = 0; i< pollDates.length; i++){
+        console.log(pollDates[i]);
+        console.log(pollDates);
+            var then = new Date(pollDates[i].innerHTML),
+                distance = now - then;
+              // Time calculations for days, hours, minutes and seconds
+              var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+              var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+              var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+              pollDates[i].innerHTML = days + "d " + hours + "h "
+                + minutes + "m " + seconds + "s ";
+        }
     </script>
 {% endblock %}
