@@ -60,7 +60,28 @@ def push_vote(response):
     socketio.send(json.dumps(data), json=True, namespace='/poll/'+response.get_poll_id())
 
 
+# Push request to remove a poll
+def push_remove_poll(poll):
+    data = {}
+    data['poll_removal'] = {}
+    data['poll_removal']['poll_id'] = poll.get_id()
+    socketio.send(json.dumps(data), json=True, namespace='/global')
+    socketio.send(json.dumps(data), json=True, namespace='/poll/'+poll.get_id())  # Allow moderated warning to be shown
+
+
+# Push request to remove a response
+def push_remove_response(response):
+    data = {}
+    data['response_removal'] = {}
+    data['response_removal']['poll_id'] = response.get_poll_id()
+    data['response_removal']['response_id'] = response.get_id()
+    socketio.send(json.dumps(data), json=True, namespace='/global')
+    socketio.send(json.dumps(data), json=True, namespace='/poll/'+response.get_poll_id())
+
+
 # Add event handlers
 events.poll_created_event.add_listener(push_poll)
 events.response_event.add_listener(push_response)
 events.vote_event.add_listener(push_vote)
+events.auto_moderated_poll_event.add_listener(push_remove_poll)
+events.auto_moderated_response_event.add_listener(push_remove_response)

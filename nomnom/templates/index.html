@@ -154,6 +154,14 @@
             </li>
         {% endraw %}
     </script>
+    <script id="noPollsNoticeTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="container text-center">
+                <h2>Oh no, there are no polls at the moment.</h2>
+                <h4>Why don't you <a href="/create">create one</a>?</h4>
+            </div>
+        {% endraw %}
+    </script>
     <script>
         var socket = io.connect('http{% if is_production() %}s{% endif %}://' + document.domain + ':' + location.port + '/global');
         {% if not is_production() %}
@@ -177,6 +185,10 @@
                     handleResponse(data.response);
                 } else if ('vote' in data) {
                     handleVote(data.vote);
+                } else if ('poll_removal' in data) {
+                    handlePollRemoval(data.poll_removal);
+                } else if ('response_removal') {
+                    handleResponseRemoval(data.response_removal);
                 }
             } catch (e) {
                 {% if not is_production() %}
@@ -267,6 +279,22 @@
             element.find('span.score').text(data.score);
             element.find('span.up-score span').text(data.upv);
             element.find('span.down-score span').text(data.dnv);
+        }
+
+        function handlePollRemoval(data) {
+            // Remove flagged poll
+            $('#poll-' + data.poll_id).parent().remove();
+
+            // If no polls left, replace with no polls container
+            if ($('#poll-list').children().length === 0) {
+                tmpl = $.templates("#noPollsNoticeTemplate");
+                $('#index-container').html(tmpl.render());
+            }
+        }
+
+        function handleResponseRemoval(data) {
+            // Remove flagged response
+            $('#poll-' + data.poll_id + '-resp-' + data.response_id).remove();
         }
     </script>
 {% endblock %}

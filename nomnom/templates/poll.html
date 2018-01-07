@@ -153,6 +153,32 @@
             </button>
         {% endraw %}
     </script>
+    <script id="flaggedNoticeTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="alert alert-danger" role="alert">
+                This poll has been flagged for moderation and will not appear on the main page or in any search results.
+            </div>
+        {% endraw %}
+    </script>
+    <script id="dismissibleAlertTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="alert alert-{{:category}} alert-dismissible fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{:message}}
+            </div>
+        {% endraw %}
+    </script>
+    <script id="noResponsesNoticeTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="card" style="margin-bottom: 20px;" id="no-responses-notice">
+                <div class="card-body">
+                    <h3 class="text-center">There are no responses yet, why don't you make one?</h3>
+                </div>
+            </div>
+        {% endraw %}
+    </script>
     <script>
         var poll_id = window.location.pathname.split('/')[2];
 
@@ -184,6 +210,10 @@
                     if (data.vote.poll_id === poll_id) {
                         handleVote(data.vote);
                     }
+                } else if ('poll_removal' in data) {
+                    handlePollFlagged(data.poll_removal);
+                } else if ('response_removal') {
+                    handleResponseRemoval(data.response_removal);
                 }
             } catch (e) {
                 {% if not is_production() %}
@@ -222,7 +252,7 @@
             }
 
             // Insert response
-            $('#response-table tbody').append(tmpl.render(tmpl_data));
+            $('#response-table').find('tbody').append(tmpl.render(tmpl_data));
             {% if not is_production() %}
                 console.log("Added response!");
             {% endif %}
@@ -233,6 +263,35 @@
             element.find('span.score').text(data.score);
             element.find('.up-score span').text(data.upv);
             element.find('.down-score span').text(data.dnv);
+        }
+
+        function handlePollFlagged(data) {
+            // Show notice to user poll has been flagged by auto-moderator
+            var tmpl = $.templates("#flaggedNoticeTemplate");
+            $('.main-content').prepend(tmpl.render());
+            {% if not is_production() %}
+                console.log('Shown flagged poll notice!');
+            {% endif %}
+        }
+
+        function handleResponseRemoval(data) {
+            // Show notice to user response has been flagged by auto-moderator
+            var alert_tmpl = $.templates("#dismissibleAlertTemplate");
+            var alert_tmpl_data = {
+                category: 'warning',
+                message: 'Your response has triggered our auto-moderator so has been removed pending moderator approval.'
+            };
+            $('.main-content').prepend(alert_tmpl.render(alert_tmpl_data));
+
+            // Remove flagged response
+            $('tr#resp-' + data.response_id).remove();
+
+            // If no responses left, replace no responses card
+            if ($('#response-table').find('tbody').children().length === 0) {
+                $('#response-table').remove();
+                var no_resp_tmpl = $.templates("#noResponsesNoticeTemplate");
+                $('div.share-buttons').after(no_resp_tmpl.render());
+            }
         }
     </script>
 {% endblock %}
