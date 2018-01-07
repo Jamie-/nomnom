@@ -69,6 +69,14 @@ def push_remove_poll(poll):
     socketio.send(json.dumps(data), json=True, namespace='/poll/'+poll.get_id())  # Allow moderated warning to be shown
 
 
+# Push request to delete a poll
+def push_delete_poll(poll):
+    data = {}
+    data['poll_deletion'] = {}
+    data['poll_deletion']['poll_id'] = poll.get_id()
+    socketio.send(json.dumps(data), json=True, namespace='/global')
+    socketio.send(json.dumps(data), json=True, namespace='/poll/' + poll.get_id())
+
 # Push request to remove a response
 def push_remove_response(response):
     data = {}
@@ -89,6 +97,7 @@ def flagged_item_handler(item):
 
 # Add event handlers
 events.poll_created_event.add_listener(push_poll)
+events.poll_deleted_event.add_listener(push_delete_poll)
 events.response_event.add_listener(push_response)
 events.vote_event.add_listener(push_vote)
 events.auto_moderated_poll_event.add_listener(push_remove_poll)

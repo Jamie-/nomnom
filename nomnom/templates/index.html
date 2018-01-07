@@ -187,6 +187,8 @@
                     handleVote(data.vote);
                 } else if ('poll_removal' in data) {
                     handlePollRemoval(data.poll_removal);
+                } else if ('poll_deletion' in data) {
+                    handlePollRemoval(data.poll_deletion);
                 } else if ('response_removal') {
                     handleResponseRemoval(data.response_removal);
                 }

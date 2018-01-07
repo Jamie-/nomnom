@@ -160,6 +160,13 @@
             </div>
         {% endraw %}
     </script>
+    <script id="deletedNoticeTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="alert alert-danger" role="alert">
+                This poll has been deleted so will be accessible again once you leave this page.
+            </div>
+        {% endraw %}
+    </script>
     <script id="dismissibleAlertTemplate" type="text/x-jsrender">
         {% raw %}
             <div class="alert alert-{{:category}} alert-dismissible fade show" role="alert">
@@ -212,6 +219,8 @@
                     }
                 } else if ('poll_removal' in data) {
                     handlePollFlagged(data.poll_removal);
+                } else if ('poll_deletion' in data) {
+                    handlePollDeletion(data.poll_deletion)
                 } else if ('response_removal') {
                     handleResponseRemoval(data.response_removal);
                 }
@@ -271,6 +280,15 @@
             $('.main-content').prepend(tmpl.render());
             {% if not is_production() %}
                 console.log('Shown flagged poll notice!');
+            {% endif %}
+        }
+
+        function handlePollDeletion(data) {
+            // Show notice to user poll has been deleted
+            var tmpl = $.templates("#deletedNoticeTemplate");
+            $('.main-content').prepend(tmpl.render());
+            {% if not is_production() %}
+                console.log('Shown poll deleted notice!');
             {% endif %}
         }
 
