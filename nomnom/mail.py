@@ -28,7 +28,7 @@ class Email:
             'to': to,
             'subject': 'New Poll Created - NomNom',
             'text': 'You Created a Poll: "' + poll_title + '"\n' +
-                    'Use this link to view and share your poll: ' + poll_url +
+                    'Use this link to view and share your poll: ' + poll_url + '\n' +
                     'Use this link to delete your poll: ' + delete_url + '\n'
                     'Thanks for using NomNom, the best way to name your stuff.\n' +
                     '~ The NomNom Team\n',
