@@ -283,6 +283,8 @@
 
             // Insert response
             $('#poll-' + data.poll + ' ul').prepend(tmpl.render(tmpl_data));
+            // Update masonry
+            $('.grid').masonry('layout');
             {% if not is_production() %}
                 console.log("Added response!");
             {% endif %}
