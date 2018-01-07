@@ -169,7 +169,7 @@
     </script>
     <script id="dismissibleAlertTemplate" type="text/x-jsrender">
         {% raw %}
-            <div class="alert alert-{{:category}} alert-dismissible fade show" role="alert">
+            <div class="alert alert-{{:category}} alert-dismissible fade show" role="alert" id="{{:id}}">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -297,9 +297,13 @@
             var alert_tmpl = $.templates("#dismissibleAlertTemplate");
             var alert_tmpl_data = {
                 category: 'danger',
-                message: 'A response has been hidden due to inappropriate language; pending moderator approval.'
+                message: 'A response has been hidden due to inappropriate language; pending moderator approval.',
+                id: 'alert-' + data.response_id
             };
             $('.main-content').prepend(alert_tmpl.render(alert_tmpl_data));
+            setTimeout(function() {
+                $('#alert-' + data.response_id).remove();
+            }, 6000);
 
             // Remove flagged response
             $('tr#resp-' + data.response_id).remove();
