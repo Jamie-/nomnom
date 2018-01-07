@@ -36,6 +36,9 @@ class NomNomModel(ndb.Model):
             self.flagged_users[cookie_value] = 1
             self.flag += 1
             self.put()
+        # If flag is above threshold, throw event to remove it from all connected users
+        if self.flag >= 3:
+            events.flagged_nomnommodel_event(self)
 
 
 # Poll object model

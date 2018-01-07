@@ -79,9 +79,18 @@ def push_remove_response(response):
     socketio.send(json.dumps(data), json=True, namespace='/poll/'+response.get_poll_id())
 
 
+# Handle flagged polls and responses that have hit max flag count
+def flagged_item_handler(item):
+    if item.__class__.__name__ == "Poll":
+        push_remove_poll(item)
+    elif item.__class__.__name__ == "Response":
+        push_remove_response(item)
+
+
 # Add event handlers
 events.poll_created_event.add_listener(push_poll)
 events.response_event.add_listener(push_response)
 events.vote_event.add_listener(push_vote)
 events.auto_moderated_poll_event.add_listener(push_remove_poll)
 events.auto_moderated_response_event.add_listener(push_remove_response)
+events.flagged_nomnommodel_event.add_listener(flagged_item_handler)
