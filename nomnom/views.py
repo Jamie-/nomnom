@@ -74,7 +74,7 @@ def poll(poll_id):
                 flask.flash("That response has already been submitted, why don't you upvote it?", 'warning')
             # Check the response actually has content
             elif not poll.check_valid_response(rs):
-                flask.flash("That response is invalid, please try a different one.", 'warning')
+                flask.flash("That response is invalid, a good valid response is one that's more than a few characters and adds value to the poll.", 'warning')
             else:
                 Response.add(poll, rs)
                 flask.flash('Response added', 'success')
