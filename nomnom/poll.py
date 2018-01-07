@@ -104,6 +104,9 @@ class Poll(NomNomModel):
             taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
         if email:
             Email.send_mail(email, p.get_id(), p.delete_key)
+        else:
+            import time
+            time.sleep(0.5)
         return p
 
     # Fetch all polls from datastore
