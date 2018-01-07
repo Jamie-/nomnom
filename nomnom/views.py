@@ -65,7 +65,6 @@ def poll(poll_id):
         form = forms.ResponseForm()
         if form.validate_on_submit():
             Response.add(poll, form.response.data)
-            flask.flash('Response added', 'success')
         return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, cookie=flask.request.cookies.get('voteData'))
     except:  # Poll.get_poll() with an invalid ID can return one of many exceptions so leaving this for general case
         # More info see: https://github.com/googlecloudplatform/datastore-ndb-python/issues/143
