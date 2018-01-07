@@ -302,7 +302,7 @@
             };
             $('.main-content').prepend(alert_tmpl.render(alert_tmpl_data));
             setTimeout(function() {
-                $('#alert-' + data.response_id).remove();
+                $('#alert-' + data.response_id).alert('close');
             }, 6000);
 
             // Remove flagged response
