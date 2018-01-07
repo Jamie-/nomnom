@@ -31,7 +31,7 @@ class Email:
                     'Use this link to view and share your poll: ' + poll_url + '\n' +
                     'Use this link to delete your poll: ' + delete_url + '\n\n' +
                     'Thanks for using NomNom, the best way to name your stuff.\n' +
-                    '~ The NomNom Team',
+                    '~ The NomNom Team\n',
             'html': email_html
         })
 
