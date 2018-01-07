@@ -1,5 +1,6 @@
 import flask
 from nomnom import app
+from nomnom import events
 import forms
 import tags
 from poll import Poll, Response
@@ -98,6 +99,7 @@ def delete_poll(poll_id, delete_key):
             import time
             time.sleep(0.5)
             flask.flash('Poll deleted successfully.', 'success')
+            events.poll_deleted_event(poll)
             return flask.redirect('/', code=302)  # Redirect back to home page
         form = forms.ResponseForm()
         return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, delete_form=delete_form, delete=True)

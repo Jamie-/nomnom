@@ -4,37 +4,35 @@
     <img src="{{ url_for('static', filename='nomnom-logo.svg') }}" class="site-logo img-fluid mx-auto" alt="{{ APP_NAME }} Logo">
     <h5 class="logo-text">You dream it, the crowd will name it</h5>
 
-    {% if polls|length > 0 %}
-        <ul class="nav nav-tabs" style="margin-bottom: 20px">
-            <li class="nav-item">
-                <a class="nav-link{% if order == "newest" %} active{% endif %}" href="?order=newest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
-                    <i class="fa fa-hourglass"></i> Newest
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link{% if order == "hottest" %} active{% endif %}" href="?order=hottest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
-                    <i class="fa fa-fire"></i> Hottest
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link{% if order == "easiest" %} active{% endif %}" href="?order=easiest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
-                    <i class="fa fa-thumbs-up"></i> Easiest
-                </a>
-            </li>
-        </ul>
-    {% endif %}
+    <ul class="nav nav-tabs" style="margin-bottom: 20px">
+        <li class="nav-item">
+            <a class="nav-link{% if order == "newest" %} active{% endif %}" href="?order=newest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
+                <i class="fa fa-hourglass"></i> Newest
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link{% if order == "hottest" %} active{% endif %}" href="?order=hottest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
+                <i class="fa fa-fire"></i> Hottest
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link{% if order == "easiest" %} active{% endif %}" href="?order=easiest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
+                <i class="fa fa-thumbs-up"></i> Easiest
+            </a>
+        </li>
+    </ul>
 
-    <div class="row">
+    <div class="row" id="index-container">
         {% if polls|length > 0 %}
             <div class="container">
                 <div class="grid" data-masonry='{ "itemSelector": ".grid-item", "isFitWidth": true }' id="poll-list">
                     {% for p in polls %}
                         <div class="grid-item">
-                            <div class="card">
+                            <div class="card"  id="poll-{{ p.get_id() }}">
                                 {% if p.image_url is not none and p.image_url != "" %}
                                     <img class="img img-responsive full-width" src="{{ p.image_url }}">
                                 {% endif %}
-                                <div class="card-body">
+                                <div class="card-body poll-card-header">
                                     <div class="container">
                                         <button class="poll-flag float-right" data-vote="poll-flag" data-poll-id = "{{ p.get_id() }}">
                                             <i class="fa fa-flag {% if p.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
@@ -47,7 +45,7 @@
                                 {% if p.get_responses(3)|length > 0 %}
                                     <ul class="list-group list-group-flush list-group-striped">
                                         {% for r in p.get_responses(3) %}
-                                            <li class="list-group-item">
+                                            <li class="list-group-item" id="poll-{{ p.get_id() }}-resp-{{ r.get_id() }}">
                                                 <i class="fa fa-trophy"></i>
                                                 <span class="score" style="margin-right: 20px;">{{ r.upv - r.dnv }}</span>
                                                 {{ r.response_str }}
@@ -108,4 +106,213 @@
 
 {% block script %}
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!-- Poll Template -->
+    <script id="pollTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="grid-item">
+                <div class="card" id="poll-{{:id}}">
+                    {{:image}}
+                    <div class="card-body poll-card-header">
+                        <div class="container">
+                            <button class="poll-flag float-right" data-vote="poll-flag" data-poll-id="{{:id}}">
+                                <i class="fa fa-flag" title="Flag as Inappropriate"></i>
+                            </button>
+                            <h6 class="card-text">Name my</h6>
+                            <h1 class="card-title">{{:title}}</h1>
+                            <p class="card-text">{{:description}}</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <a href="/poll/{{:id}}" class="btn btn-primary">Join in!</a>
+                        {{:tag}}
+                    </div>
+                </div>
+            </div>
+        {% endraw %}
+    </script>
+    <!-- Response Template -->
+    <script id="responseTemplate" type="text/x-jsrender">
+        {% raw %}
+            <li class="list-group-item" id="poll-{{:poll}}-resp-{{:id}}">
+                <i class="fa fa-trophy"></i>
+                <span class="score" style="margin-right: 20px;">{{:score}}</span>
+                {{:string}}
+                <div class="pull-right">
+                    <span class="up-score">
+                        <button class="vote" data-vote="resp-up" data-resp-id="{{:id}}" data-poll-id="{{:poll}}">
+                            <i class="fa fa-arrow-up" title="Up Vote"></i>
+                        </button>
+                        <span style="margin-right: 5px;">{{:upv}}</span>
+                    </span>
+                    <span class="down-score">
+                        <button class="vote" data-vote="resp-down" data-resp-id="{{:id}}" data-poll-id="{{:poll}}">
+                            <i class="fa fa-arrow-down" title="Down Vote"></i>
+                        </button>
+                        <span style="margin-right: 5px;">{{:dnv}}</span>
+                    </span>
+                    <span class="flag-score">
+                        <button class="vote" data-vote="resp-flag" data-resp-id="{{:id}}" data-poll-id="{{:poll}}">
+                            <i class="fa fa-flag" title="Flag as Inappropriate"></i>
+                        </button>
+                    </span>
+                </div>
+            </li>
+        {% endraw %}
+    </script>
+    <script id="noPollsNoticeTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="container text-center">
+                <h2>Oh no, there are no polls at the moment.</h2>
+                <h4>Why don't you <a href="/create">create one</a>?</h4>
+            </div>
+        {% endraw %}
+    </script>
+    <script>
+        var socket = io.connect('http{% if is_production() %}s{% endif %}://' + document.domain + ':' + location.port + '/global');
+        {% if not is_production() %}
+            socket.on('connect', function() {
+                console.log('Client connected to server');
+            });
+            socket.on('message', function(msg) {
+                console.log('Response from server: ', msg)
+            });
+        {% endif %}
+
+        socket.on('json', function(json_data) {
+            {% if not is_production() %}
+                console.log('Received data from server: ', json_data);
+            {% endif %}
+            try {
+                var data = JSON.parse(json_data);
+                if ('poll' in data) {
+                    handlePoll(data.poll);
+                } else if ('response' in data) {
+                    handleResponse(data.response);
+                } else if ('vote' in data) {
+                    handleVote(data.vote);
+                } else if ('poll_removal' in data) {
+                    handlePollRemoval(data.poll_removal);
+                } else if ('poll_deletion' in data) {
+                    handlePollRemoval(data.poll_deletion);
+                } else if ('response_removal') {
+                    handleResponseRemoval(data.response_removal);
+                }
+            } catch (e) {
+                {% if not is_production() %}
+                    console.log("ERROR: ", e);
+                {% endif %}
+            }
+        });
+
+        function handlePoll(data) {
+            // If no polls yet created, create structure
+            if ($('#poll-list').length === 0) {
+                $('#index-container').html('<div class="container"><div class="grid" id="poll-list"></div></div>');
+                $('.grid').masonry({
+                    isFitWidth: true,
+                    itemSelector: '.grid-item'
+                });
+            }
+
+            // Load and fill poll HTML template
+            var tmpl = $.templates("#pollTemplate");
+            var tmpl_data = {
+                id: data.id,
+                title: data.title,
+                description: data.description
+            };
+            if ('image_url' in data) {
+                tmpl_data.image = '<img class="img img-responsive full-width" src="' + data.image_url + '">';
+            } else {
+                tmpl_data.image = '';
+            }
+            switch(data.tag.toUpperCase()) {
+                case 'PERSON':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-user"></i> ' + data.tag +'</h5>';
+                    break;
+                case 'PLACE':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-map-marker"></i> ' + data.tag +'</h5>';
+                    break;
+                case 'ORGANIZATION':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-building"></i> ' + data.tag +'</h5>';
+                    break;
+                case 'EVENT':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-calendar"></i> ' + data.tag +'</h5>';
+                    break;
+                case 'WORK OF ART':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-picture-o"></i> ' + data.tag +'</h5>';
+                    break;
+                case 'CONSUMER GOOD':
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-beer"></i> ' + data.tag +'</h5>';
+                    break;
+                default:
+                    tmpl_data.tag = '<h5 class="card-text float-right" id="tag"> <i class="fa fa-question-circle"></i> ' + data.tag +'</h5>';
+            }
+
+            // Insert poll
+            var poll_data = $(tmpl.render(tmpl_data));
+            $('.grid').prepend(poll_data).masonry('prepended', poll_data);
+            {% if not is_production() %}
+                console.log("Added poll!");
+            {% endif %}
+        }
+
+        function handleResponse(data) {
+            // Check response structure exists in poll, if not, create it
+            if ($('#poll-' + data.poll + ' ul').length === 0) {
+                $('#poll-' + data.poll + ' .poll-card-header').after('<ul class="list-group list-group-flush list-group-striped"></div>');
+            }
+
+            // Check limit of 3 responses has not been reached, if so don't do anything
+            if ($('#poll-' + data.poll + ' li').length >= 3) {
+                return;
+            }
+
+            // Load and fill response template
+            var tmpl = $.templates("#responseTemplate");
+            var tmpl_data = {
+                id: data.id,
+                poll: data.poll,
+                string: data.string,
+                score: data.score,
+                upv: data.upv,
+                dnv: data.dnv
+            };
+
+            // Insert response
+            $('#poll-' + data.poll + ' ul').prepend(tmpl.render(tmpl_data));
+            // Update masonry
+            $('.grid').masonry('layout');
+            {% if not is_production() %}
+                console.log("Added response!");
+            {% endif %}
+        }
+
+        function handleVote(data) {
+            element = $('#poll-' + data.poll_id + '-resp-' + data.response_id);
+            element.find('span.score').text(data.score);
+            element.find('span.up-score span').text(data.upv);
+            element.find('span.down-score span').text(data.dnv);
+        }
+
+        function handlePollRemoval(data) {
+            // Remove flagged poll
+            $('#poll-' + data.poll_id).parent().remove();
+            // Update masonry
+            $('.grid').masonry('layout');
+
+            // If no polls left, replace with no polls container
+            if ($('#poll-list').children().length === 0) {
+                tmpl = $.templates("#noPollsNoticeTemplate");
+                $('#index-container').html(tmpl.render());
+            }
+        }
+
+        function handleResponseRemoval(data) {
+            // Remove flagged response
+            $('#poll-' + data.poll_id + '-resp-' + data.response_id).remove();
+            // Update masonry
+            $('.grid').masonry('layout');
+        }
+    </script>
 {% endblock %}

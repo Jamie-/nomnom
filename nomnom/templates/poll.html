@@ -24,7 +24,7 @@
             <div class="card-body">
                 {{ poll.description }}
                 {%  if poll.visible %}
-                    <button class="poll-flag" data-vote="poll-flag" data-poll-id = "{{ poll.get_id() }}">
+                    <button id="flag-poll-button" class="poll-flag" data-vote="poll-flag" data-poll-id="{{ poll.get_id() }}">
                         <i class="fa fa-flag {% if poll.flagged_users[cookie] == 1 %}flag-active{% endif %}" title="Flag as Inappropriate"></i>
                     </button>
                 {% endif %}
@@ -55,11 +55,10 @@
             </div>
         </div>
 
-
         {% if responses|length > 0 %}
-            <table class="table table-striped table-inverse">
+            <table class="table table-striped table-inverse" id="response-table">
                 {% for r in responses %}
-                    <tr>
+                    <tr id="resp-{{ r.get_id() }}">
                         <td class="text-center" style="width: 10%;"><i class="fa fa-trophy"></i> <span class="score">{{ r.upv - r.dnv }}</span></td>
                         <td>{{ r.response_str }}</td>
                         <td class="text-center up-score" style="width: 10%;">
@@ -85,7 +84,7 @@
                 {% endfor %}
             </table>
         {% else %}
-            <div class="card" style="margin-bottom: 20px;">
+            <div class="card" style="margin-bottom: 20px;" id="no-responses-notice">
                 <div class="card-body">
                     <h3 class="text-center">There are no responses yet, why don't you make one?</h3>
                 </div>
@@ -123,4 +122,198 @@
             $('#delete-modal').modal('show')
         </script>
     {% endif %}
+    <!-- Response template -->
+    <script id="responseTemplate" type="text/x-jsrender">
+        {% raw %}
+            <tr id="resp-{{:id}}">
+                <td class="text-center" style="width: 10%;"><i class="fa fa-trophy"></i> <span class="score">{{:score}}</span></td>
+                <td>{{:string}}</td>
+                <td class="text-center up-score" style="width: 10%;">
+                    <button class="vote" data-vote="resp-up" data-resp-id="{{:id}}" data-poll-id="{{:poll}}">
+                        <i class="fa fa-arrow-up" title="Up Vote"></i>
+                    </button>
+                    <span>{{:upv}}</span>
+                </td>
+                <td class="text-center down-score" style="width: 10%;">
+                    <button class="vote" data-vote="resp-down" data-resp-id="{{:id}}" data-poll-id="{{:poll}}">
+                        <i class="fa fa-arrow-down" title="Down Vote"></i>
+                    </button>
+                    <span>{{:dnv}}</span>
+                </td>
+                <td class="text-center flag-score" style="width: 10%;">
+                    {{:flag}}
+                </td>
+            </tr>
+        {% endraw %}
+    </script>
+    <script id="flagTemplate" type="text/x-jsrender">
+        {% raw %}
+            <button class="vote" data-vote="resp-flag" data-resp-id="{{:id}}" data-poll-id="{{:poll}}">
+                <i class="fa fa-flag" title="Flag as Inappropriate"></i>
+            </button>
+        {% endraw %}
+    </script>
+    <script id="flaggedNoticeTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="alert alert-danger" role="alert">
+                This poll has been flagged for moderation and will not appear on the main page or in any search results.
+            </div>
+        {% endraw %}
+    </script>
+    <script id="deletedNoticeTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="alert alert-danger" role="alert">
+                This poll has been deleted so will be accessible again once you leave this page.
+            </div>
+        {% endraw %}
+    </script>
+    <script id="dismissibleAlertTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="alert alert-{{:category}} alert-dismissible fade show" role="alert" id="{{:id}}">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{:message}}
+            </div>
+        {% endraw %}
+    </script>
+    <script id="noResponsesNoticeTemplate" type="text/x-jsrender">
+        {% raw %}
+            <div class="card" style="margin-bottom: 20px;" id="no-responses-notice">
+                <div class="card-body">
+                    <h3 class="text-center">There are no responses yet, why don't you make one?</h3>
+                </div>
+            </div>
+        {% endraw %}
+    </script>
+    <script>
+        var poll_id = window.location.pathname.split('/')[2];
+
+        // Create socket listening to the namespace for this poll
+        var socket = io.connect('http{% if is_production() %}s{% endif %}://' + document.domain + ':' + location.port + '/poll/' + poll_id);
+        {% if not is_production() %}
+            socket.on('connect', function() {
+                console.log('Client connected to server');
+            });
+            socket.on('message', function(msg) {
+                console.log('Response from server: ', msg)
+            });
+        {% endif %}
+
+        socket.on('json', function(json_data) {
+            {% if not is_production() %}
+                console.log('Received data from server: ', json_data);
+            {% endif %}
+            try {
+                var data = JSON.parse(json_data);
+                // Only act on response and vote events
+                if ('response' in data) {
+                    // Check response is for this poll
+                    if (data.response.poll === poll_id) {
+                        handleResponse(data.response);
+                    }
+                } else if ('vote' in data) {
+                    // Check vote is for this poll
+                    if (data.vote.poll_id === poll_id) {
+                        handleVote(data.vote);
+                    }
+                } else if ('poll_removal' in data) {
+                    handlePollFlagged(data.poll_removal);
+                } else if ('poll_deletion' in data) {
+                    handlePollDeletion(data.poll_deletion)
+                } else if ('response_removal') {
+                    handleResponseRemoval(data.response_removal);
+                }
+            } catch (e) {
+                {% if not is_production() %}
+                    console.log("ERROR: ", e);
+                {% endif %}
+            }
+        });
+
+        function handleResponse(data) {
+            // Check response structure exists in poll, if not, create it
+            if ($('#response-table').length === 0) {
+                $('#no-responses-notice').remove();
+                $('div.share-buttons').after('<table class="table table-striped table-inverse" id="response-table"><tbody></tbody></table>');
+            }
+
+            // Load and fill response template
+            var tmpl = $.templates("#responseTemplate");
+            var tmpl_data = {
+                id: data.id,
+                poll: data.poll,
+                string: data.string,
+                score: data.score,
+                upv: data.upv,
+                dnv: data.dnv
+            };
+            // Check poll visibility, hide flag button if not visible
+            if ($('#flag-poll-button').length === 0) {
+                tmpl_data.flag = "";
+            } else {
+                flag_tmpl = $.templates("#flagTemplate");
+                flag_tmpl_data = {
+                    id: data.id,
+                    poll: data.poll
+                };
+                tmpl_data.flag = flag_tmpl.render(flag_tmpl_data);
+            }
+
+            // Insert response
+            $('#response-table').find('tbody').prepend(tmpl.render(tmpl_data));
+            {% if not is_production() %}
+                console.log("Added response!");
+            {% endif %}
+        }
+
+        function handleVote(data) {
+            element = $('#resp-' + data.response_id);
+            element.find('span.score').text(data.score);
+            element.find('.up-score span').text(data.upv);
+            element.find('.down-score span').text(data.dnv);
+        }
+
+        function handlePollFlagged(data) {
+            // Show notice to user poll has been flagged by auto-moderator
+            var tmpl = $.templates("#flaggedNoticeTemplate");
+            $('.main-content').prepend(tmpl.render());
+            {% if not is_production() %}
+                console.log('Shown flagged poll notice!');
+            {% endif %}
+        }
+
+        function handlePollDeletion(data) {
+            // Show notice to user poll has been deleted
+            var tmpl = $.templates("#deletedNoticeTemplate");
+            $('.main-content').prepend(tmpl.render());
+            {% if not is_production() %}
+                console.log('Shown poll deleted notice!');
+            {% endif %}
+        }
+
+        function handleResponseRemoval(data) {
+            // Show notice to user response has been hidden
+            var alert_tmpl = $.templates("#dismissibleAlertTemplate");
+            var alert_tmpl_data = {
+                category: 'danger',
+                message: 'A response has been hidden due to inappropriate language; pending moderator approval.',
+                id: 'alert-' + data.response_id
+            };
+            $('.main-content').prepend(alert_tmpl.render(alert_tmpl_data));
+            setTimeout(function() {
+                $('#alert-' + data.response_id).alert('close');
+            }, 6000);
+
+            // Remove flagged response
+            $('tr#resp-' + data.response_id).remove();
+
+            // If no responses left, replace no responses card
+            if ($('#response-table').find('tbody').children().length === 0) {
+                $('#response-table').remove();
+                var no_resp_tmpl = $.templates("#noResponsesNoticeTemplate");
+                $('div.share-buttons').after(no_resp_tmpl.render());
+            }
+        }
+    </script>
 {% endblock %}
