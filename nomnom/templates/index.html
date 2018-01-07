@@ -111,7 +111,7 @@
     <!-- Poll Template -->
     <script id="pollTemplate" type="text/x-jsrender">
         {% raw %}
-            <div class="item">
+            <div class="grid-item">
                 <div class="card" id="poll-{{:id}}">
                     {{:image}}
                     <div class="card-body poll-card-header">
@@ -209,7 +209,11 @@
         function handlePoll(data) {
             // If no polls yet created, create structure
             if ($('#poll-list').length === 0) {
-                $('#index-container').html('<div class="container"><div class="masonry" id="poll-list"></div></div>');
+                $('#index-container').html('<div class="container"><div class="grid" id="poll-list"></div></div>');
+                $('.grid').masonry({
+                    isFitWidth: true,
+                    itemSelector: '.grid-item'
+                });
             }
 
             // Load and fill poll HTML template
@@ -248,7 +252,8 @@
             }
 
             // Insert poll
-            $('#poll-list').prepend(tmpl.render(tmpl_data));
+            var poll_data = $(tmpl.render(tmpl_data));
+            $('.grid').prepend(poll_data).masonry('prepended', poll_data);
             {% if not is_production() %}
                 console.log("Added poll!");
             {% endif %}
