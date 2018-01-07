@@ -293,15 +293,13 @@
         }
 
         function handleResponseRemoval(data) {
-            // Show notice to user response has been flagged by auto-moderator
-            /*
+            // Show notice to user response has been hidden
             var alert_tmpl = $.templates("#dismissibleAlertTemplate");
             var alert_tmpl_data = {
                 category: 'warning',
-                message: 'Your response has triggered our auto-moderator so has been removed pending moderator approval.'
+                message: 'A response has been hidden due to inappropriate language pending moderator approval.'
             };
             $('.main-content').prepend(alert_tmpl.render(alert_tmpl_data));
-            */
 
             // Remove flagged response
             $('tr#resp-' + data.response_id).remove();
