@@ -300,6 +300,8 @@
         function handlePollRemoval(data) {
             // Remove flagged poll
             $('#poll-' + data.poll_id).parent().remove();
+            // Update masonry
+            $('.grid').masonry('layout');
 
             // If no polls left, replace with no polls container
             if ($('#poll-list').children().length === 0) {
@@ -311,6 +313,8 @@
         function handleResponseRemoval(data) {
             // Remove flagged response
             $('#poll-' + data.poll_id + '-resp-' + data.response_id).remove();
+            // Update masonry
+            $('.grid').masonry('layout');
         }
     </script>
 {% endblock %}
