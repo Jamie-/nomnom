@@ -4,25 +4,23 @@
     <img src="{{ url_for('static', filename='nomnom-logo.svg') }}" class="site-logo img-fluid mx-auto" alt="{{ APP_NAME }} Logo">
     <h5 class="logo-text">You dream it, the crowd will name it</h5>
 
-    {% if polls|length > 0 %}
-        <ul class="nav nav-tabs" style="margin-bottom: 20px">
-            <li class="nav-item">
-                <a class="nav-link{% if order == "newest" %} active{% endif %}" href="?order=newest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
-                    <i class="fa fa-hourglass"></i> Newest
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link{% if order == "hottest" %} active{% endif %}" href="?order=hottest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
-                    <i class="fa fa-fire"></i> Hottest
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link{% if order == "easiest" %} active{% endif %}" href="?order=easiest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
-                    <i class="fa fa-thumbs-up"></i> Easiest
-                </a>
-            </li>
-        </ul>
-    {% endif %}
+    <ul class="nav nav-tabs" style="margin-bottom: 20px">
+        <li class="nav-item">
+            <a class="nav-link{% if order == "newest" %} active{% endif %}" href="?order=newest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
+                <i class="fa fa-hourglass"></i> Newest
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link{% if order == "hottest" %} active{% endif %}" href="?order=hottest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
+                <i class="fa fa-fire"></i> Hottest
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link{% if order == "easiest" %} active{% endif %}" href="?order=easiest{% if tag %}&tag={{ tag }}{% endif %}{% if search_term %}&q={{ search_term }}{% endif %}">
+                <i class="fa fa-thumbs-up"></i> Easiest
+            </a>
+        </li>
+    </ul>
 
     <div class="row" id="index-container">
         {% if polls|length > 0 %}
