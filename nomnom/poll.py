@@ -1,9 +1,10 @@
 from google.appengine.ext import ndb
 from google.appengine.api import taskqueue
 import nomnom.tags as tags
-import re
+from nomnom import events
 from mail import Email
 import uuid
+import re
 
 # Moderation code, used in both models, so done as a parent class
 class NomNomModel(ndb.Model):
@@ -36,6 +37,9 @@ class NomNomModel(ndb.Model):
             self.flagged_users[cookie_value] = 1
             self.flag += 1
             self.put()
+        # If flag is above threshold, throw event to remove it from all connected users
+        if self.flag >= 3:
+            events.flagged_nomnommodel_event(self)
 
 
 # Poll object model
@@ -104,6 +108,7 @@ class Poll(NomNomModel):
             taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
         if email:
             Email.send_mail(email, p.get_id(), p.delete_key)
+        events.poll_created_event(p)
         return p
 
     # Fetch all polls from datastore
@@ -176,6 +181,7 @@ class Response(NomNomModel):
             self.dnv -= 1
             self.voted_users[cookie_value] = 1
 
+        events.vote_event(self)
         self.put()
 
     # Add down-vote to response
@@ -195,6 +201,7 @@ class Response(NomNomModel):
             self.dnv += 1
             self.voted_users[cookieValue] = -1
 
+        events.vote_event(self)
         self.put()
 
     # Add response to datastore
@@ -205,6 +212,7 @@ class Response(NomNomModel):
         # if the poll is public schedule a thread to check the response for bad language
         if r.poll_visible():
             taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
+        events.response_event(r)
         return r
 
     # Check if the parent poll is visible.
