@@ -17,15 +17,13 @@ run: # Run app locally
 	/usr/bin/env python $(gcloud-sdk)/platform/google_appengine/dev_appserver.py --host 127.0.0.1 .
 
 deploy-plus: # deploy everything
-	gcloud app deploy --quiet
-	gcloud app deploy index.yaml --quiet
-	gcloud app deploy queue.yaml --quiet
+	gcloud app deploy *.yaml --quiet --project=nomnom-online
 
 deploy: # Deploy app to AppEngine
-	gcloud app deploy --quiet
+	gcloud app deploy --quiet --project=nomnom-online
 
 cloud-logs: # Watch AppEngine cloud logs
-	gcloud app logs tail -s default
+	gcloud app logs tail -s default --project=nomnom-online
 
 view: # Open deployed app in browser
-	gcloud app browse
+	gcloud app browse --project=nomnom-online

@@ -1,8 +1,10 @@
 from google.appengine.ext import ndb
 from google.appengine.api import taskqueue
 import nomnom.tags as tags
+from nomnom import events
 from mail import Email
 import uuid
+import re
 
 # Moderation code, used in both models, so done as a parent class
 class NomNomModel(ndb.Model):
@@ -35,6 +37,9 @@ class NomNomModel(ndb.Model):
             self.flagged_users[cookie_value] = 1
             self.flag += 1
             self.put()
+        # If flag is above threshold, throw event to remove it from all connected users
+        if self.flag >= 3:
+            events.flagged_nomnommodel_event(self)
 
 
 # Poll object model
@@ -46,6 +51,12 @@ class Poll(NomNomModel):
     delete_key = ndb.StringProperty()
     tag = ndb.StringProperty()
     datetime = ndb.DateTimeProperty(auto_now_add=True)
+    visible = ndb.BooleanProperty()
+
+    # can't flag invisible polls
+    def update_flag(self, cookie_value):
+        if self.visible:
+            super(Poll, self).update_flag(cookie_value)
 
     # get the id of the poll
     def get_id(self):
@@ -59,27 +70,55 @@ class Poll(NomNomModel):
         else:
             return sorted(Response.query(Response.flag < flag_count, ancestor=self.key).fetch(n), key=lambda response: -response.score)[:n]
 
+    # Checks whether a certain string has already been submitted before
+    def check_duplicate(self, response_string):
+        responses = self.get_responses()
+        for r in responses:
+            if r.response_str.lower().strip() == response_string.lower().strip():
+                return False
+        return True
+
+    # Check if response is valid
+    def check_valid_response(self, response_string):
+        # Check length
+        if len(response_string) < 3:
+            return False
+        # Check if string contains alphabet letters
+        letters = 0
+        for c in response_string:
+            if c.isalpha():
+                letters += 1
+        if letters < (len(response_string) / 2):
+            return False
+        # Check for escape backslash
+        if "\\" in response_string:
+            return False
+        return True
+
+
     # Add poll to datastore
     @classmethod
-    def add(cls, title, description, email, image_url):
-        content_tag = tags.entities_text(title)
-        p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()), tag=content_tag)
+    def add(cls, title, description, email, image_url, visible):
+        content_tag = tags.analyze_entities(title)
+        p = Poll(title=title, description=description, email=email, image_url=image_url, delete_key=str(uuid.uuid4()), tag=content_tag, visible=visible)
         p.put()  # Add to datastore
-        # add a job to a task queue that will check the poll for bad language
-        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
+        # don't check hidden polls
+        if visible:
+            # add a job to a task queue that will check the poll for bad language
+            taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
         if email:
             Email.send_mail(email, p.get_id(), p.delete_key, title, image_url)
+        events.poll_created_event(p)
         return p
 
     # Fetch all polls from datastore
     # flag_count is the number of flags that are required before being excluded from the search (defaults to 3)
     @classmethod
     def fetch_all(cls, order_by=None, tag_value=None, flag_count=3):
-        query = Poll.query(Poll.flag < flag_count)
+        query = Poll.query(Poll.visible == True, Poll.flag < flag_count)
         # If there is a tag then limit to that tag
         if (tag_value is not None):
-            query = Poll.query(Poll.flag < flag_count, Poll.tag == tag_value)
-
+            query = Poll.query(Poll.visible == True, Poll.flag < flag_count, Poll.tag == tag_value)
         if (order_by is None):  # First as most common case
             return sorted(query.fetch())
         elif (order_by == "newest"):
@@ -142,6 +181,7 @@ class Response(NomNomModel):
             self.dnv -= 1
             self.voted_users[cookie_value] = 1
 
+        events.vote_event(self)
         self.put()
 
     # Add down-vote to response
@@ -161,6 +201,7 @@ class Response(NomNomModel):
             self.dnv += 1
             self.voted_users[cookieValue] = -1
 
+        events.vote_event(self)
         self.put()
 
     # Add response to datastore
@@ -168,9 +209,20 @@ class Response(NomNomModel):
     def add(cls, poll, response_str):
         r = Response(parent=poll.key, response_str=response_str)
         r.put()
-        # schedule a thread to check the poll for bad language
-        taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
+        # if the poll is public schedule a thread to check the response for bad language
+        if r.poll_visible():
+            taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
+        events.response_event(r)
         return r
+
+    # Check if the parent poll is visible.
+    def poll_visible(self):
+        return self.key.parent().get().visible
+
+    # don't flag responses to hidden polls
+    def update_flag(self, cookie_value):
+        if self.poll_visible():
+            super(Response, self).update_flag(cookie_value)
 
     # Get response from datastore
     @classmethod

@@ -1,5 +1,5 @@
 // Update score and return results on .vote event
-$('.vote').click(function() {
+$(document).on('click', '.vote', function() {
     element = $(this); // Element event handler bound to
     $.ajax({
         url: '/poll/' + $(this).data('poll-id') + '/vote/' + $(this).data('vote'),
@@ -16,18 +16,28 @@ $('.vote').click(function() {
             // Update up-vote, down-vote and flag-vote scores
             element.parent().parent().find('.up-score span').html(response['up']);
             element.parent().parent().find('.down-score span').html(response['down']);
-            // Show arrow as pressed
-            if (response['up'] === 1) {
-                element.find('i').addClass('upvote');
+            // Show arrow as pressed when clicked
+            if (element.data('vote') === "resp-up") {
+                if (element.find('i').hasClass('upvote'))
+                    element.find('i').removeClass('upvote');
+                else
+                    element.find('i').addClass('upvote');
                 element.parent().parent().find('.down-score i').removeClass('downvote');
             } else {
                 element.find('i').removeClass('upvote');
             }
-            if (response['down'] === 1) {
-                element.find('i').addClass('downvote');
+            if (element.data('vote') === "resp-down") {
+                if (element.find('i').hasClass('downvote'))
+                    element.find('i').removeClass('downvote');
+                else
+                    element.find('i').addClass('downvote');
                 element.parent().parent().find('.up-score i').removeClass('upvote');
             } else {
                 element.find('i').removeClass('downvote');
+            }
+            // Show flag as pressed when clicked
+            if (element.data('vote') === "resp-flag") {
+                element.find('i').addClass('flag-active');
             }
         },
         error: function(error) {
@@ -37,7 +47,7 @@ $('.vote').click(function() {
 });
 
 // Flag a poll
-$('.poll-flag').click(function () {
+$(document).on('click', '.poll-flag', function() {
    element = $(this);
    $.ajax({
         url: '/poll/' + $(this).data('poll-id') + '/vote/' + $(this).data('vote'),
