@@ -38,6 +38,11 @@ img {
     margin-bottom: 20px;
 }
 
+/* Fixed main-content bottom margin */
+.main-content {
+    margin-bottom: 20px;
+}
+
 /* Masonry grid */
 .grid {
     margin-left: auto;
