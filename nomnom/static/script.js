@@ -80,3 +80,8 @@ function copyToClip(element) {
         $(element).tooltip('hide');
     }, 500);
 }
+
+//ensures only a single press of the submit button to create a form
+$("#create-submit").on("click", function() {
+    $(this).prop("disabled", true);
+});
