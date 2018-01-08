@@ -93,7 +93,7 @@ function copyToClip(element) {
 
 $(window).on('resize', function(){
     $('#poll-list .card').css('margin',$(window).width()*0.008);
-    if ($(window).width() > 1500){
+    if ($(window).width() > 1600){
 		$('#poll-list .card').width(1500/3 - 1500*0.05);
 		$('#poll-list .card').css('margin',1500*0.008);
 	} else if ($(window).width() > 1350){
