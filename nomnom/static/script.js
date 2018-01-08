@@ -91,16 +91,16 @@ function copyToClip(element) {
     }, 500);
 }
 
-$(window).on('load resize', function(){
+$(window).on('resize', function(){
     $('#poll-list .card').css('margin',$(window).width()*0.008);
     if ($(window).width() > 1500){
 		$('#poll-list .card').width(1500/3 - 1500*0.05);
 		$('#poll-list .card').css('margin',1500*0.008);
 	} else if ($(window).width() > 1350){
-		$('#poll-list .card').width($(window).width()/3 - $(window).width()*0.05);
+		$('#poll-list .card').width($(window).width()/3 - $(window).width()*0.03);
 	} else if ($(window).width() < 950){
 		$('#poll-list .card').width($(window).width() - $(window).width()*0.1);
 	} else {
 		$('#poll-list .card').width($(window).width()/2 - $(window).width()*0.06);
 	}
-});
+}).resize();
