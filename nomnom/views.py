@@ -1,5 +1,6 @@
 import flask
 from nomnom import app
+from nomnom import events
 import forms
 import tags
 from poll import Poll, Response
@@ -68,12 +69,16 @@ def poll(poll_id):
             flask.abort(404)
         form = forms.ResponseForm()
         if form.validate_on_submit():
+            rs = form.response.data
             # Check if the the response has been posted before
-            if poll.check_duplicate(form.response.data):
-                Response.add(poll, form.response.data)
-                flask.flash('Response added', 'success')
-            else:
+            if not poll.check_duplicate(rs):
                 flask.flash("That response has already been submitted, why don't you upvote it?", 'warning')
+            # Check the response actually has content
+            elif not poll.check_valid_response(rs):
+                flask.flash("That response is invalid, a good valid response is one that's more than a few characters and adds value to the poll.", 'warning')
+            else:
+                Response.add(poll, rs)
+                flask.flash('Response added', 'success')
         return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, cookie=flask.request.cookies.get('voteData'))
     except:  # Poll.get_poll() with an invalid ID can return one of many exceptions so leaving this for general case
         # More info see: https://github.com/googlecloudplatform/datastore-ndb-python/issues/143
@@ -94,6 +99,7 @@ def delete_poll(poll_id, delete_key):
             import time
             time.sleep(0.5)
             flask.flash('Poll deleted successfully.', 'success')
+            events.poll_deleted_event(poll)
             return flask.redirect('/', code=302)  # Redirect back to home page
         form = forms.ResponseForm()
         return flask.render_template('poll.html', title=poll.title, poll=poll, responses=poll.get_responses(), form=form, delete_form=delete_form, delete=True)
