@@ -90,6 +90,3 @@ function copyToClip(element) {
         $(element).tooltip('hide');
     }, 500);
 }
-
-
-
