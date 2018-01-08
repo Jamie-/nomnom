@@ -169,6 +169,21 @@
         {% endraw %}
     </script>
     <script>
+        var resizeWidth = function () {
+            $('#poll-list .card').css('margin',$(window).width()*0.008);
+            if ($(window).width() > 1600){
+                $('.grid-item').width(1600/3 - 1600*0.03);
+            } else if ($(window).width() > 1350){
+                $('.grid-item').width($(window).width()/3 - $(window).width()*0.03);
+            } else if ($(window).width() < 950){
+                $('.grid-item').width($(window).width() - $(window).width()*0.1);
+            } else {
+                $('.grid-item').width($(window).width()/2 - $(window).width()*0.06);
+            }
+        };
+
+        $(window).resize(resizeWidth).resize();
+
         var socket = io.connect('http{% if is_production() %}s{% endif %}://' + document.domain + ':' + location.port + '/global');
         {% if not is_production() %}
             socket.on('connect', function() {
@@ -198,6 +213,8 @@
                 } else if ('response_removal') {
                     handleResponseRemoval(data.response_removal);
                 }
+                resizeWidth();
+                $('.grid').masonry('layout');
             } catch (e) {
                 {% if not is_production() %}
                     console.log("ERROR: ", e);
@@ -252,7 +269,11 @@
 
             // Insert poll
             var poll_data = $(tmpl.render(tmpl_data));
-            $('.grid').prepend(poll_data).masonry('prepended', poll_data);
+            {% if order == "newest" %}
+                $('.grid').prepend(poll_data).masonry('prepended', poll_data);
+            {% else %}
+                $('.grid').append(poll_data).masonry('appended', poll_data);
+            {% endif %}
             {% if not is_production() %}
                 console.log("Added poll!");
             {% endif %}
