@@ -1,6 +1,6 @@
 // Update score and return results on .vote event
 $(document).on('click', '.vote', function() {
-    element = $(this); // Element event handler bound to
+    var element = $(this); // Element event handler bound to
     $.ajax({
         url: '/poll/' + $(this).data('poll-id') + '/vote/' + $(this).data('vote'),
         data: {resp_id: $(this).data('resp-id')},
@@ -8,19 +8,21 @@ $(document).on('click', '.vote', function() {
         success: function(response) {
             // Show arrow as pressed when clicked
             if (element.data('vote') === "resp-up") {
-                if (element.find('i').hasClass('upvote'))
+                if (element.find('i').hasClass('upvote')) {
                     element.find('i').removeClass('upvote');
-                else
+                } else {
                     element.find('i').addClass('upvote');
+                }
                 element.parent().parent().find('.down-score i').removeClass('downvote');
             } else {
                 element.find('i').removeClass('upvote');
             }
             if (element.data('vote') === "resp-down") {
-                if (element.find('i').hasClass('downvote'))
+                if (element.find('i').hasClass('downvote')) {
                     element.find('i').removeClass('downvote');
-                else
+                } else {
                     element.find('i').addClass('downvote');
+                }
                 element.parent().parent().find('.up-score i').removeClass('upvote');
             } else {
                 element.find('i').removeClass('downvote');
@@ -38,7 +40,7 @@ $(document).on('click', '.vote', function() {
 
 // Flag a poll
 $(document).on('click', '.poll-flag', function() {
-   element = $(this);
+   var element = $(this);
    $.ajax({
         url: '/poll/' + $(this).data('poll-id') + '/vote/' + $(this).data('vote'),
         data: {resp_id: $(this).data('resp-id')},

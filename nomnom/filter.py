@@ -1,5 +1,6 @@
 import urllib2
 
+
 ################
 # Filter Class #
 ################
@@ -15,5 +16,3 @@ class Filter:
             return True
         else:
             return False
-
-

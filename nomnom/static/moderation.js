@@ -1,6 +1,6 @@
 // Approve/remove flagged polls and responses
 $('.vote').click(function() {
-    element = $(this); // Element event handler bound to
+    var element = $(this); // Element event handler bound to
     $.ajax({
         // post to the moderation URL
         // cookies are checked on ajax, so only admins can access this

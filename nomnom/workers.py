@@ -8,6 +8,7 @@ filter = Filter()
 
 # Views that are only ever accessed by GAE worker threads, such as task queues or cronjobs go here
 
+
 # Check for bad language in a response
 @app.route('/admin/worker/checkresponse', methods=['POST'])
 def check_response():
@@ -16,6 +17,7 @@ def check_response():
         response.mod_flag()
         events.auto_moderated_response_event(response)
     return '', 200
+
 
 # Check for bad language in a poll
 @app.route('/admin/worker/checkpoll', methods=['POST'])

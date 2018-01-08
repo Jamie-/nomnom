@@ -6,6 +6,7 @@ from nomnom import app
 
 BASE_URL = 'https://nomnom-online.appspot.com/poll/'
 
+
 class Email:
 
     @classmethod

@@ -6,6 +6,7 @@ import tags
 from poll import Poll, Response
 import uuid
 
+
 @app.route('/')
 def index():
     tag_url = tags.gen_tag_url(flask.request)
@@ -16,6 +17,7 @@ def index():
     except ValueError:
         flask.abort(400)  # Args invalid
 
+
 # Create a poll
 @app.route('/create', methods=['GET', 'POST'])
 def create():
@@ -23,12 +25,13 @@ def create():
     if form.validate_on_submit():
         poll = Poll.add(form.title.data, form.description.data, form.email.data, form.image_url.data, not form.private.data)
         flask.flash('Poll created successfully', 'success')
-        return flask.redirect('/poll/' + poll.get_id(), code=302) # After successfully creating a poll, go to it
+        return flask.redirect('/poll/' + poll.get_id(), code=302)  # After successfully creating a poll, go to it
     return flask.render_template('create.html', title='Create a Poll', form=form)
+
 
 # Queries the database to find polls related to a string
 @app.route('/search')
-def search():
+def search_view():
     try:
         tag_url = tags.gen_tag_url(flask.request)
         search = flask.request.args.get("q")  # Search terms
@@ -54,15 +57,16 @@ def search():
                 if search in r.response_str.lower():
                     include = True
             if p not in returned_polls and include:
-                 returned_polls.append(p)
+                returned_polls.append(p)
             include = False
         return flask.render_template('index.html', polls=returned_polls, tag_url=tag_url, order=order, tag=tag, search_term=search)
     except ValueError:
         flask.abort(400)  # Order arg invalid
 
+
 # View poll and add responses
 @app.route('/poll/<string:poll_id>', methods=['GET', 'POST'])
-def poll(poll_id):
+def poll_view(poll_id):
     try:
         poll = Poll.get_poll(poll_id)
         if poll is None:
@@ -83,6 +87,7 @@ def poll(poll_id):
     except:  # Poll.get_poll() with an invalid ID can return one of many exceptions so leaving this for general case
         # More info see: https://github.com/googlecloudplatform/datastore-ndb-python/issues/143
         flask.abort(404)
+
 
 # Delete a poll
 @app.route('/poll/<string:poll_id>/delete/<string:delete_key>', methods=['GET', 'POST'])
@@ -107,6 +112,7 @@ def delete_poll(poll_id, delete_key):
         # More info see: https://github.com/googlecloudplatform/datastore-ndb-python/issues/143
         flask.abort(404)
 
+
 # Vote on a response to a poll
 @app.route('/poll/<string:poll_id>/vote/<string:vote_type>', methods=['POST'])
 def poll_vote(poll_id, vote_type):
@@ -116,7 +122,7 @@ def poll_vote(poll_id, vote_type):
     else:
         cookie = str(uuid.uuid4())  # Generate cookie
     resp = flask.jsonify({})
-    #check the start of vote_type to determin the type of object that the user is voting on
+    # check the start of vote_type to determin the type of object that the user is voting on
     if vote_type.startswith('resp'):
         # if the user is voting on a response
         r = Response.get_response(poll_id, flask.request.form['resp_id'])
@@ -135,12 +141,14 @@ def poll_vote(poll_id, vote_type):
     resp.set_cookie('voteData', cookie)
     return resp
 
+
 # moderation panel
 @app.route('/admin/moderation')
 def admin_moderation():
     polls = Poll.get_flagged()
     responses = Response.get_flagged()
     return flask.render_template('moderation.html', polls=polls, responses=responses)
+
 
 # moderation tools
 @app.route('/admin/moderation/<string:poll_id>/action/<string:action_id>', methods=['POST'])
@@ -168,27 +176,32 @@ def admin_moderation_action(poll_id, action_id):
     return ''
 
 
-## Error Handlers
+# Error Handlers
 
 @app.errorhandler(400)
 def error_400(error):
     return flask.render_template('error.html', title='400', heading='Error 400', text="Oh no, that's an error!"), 400
 
+
 @app.errorhandler(401)
 def error_401(error):
     return flask.render_template('error.html', title='401', heading='Error 401', text="Oh no, that's an error!"), 401
+
 
 @app.errorhandler(403)
 def error_403(error):
     return flask.render_template('error.html', title='403', heading='Error 403', text="Oh no, that's an error!"), 403
 
+
 @app.errorhandler(404)
 def error_404(error):
     return flask.render_template('error.html', title='404', heading='Error 404', text="This page does not exist."), 404
 
+
 @app.errorhandler(405)
 def error_405(error):
     return flask.render_template('error.html', title='405', heading='Error 405', text="Oh no, that's an error!"), 405
+
 
 @app.errorhandler(500)
 def error_500(error):

@@ -1,4 +1,3 @@
-import flask_socketio
 import json
 from nomnom import socketio, is_production
 from nomnom import events
@@ -76,6 +75,7 @@ def push_delete_poll(poll):
     data['poll_deletion']['poll_id'] = poll.get_id()
     socketio.send(json.dumps(data), json=True, namespace='/global')
     socketio.send(json.dumps(data), json=True, namespace='/poll/' + poll.get_id())
+
 
 # Push request to remove a response
 def push_remove_response(response):

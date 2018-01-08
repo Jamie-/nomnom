@@ -6,6 +6,7 @@ from mail import Email
 import uuid
 import re
 
+
 # Moderation code, used in both models, so done as a parent class
 class NomNomModel(ndb.Model):
     flag = ndb.IntegerProperty()
@@ -95,7 +96,6 @@ class Poll(NomNomModel):
             return False
         return True
 
-
     # Add poll to datastore
     @classmethod
     def add(cls, title, description, email, image_url, visible):
@@ -105,7 +105,7 @@ class Poll(NomNomModel):
         # don't check hidden polls
         if visible:
             # add a job to a task queue that will check the poll for bad language
-            taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll':p.get_id()})
+            taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkpoll', params={'poll': p.get_id()})
         if email:
             Email.send_mail(email, p.get_id(), p.delete_key, title, image_url)
         events.poll_created_event(p)
@@ -117,15 +117,15 @@ class Poll(NomNomModel):
     def fetch_all(cls, order_by=None, tag_value=None, flag_count=3):
         query = Poll.query(Poll.visible == True, Poll.flag < flag_count)
         # If there is a tag then limit to that tag
-        if (tag_value is not None):
+        if tag_value is not None:
             query = Poll.query(Poll.visible == True, Poll.flag < flag_count, Poll.tag == tag_value)
-        if (order_by is None):  # First as most common case
+        if order_by is None:  # First as most common case
             return sorted(query.fetch())
-        elif (order_by == "newest"):
+        elif order_by == "newest":
             return query.order(Poll.flag).order(-Poll.datetime).fetch()
-        elif (order_by == "hottest"):
+        elif order_by == "hottest":
             return sorted(query.fetch(), key=lambda poll: -sum(r.upv + r.dnv for r in Response.query(ancestor=poll.key).fetch()))
-        elif (order_by == "easiest"):
+        elif order_by == "easiest":
             return sorted(query.fetch(), key=lambda poll: Response.query(ancestor=poll.key).count())
         raise ValueError()  # order_by not in specified list
 
@@ -151,7 +151,7 @@ class Response(NomNomModel):
 
     # Initialise a new response object with 0 upv and dnv maintaining kwargs to parent
     def __init__(self, **kwargs):
-        super(Response, self).__init__(**kwargs) # Call parent constructor
+        super(Response, self).__init__(**kwargs)  # Call parent constructor
         self.upv = 0
         self.dnv = 0
         self.voted_users = {}
@@ -185,21 +185,21 @@ class Response(NomNomModel):
         self.put()
 
     # Add down-vote to response
-    def downvote(self, cookieValue):
+    def downvote(self, cookie_value):
         vote_value = 0
-        if cookieValue in self.voted_users:
-            vote_value = self.voted_users[cookieValue]
+        if cookie_value in self.voted_users:
+            vote_value = self.voted_users[cookie_value]
 
         if vote_value == -1:  # User has previously downvoted (so toggle vote)
             self.dnv -= 1
-            self.voted_users[cookieValue] = 0
+            self.voted_users[cookie_value] = 0
         elif vote_value == 0:  # User has no previous vote
             self.dnv += 1
-            self.voted_users[cookieValue] = -1
+            self.voted_users[cookie_value] = -1
         elif vote_value == 1:  # User has previously upvoted (so change vote)
             self.upv -= 1
             self.dnv += 1
-            self.voted_users[cookieValue] = -1
+            self.voted_users[cookie_value] = -1
 
         events.vote_event(self)
         self.put()
@@ -211,7 +211,7 @@ class Response(NomNomModel):
         r.put()
         # if the poll is public schedule a thread to check the response for bad language
         if r.poll_visible():
-            taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll':poll.get_id(), 'response':r.get_id()})
+            taskqueue.add(queue_name='filter-queue', url='/admin/worker/checkresponse', params={'poll': poll.get_id(), 'response': r.get_id()})
         events.response_event(r)
         return r
 
