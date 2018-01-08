@@ -40,6 +40,7 @@
                                         <h6 class="card-text">Name my</h6>
                                         <h1 class="card-title">{{ p.title }}</h1>
                                         <p class="card-text">{{ p.description }}</p>
+                                        <p class="date-poll" data-date="{{ p.datetime }}"></p>
                                     </div>
                                 </div>
                                 {% if p.get_responses(3)|length > 0 %}
@@ -314,5 +315,46 @@
             // Update masonry
             $('.grid').masonry('layout');
         }
+    </script>
+    <script>
+        function updateTime() {
+            var now = new Date();
+            $.each($(".date-poll"), function(i, obj) {
+                obj = $(obj); // Convert obj to jQuery obj
+                var distance = now - new Date(obj.data('date'));
+                // Time calculations for days, hours, minutes and seconds
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                if (days === 0) {
+                    if (hours === 0) {
+                        if (minutes === 0) {
+                            obj.html("Just now");
+                        } else {
+                            if (minutes === 1) {
+                                obj.html(minutes + " minute ago");
+                            } else {
+                                obj.html(minutes + " minutes ago");
+                            }
+                        }
+                    } else {
+                        if (hours === 1) {
+                            obj.html(hours + " hour ago");
+                        } else {
+                            obj.html(hours + " hours ago");
+                        }
+                    }
+                } else {
+                    if (days === 1) {
+                        obj.html(days + " day ago");
+                    } else {
+                        obj.html(days + " days ago");
+                    }
+                }
+            });
+        }
+        updateTime();
+        // Live update poll time since creation
+        setInterval(updateTime, 1000);
     </script>
 {% endblock %}
