@@ -2,6 +2,6 @@
   "WTF_CSRF_ENABLED": true,
   "SECRET_KEY": "XY8bStqGJKvWtx5Rztv8gMDSNagaPTguAY6YuDPJpcvPRnmp5wV36js6V7fvtxCY",
   "APP_NAME": "NomNom",
-  "MAILGUN_DOMAIN_NAME":"nomnom.mx.nyanlabs.com",
-  "MAILGUN_API_KEY": "key-bfe54daec02f86760bc860a89b0cb666"
+  "MAILGUN_DOMAIN_NAME":"<mailgun domain name>",
+  "MAILGUN_API_KEY": "<mailgun api key>"
 }
